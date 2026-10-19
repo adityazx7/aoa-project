@@ -2,320 +2,1876 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Store Navigation Control Deck</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store Navigator - Spatial Routing & Graph Intelligence</title>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --border: #334155;
-      --text: #f8fafc;
-      --accent: #38bdf8;
-      --success: #22c55e;
-      --danger: #ef4444;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --border-dark: #cbd5e1;
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-subtle: #eff6ff;
+      --emerald: #059669;
+      --emerald-subtle: #ecfdf5;
+      --amber: #d97706;
+      --amber-subtle: #fffbeb;
+      --rose: #e11d48;
+      --rose-subtle: #fff1f2;
+      --indigo: #4f46e5;
+      --indigo-subtle: #eef2ff;
+      --radius: 10px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
     }
-    body {
-      margin: 0;
-      padding: 24px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 24px;
-      height: 100vh;
+
+    * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    .panel {
-      background: var(--card);
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .brand-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      background: var(--surface-subtle);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      color: var(--text-secondary);
+      border-radius: 6px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .preset-toggle {
+      display: flex;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .preset-btn {
+      background: transparent;
+      border: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-btn.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-outline {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 7px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-outline:hover {
+      background: var(--surface-subtle);
+      border-color: var(--border-dark);
+      color: var(--text-main);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--emerald);
+      background: var(--emerald-subtle);
+      border: 1px solid rgba(5, 150, 105, 0.2);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--emerald);
+      border-radius: 50%;
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 28px 40px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* TOP SECTION: Primary Action Control Deck */
+    .control-deck {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .field-label {
+      font-size: 0.76rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    select {
+      background: var(--surface);
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      font-family: inherit;
+      outline: none;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--surface-subtle);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    /* KPI Summary Ribbon */
+    .kpi-ribbon {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kpi-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .kpi-value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-main);
+    }
+
+    .kpi-value.highlight { color: var(--emerald); }
+    .kpi-value.blue { color: var(--primary); }
+
+    /* MIDDLE SECTION: Floorplan Canvas Stage */
+    .canvas-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .canvas-header {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+    }
+
+    .canvas-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-circle {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .canvas-container {
+      height: 480px;
+      position: relative;
+      background: #fbfcfd;
+      overflow: hidden;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+    canvas:active { cursor: grabbing; }
+
+    /* Canvas Floating Overlay Controls */
+    .zoom-toolbar {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .zoom-tool-btn {
+      width: 32px;
+      height: 32px;
+      background: transparent;
+      border: none;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+
+    .zoom-tool-btn:hover {
+      background: var(--surface-subtle);
+      color: var(--text-main);
+    }
+
+    .zoom-tool-btn + .zoom-tool-btn {
+      border-top: 1px solid var(--border);
+    }
+
+    /* Traversal Stepper Player Bar */
+    .stepper-bar {
+      position: absolute;
+      bottom: 16px;
+      left: 20px;
+      right: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border-dark);
+      border-radius: 10px;
+      box-shadow: var(--shadow-md);
+      padding: 10px 16px;
+      display: none;
+      align-items: center;
+      gap: 14px;
+      z-index: 10;
+    }
+
+    .stepper-btns {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stepper-btn {
+      width: 30px;
+      height: 30px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stepper-btn:hover { background: #e2e8f0; }
+
+    .stepper-progress {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stepper-desc {
+      font-size: 0.74rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stepper-slider {
+      width: 100%;
+      height: 5px;
+      background: var(--border);
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* BOTTOM SECTION: Deep Analysis & Structured Cards */
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      overflow-y: auto;
+      gap: 14px;
     }
-    h2, h3 { margin: 0; font-weight: 600; }
-    h2 { color: var(--accent); font-size: 1.25rem; }
-    h3 { font-size: 0.95rem; color: #94a3b8; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-    label { font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 4px; }
-    select, input, button {
-      width: 100%;
-      padding: 10px;
-      background: #0f172a;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-size: 0.9rem;
-      box-sizing: border-box;
-    }
-    button {
-      background: var(--accent);
-      color: #0f172a;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: opacity 0.2s;
-    }
-    button:hover { opacity: 0.9; }
-    .canvas-container {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      position: relative;
+
+    .card-header {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Table Styles */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+
+    .data-table th {
+      background: var(--surface-subtle);
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table td {
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: #fafafa; }
+
+    .tag-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--surface-subtle);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .tag-badge.emerald {
+      background: var(--emerald-subtle);
+      color: var(--emerald);
+      border-color: rgba(5, 150, 105, 0.2);
+    }
+
+    .math-callout {
+      background: var(--surface-subtle);
+      border-left: 3px solid var(--primary);
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .math-callout b {
+      color: var(--text-main);
+    }
+
+    /* Secondary Tools: Tabbed Interface */
+    .tools-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
       overflow: hidden;
     }
-    canvas { width: 100%; height: 100%; display: block; }
-    .status-bar {
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      right: 16px;
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
+
+    .tools-nav {
+      display: flex;
+      background: var(--surface-subtle);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+    }
+
+    .tool-tab-btn {
+      background: transparent;
+      border: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
       padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .tool-tab-btn:hover { color: var(--text-main); }
+    .tool-tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: var(--surface);
+    }
+
+    .tool-panel {
+      padding: 20px;
+      display: none;
+    }
+    .tool-panel.active { display: block; }
+
+    /* Chips container for shopping items */
+    .chip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .item-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      font-family: monospace;
-      font-size: 0.85rem;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s ease;
+    }
+
+    .item-chip:hover { border-color: var(--border-dark); }
+    .item-chip.selected {
+      background: var(--emerald-subtle);
+      border-color: var(--emerald);
+      color: var(--emerald);
+      font-weight: 600;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Tooltip */
+    #tooltip {
+      position: absolute;
+      background: var(--text-main);
+      color: #ffffff;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.74rem;
+      pointer-events: none;
+      z-index: 30;
+      display: none;
+      transform: translate(-50%, -120%);
+      box-shadow: var(--shadow-md);
     }
   </style>
 </head>
 <body>
 
-  <!-- Controls Side Panel -->
-  <div class="panel">
-    <h2>Spatial Navigator</h2>
-
-    <!-- Point to Point Routing -->
-    <div>
-      <h3>Single-Source Path (SSSP)</h3>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
-        <div>
-          <label>Source Node</label>
-          <input type="number" id="srcNode" value="0" min="0" max="5" />
-        </div>
-        <div>
-          <label>Target Node</label>
-          <input type="number" id="destNode" value="5" min="0" max="5" />
-        </div>
+  <!-- Top Navigation -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+        </svg>
       </div>
-      <div style="margin-top: 8px;">
-        <label>Algorithm</label>
-        <select id="algoSelect">
-          <option value="dijkstra">Dijkstra (O((V+E)logV))</option>
-          <option value="bellman-ford">Bellman-Ford (O(V*E))</option>
-        </select>
+      <div>
+        <span class="brand-title">Store Navigator Pro</span>
+        <span class="brand-pill" style="margin-left: 6px;">AOA Spatial Intelligence</span>
       </div>
-      <button style="margin-top: 12px;" onclick="fetchRoute()">Compute Shortest Path</button>
     </div>
 
-    <!-- Multi-Item Itinerary -->
-    <div>
-      <h3>Multi-Stop Shopping List (APSP)</h3>
-      <label style="margin-top: 8px;">Item Node IDs (comma separated)</label>
-      <input type="text" id="targetItems" value="3, 4, 5" />
-      <button style="margin-top: 10px; background: var(--success); color: white;" onclick="fetchBatchItinerary()">
-        Solve Order Picking
-      </button>
-    </div>
+    <div class="header-controls">
+      <!-- Layout Preset Toggle -->
+      <div class="preset-toggle">
+        <button class="preset-btn active" id="btnMega" onclick="switchPreset('mega')">Mega Mart (13 Zones)</button>
+        <button class="preset-btn" id="btnClassic" onclick="switchPreset('classic')">Classic (6 Zones)</button>
+      </div>
 
-    <!-- Congestion / Dynamic Weight Injection -->
-    <div>
-      <h3>Dynamic Telemetry Injection</h3>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
-        <div>
-          <label>Edge U</label>
-          <input type="number" id="edgeU" value="0" min="0" max="5" />
+      <button class="btn-outline" onclick="resetGraph()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Reset Topology
+      </button>
+
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        <span>ENGINE ONLINE</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- TOP SECTION: Primary Action Control Deck -->
+    <section class="control-deck">
+      <div class="control-row">
+        <div class="field-group">
+          <label class="field-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+            Origin Zone
+          </label>
+          <select id="srcNodeSelect" onchange="onEndpointChange()"></select>
         </div>
-        <div>
-          <label>Edge V</label>
-          <input type="number" id="edgeV" value="1" min="0" max="5" />
+
+        <div class="field-group">
+          <label class="field-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            Target Zone
+          </label>
+          <select id="destNodeSelect" onchange="onEndpointChange()"></select>
+        </div>
+
+        <div class="field-group" style="flex: 1.2;">
+          <label class="field-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Routing Algorithm
+          </label>
+          <select id="algoSelect" onchange="updateAlgoTheory()">
+            <option value="dijkstra">Dijkstra's Algorithm — Min-Heap SSSP O((V+E) log V)</option>
+            <option value="astar">A* Search — Guided Euclidean Heuristic f(n)=g(n)+h(n)</option>
+            <option value="bellman-ford">Bellman-Ford — Iterative Edge Relaxation O(V·E)</option>
+            <option value="bfs">Breadth-First Search (BFS) — Unweighted Minimum Hops</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-primary" onclick="computeRoute(false)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Calculate Path
+          </button>
+          <button class="btn-secondary" onclick="computeRoute(true)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            Animate Traversal
+          </button>
         </div>
       </div>
-      <label style="margin-top: 8px;">Congestion Weight</label>
-      <input type="number" id="newWeight" value="50" />
-      <button style="margin-top: 10px; background: var(--danger); color: white;" onclick="injectTelemetry()">
-        Inject Weight Update
-      </button>
+    </section>
+
+    <!-- KPI Summary Ribbon -->
+    <section class="kpi-ribbon">
+      <div class="kpi-card">
+        <span class="kpi-title">Total Travel Distance</span>
+        <span class="kpi-value highlight" id="kpiDistance">0.0 m</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-title">Aisle Hops Count</span>
+        <span class="kpi-value" id="kpiHops">0</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-title">Execution Latency</span>
+        <span class="kpi-value blue" id="kpiTime">0.00 ms</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-title">Edge Relaxations</span>
+        <span class="kpi-value" id="kpiRelaxations">0</span>
+      </div>
+    </section>
+
+    <!-- MIDDLE SECTION: Floorplan Canvas Stage -->
+    <section class="canvas-card">
+      <div class="canvas-header">
+        <div class="canvas-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          Retail Floorplan & Spatial Graph
+        </div>
+        <div class="legend-bar">
+          <div class="legend-item">
+            <div class="legend-circle" style="background: var(--emerald);"></div>
+            <span>Origin</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-circle" style="background: var(--primary);"></div>
+            <span>Destination</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-circle" style="background: #10b981; border: 2px dashed #059669;"></div>
+            <span>Optimal Route</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-circle" style="background: #f43f5e;"></div>
+            <span>Congested Aisle (≥12m)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="canvas-container">
+        <div class="zoom-toolbar">
+          <button class="zoom-tool-btn" title="Zoom In" onclick="zoom(1.2)">+</button>
+          <button class="zoom-tool-btn" title="Zoom Out" onclick="zoom(0.8)">−</button>
+          <button class="zoom-tool-btn" title="Center" onclick="resetView()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" x2="18" y1="12" y2="12"/><line x1="6" x2="2" y1="12" y2="12"/><line x1="12" x2="12" y1="6" y2="2"/><line x1="12" x2="12" y1="22" y2="18"/></svg>
+          </button>
+        </div>
+
+        <!-- Traversal Stepper Player Bar -->
+        <div class="stepper-bar" id="stepperBar">
+          <div class="stepper-btns">
+            <button class="stepper-btn" onclick="jumpToStep(0)" title="Start">⏮</button>
+            <button class="stepper-btn" onclick="stepBackward()" title="Previous">◀</button>
+            <button class="stepper-btn" id="playBtn" onclick="togglePlay()" title="Play/Pause">▶</button>
+            <button class="stepper-btn" onclick="stepForward()" title="Next">▶</button>
+            <button class="stepper-btn" onclick="jumpToEnd()" title="End">⏭</button>
+          </div>
+          <div class="stepper-progress">
+            <div class="stepper-desc" id="stepperDesc">Step 0: Initialized</div>
+            <input type="range" class="stepper-slider" id="stepperSlider" min="0" max="0" value="0" oninput="jumpToStep(parseInt(this.value))">
+          </div>
+        </div>
+
+        <canvas id="storeCanvas"></canvas>
+      </div>
+    </section>
+
+    <!-- BOTTOM SECTION: Deep Analysis & Structured Cards -->
+    <section class="analysis-grid">
+      <!-- Left Analysis Card: Cost Equation & Leg Table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+            Path & Cost Mathematical Analysis
+          </div>
+          <span class="tag-badge emerald" id="analysisTag">Optimal Traversal</span>
+        </div>
+
+        <div class="math-callout" id="mathCallout">
+          <b>Optimal Distance Formulation:</b> Run path calculation to inspect mathematical summation.
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Leg</th>
+              <th>Origin</th>
+              <th>Destination</th>
+              <th>Aisle Weight</th>
+              <th>Cumulative Distance</th>
+            </tr>
+          </thead>
+          <tbody id="legsTableBody">
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 18px;">
+                No active route computed. Select endpoints and click "Calculate Path".
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Right Analysis Card: Algorithm Mechanics & Frontier State -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Algorithmic Decision Profile
+          </div>
+          <span class="tag-badge" id="algoComplexityTag">O((V+E) log V)</span>
+        </div>
+
+        <div style="font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5;" id="algoProfileText">
+          <b>Dijkstra's Algorithm:</b> Employs a min-priority heap to greedily settle the vertex with the lowest known path cost. Guarantees global optimality with non-negative edge weights.
+        </div>
+
+        <div>
+          <span style="font-size: 0.72rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.04em;">
+            Heap / Frontier Inspection:
+          </span>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;" id="frontierList">
+            <span class="tag-badge">No active search frontier</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 12px; font-size: 0.8rem; color: var(--text-muted);">
+          <b>Optimality Guarantee:</b> <span id="optimalityText">Evaluates all incoming incident edges and prunes higher-cost subtrees via dynamic relaxation.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECONDARY TOOLS SECTION (Tabbed: Shopping TSP, Congestion Control, Benchmark) -->
+    <section class="tools-section">
+      <div class="tools-nav">
+        <button class="tool-tab-btn active" onclick="switchToolTab('tsp')">Multi-Stop Order Picker (TSP)</button>
+        <button class="tool-tab-btn" onclick="switchToolTab('congestion')">Aisle Congestion Injection</button>
+        <button class="tool-tab-btn" onclick="switchToolTab('benchmark')">Empirical Algorithm Benchmark</button>
+      </div>
+
+      <!-- Tab 1: TSP Order Picker -->
+      <div class="tool-panel active" id="tool-tsp">
+        <p style="font-size: 0.84rem; color: var(--text-secondary);">
+          Select target store shelves to visit. The Held-Karp Dynamic Programming algorithm ($O(n^2 2^n)$) computes the global minimum walking itinerary connecting all stops with expanded aisle paths:
+        </p>
+        <div class="chip-grid" id="tspChipsGrid"></div>
+        <div style="margin-top: 16px;">
+          <button class="btn-primary" style="background: var(--emerald);" onclick="computeTSP()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+            Solve Exact Order Itinerary
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 2: Congestion Simulator -->
+      <div class="tool-panel" id="tool-congestion">
+        <p style="font-size: 0.84rem; color: var(--text-secondary);">
+          Simulate high foot traffic or blocked supermarket aisles by injecting custom weights. You can also click any aisle directly on the map:
+        </p>
+        <div style="display: flex; gap: 16px; margin-top: 12px; max-width: 600px; flex-wrap: wrap; align-items: flex-end;">
+          <div class="field-group">
+            <label class="field-label">Aisle Origin</label>
+            <select id="edgeUSel"></select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Aisle Destination</label>
+            <select id="edgeVSel"></select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Penalty Weight: <span id="weightVal" style="color: var(--primary);">20.0m</span></label>
+            <input type="range" id="weightSlider" min="1" max="50" value="20" oninput="document.getElementById('weightVal').innerText = parseFloat(this.value).toFixed(1) + 'm'">
+          </div>
+          <button class="btn-primary" onclick="injectCongestionWeight()">
+            Apply Weight
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 3: Benchmark Showdown -->
+      <div class="tool-panel" id="tool-benchmark">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <p style="font-size: 0.84rem; color: var(--text-secondary); margin: 0;">
+            Compare Dijkstra, A*, Bellman-Ford, and BFS simultaneously on the current graph topology:
+          </p>
+          <button class="btn-primary" onclick="runBenchmark()">
+            Run Benchmark
+          </button>
+        </div>
+        <table class="data-table" id="benchTable">
+          <thead>
+            <tr>
+              <th>Algorithm</th>
+              <th>Execution Time</th>
+              <th>Edge Relaxations</th>
+              <th>Operations</th>
+              <th>Path Cost</th>
+              <th>Theoretical Time Complexity</th>
+            </tr>
+          </thead>
+          <tbody id="benchTableBody">
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 18px;">
+                Click "Run Benchmark" to execute empirical trials.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Edit Aisle Weight Modal -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h4 style="font-size: 1rem; font-weight: 700;">Update Aisle Weight</h4>
+        <button style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);" onclick="closeModal()">✕</button>
+      </div>
+      <p style="font-size: 0.82rem; color: var(--text-secondary);" id="modalAisleDesc">
+        Aisle between node A and node B
+      </p>
+      <div class="field-group">
+        <label class="field-label">Aisle Weight (m): <span id="modalWeightVal">15.0m</span></label>
+        <input type="range" id="modalSlider" min="1" max="50" value="15" oninput="document.getElementById('modalWeightVal').innerText = parseFloat(this.value).toFixed(1) + 'm'">
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveModalWeight()">Save Weight</button>
+      </div>
     </div>
   </div>
 
-  <!-- Map Visualizer Canvas -->
-  <div class="canvas-container">
-    <canvas id="storeCanvas"></canvas>
-    <div class="status-bar" id="statusBar">Engine Ready. Select nodes or inject dynamic edge updates.</div>
-  </div>
+  <div id="tooltip"></div>
 
+  <!-- JavaScript: Graph Engine, Canvas Vector Drawing, and Interactivity -->
   <script>
-    const API_URL = "http://127.0.0.1:8000";
+    const API_BASE = "";
     const canvas = document.getElementById("storeCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Geometric coordinate anchors for the 6-junction layout
-    const nodes = {
-      0: { x: 100, y: 150, name: "Entrance (0)" },
-      1: { x: 300, y: 100, name: "Produce (1)" },
-      2: { x: 280, y: 320, name: "Bakery (2)" },
-      3: { x: 500, y: 120, name: "Dairy (3)" },
-      4: { x: 480, y: 340, name: "Beverages (4)" },
-      5: { x: 700, y: 220, name: "Exit/Checkout (5)" }
+    let graphData = { nodes: [], edges: [], total_nodes: 0, preset: "mega" };
+    let selectedStart = 0;
+    let selectedDest = 12;
+    let selectedTspItems = new Set([1, 4, 7, 9]);
+
+    let activePath = [];
+    let pathSegments = [];
+    let activeTrace = [];
+    let currentStepIdx = 0;
+    let isPlaying = false;
+    let playInterval = null;
+
+    let zoomLevel = 1.0;
+    let panOffset = { x: 0, y: 0 };
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let hoveredNode = null;
+    let hoveredEdge = null;
+    let activeModalEdge = null;
+
+    // Vector Icon Definitions (Lucide Vector Geometry)
+    const vectorIcons = {
+      "door-open": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.rect(x - size*0.4, y - size*0.5, size*0.8, size);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x + size*0.15, y, size*0.1, 0, Math.PI * 2);
+        ctx.fill();
+      },
+      "apple": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.arc(x, y + size*0.1, size*0.4, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y - size*0.3);
+        ctx.quadraticCurveTo(x + size*0.2, y - size*0.5, x + size*0.3, y - size*0.4);
+        ctx.stroke();
+      },
+      "croissant": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.ellipse(x, y, size*0.45, size*0.25, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      },
+      "milk": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.rect(x - size*0.3, y - size*0.3, size*0.6, size*0.8);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x - size*0.2, y - size*0.3);
+        ctx.lineTo(x, y - size*0.5);
+        ctx.lineTo(x + size*0.2, y - size*0.3);
+        ctx.stroke();
+      },
+      "beef": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.roundRect(x - size*0.4, y - size*0.3, size*0.8, size*0.6, 6);
+        ctx.stroke();
+      },
+      "cup-soda": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.moveTo(x - size*0.3, y - size*0.4);
+        ctx.lineTo(x + size*0.3, y - size*0.4);
+        ctx.lineTo(x + size*0.2, y + size*0.5);
+        ctx.lineTo(x - size*0.2, y + size*0.5);
+        ctx.closePath();
+        ctx.stroke();
+      },
+      "cookie": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.arc(x, y, size*0.42, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x - size*0.15, y - size*0.1, 1.5, 0, Math.PI * 2);
+        ctx.arc(x + size*0.15, y - size*0.15, 1.5, 0, Math.PI * 2);
+        ctx.arc(x, y + size*0.15, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      },
+      "ice-cream": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.arc(x, y - size*0.15, size*0.35, Math.PI, 0);
+        ctx.lineTo(x, y + size*0.5);
+        ctx.closePath();
+        ctx.stroke();
+      },
+      "sparkles": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.moveTo(x, y - size*0.45);
+        ctx.lineTo(x + size*0.12, y - size*0.12);
+        ctx.lineTo(x + size*0.45, y);
+        ctx.lineTo(x + size*0.12, y + size*0.12);
+        ctx.lineTo(x, y + size*0.45);
+        ctx.lineTo(x - size*0.12, y + size*0.12);
+        ctx.lineTo(x - size*0.45, y);
+        ctx.lineTo(x - size*0.12, y - size*0.12);
+        ctx.closePath();
+        ctx.stroke();
+      },
+      "pill": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.roundRect(x - size*0.45, y - size*0.2, size*0.9, size*0.4, size*0.2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y - size*0.2);
+        ctx.lineTo(x, y + size*0.2);
+        ctx.stroke();
+      },
+      "laptop": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.rect(x - size*0.35, y - size*0.35, size*0.7, size*0.5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x - size*0.5, y + size*0.2);
+        ctx.lineTo(x + size*0.5, y + size*0.2);
+        ctx.stroke();
+      },
+      "credit-card": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.roundRect(x - size*0.45, y - size*0.3, size*0.9, size*0.6, 4);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x - size*0.45, y - size*0.08);
+        ctx.lineTo(x + size*0.45, y - size*0.08);
+        ctx.stroke();
+      },
+      "shopping-bag": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.rect(x - size*0.35, y - size*0.2, size*0.7, size*0.7);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x, y - size*0.2, size*0.22, Math.PI, 0);
+        ctx.stroke();
+      }
     };
 
-    let edges = [
-      { u: 0, v: 1, weight: 4 },
-      { u: 0, v: 2, weight: 2 },
-      { u: 1, v: 2, weight: 1 },
-      { u: 1, v: 3, weight: 5 },
-      { u: 2, v: 3, weight: 8 },
-      { u: 2, v: 4, weight: 10 },
-      { u: 3, v: 5, weight: 6 },
-      { u: 4, v: 5, weight: 2 }
-    ];
+    window.addEventListener("load", () => {
+      resizeCanvas();
+      fetchGraph();
+    });
+    window.addEventListener("resize", resizeCanvas);
 
-    let highlightedPath = [];
-
-    function resize() {
-      canvas.width = canvas.parentElement.clientWidth;
-      canvas.height = canvas.parentElement.clientHeight;
-      draw();
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      render();
     }
-    window.addEventListener("resize", resize);
 
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    async function fetchGraph() {
+      try {
+        const res = await fetch(`${API_BASE}/api/graph`);
+        graphData = await res.json();
+        populateDropdowns();
+        centerGraph();
+        render();
+      } catch (e) {
+        console.error(e);
+      }
+    }
 
-      // Render Edges
-      edges.forEach(e => {
-        const from = nodes[e.u];
-        const to = nodes[e.v];
-        const isPath = isEdgeInPath(e.u, e.v);
+    function populateDropdowns() {
+      const srcSel = document.getElementById("srcNodeSelect");
+      const destSel = document.getElementById("destNodeSelect");
+      const edgeUSel = document.getElementById("edgeUSel");
+      const edgeVSel = document.getElementById("edgeVSel");
+      const tspGrid = document.getElementById("tspChipsGrid");
 
-        ctx.beginPath();
-        ctx.moveTo(from.x, from.y);
-        ctx.lineTo(to.x, to.y);
-        ctx.strokeStyle = isPath ? "#22c55e" : "#334155";
-        ctx.lineWidth = isPath ? 4 : 2;
-        ctx.stroke();
+      srcSel.innerHTML = "";
+      destSel.innerHTML = "";
+      edgeUSel.innerHTML = "";
+      edgeVSel.innerHTML = "";
+      tspGrid.innerHTML = "";
 
-        // Edge labels
-        const midX = (from.x + to.x) / 2;
-        const midY = (from.y + to.y) / 2;
-        ctx.fillStyle = isPath ? "#86efac" : "#64748b";
-        ctx.font = "12px monospace";
-        ctx.fillText(`w:${e.weight}`, midX + 5, midY - 5);
+      graphData.nodes.forEach(n => {
+        const label = `${n.id}: ${n.name}`;
+        srcSel.add(new Option(label, n.id));
+        destSel.add(new Option(label, n.id));
+        edgeUSel.add(new Option(label, n.id));
+        edgeVSel.add(new Option(label, n.id));
+
+        // TSP Chips
+        const chip = document.createElement("div");
+        chip.className = `item-chip ${selectedTspItems.has(n.id) ? 'selected' : ''}`;
+        chip.innerHTML = `<span>${n.name}</span> <span class="tag-badge">${n.id}</span>`;
+        chip.onclick = () => {
+          if (selectedTspItems.has(n.id)) {
+            selectedTspItems.delete(n.id);
+            chip.classList.remove("selected");
+          } else {
+            selectedTspItems.add(n.id);
+            chip.classList.add("selected");
+          }
+        };
+        tspGrid.appendChild(chip);
       });
 
-      // Render Nodes
-      Object.keys(nodes).forEach(id => {
-        const n = nodes[id];
-        const active = highlightedPath.includes(parseInt(id));
+      srcSel.value = selectedStart;
+      destSel.value = Math.min(selectedDest, graphData.nodes.length - 1);
+      edgeUSel.value = graphData.edges[0]?.u || 0;
+      edgeVSel.value = graphData.edges[0]?.v || 1;
+    }
+
+    function onEndpointChange() {
+      selectedStart = parseInt(document.getElementById("srcNodeSelect").value);
+      selectedDest = parseInt(document.getElementById("destNodeSelect").value);
+      render();
+    }
+
+    async function switchPreset(preset) {
+      document.getElementById('btnMega').classList.toggle('active', preset === 'mega');
+      document.getElementById('btnClassic').classList.toggle('active', preset === 'classic');
+      const res = await fetch(`${API_BASE}/api/graph/preset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preset })
+      });
+      graphData = await res.json();
+      selectedStart = 0;
+      selectedDest = graphData.nodes.length - 1;
+      selectedTspItems.clear();
+      if (preset === 'mega') {
+        selectedTspItems.add(1);
+        selectedTspItems.add(4);
+        selectedTspItems.add(7);
+      } else {
+        selectedTspItems.add(2);
+        selectedTspItems.add(4);
+      }
+      activePath = [];
+      pathSegments = [];
+      activeTrace = [];
+      document.getElementById("stepperBar").style.display = "none";
+      populateDropdowns();
+      centerGraph();
+      render();
+    }
+
+    async function resetGraph() {
+      await fetch(`${API_BASE}/api/graph/reset`, { method: "POST" });
+      await fetchGraph();
+      activePath = [];
+      pathSegments = [];
+      render();
+    }
+
+    // --- Path Computation & Analysis ---
+    async function computeRoute(animate = false) {
+      stopPlayback();
+      const algo = document.getElementById("algoSelect").value;
+      const src = selectedStart;
+      const dst = selectedDest;
+
+      if (src === dst) {
+        alert("Origin and target cannot be identical.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/route`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ source: src, destination: dst, algorithm: algo })
+        });
+        const data = await res.json();
+
+        activePath = data.optimal_path;
+        pathSegments = data.path_segments || [];
+        activeTrace = data.trace || [];
+
+        // Update KPIs
+        document.getElementById("kpiDistance").innerText = `${data.total_travel_cost.toFixed(1)} m`;
+        document.getElementById("kpiHops").innerText = `${activePath.length - 1} hops`;
+        document.getElementById("kpiTime").innerText = `${data.stats.execution_time_ms} ms`;
+        document.getElementById("kpiRelaxations").innerText = data.stats.relaxations_count;
+
+        // Update Detailed Mathematical Analysis
+        updateAnalysisCard(data);
+
+        if (animate && activeTrace.length > 0) {
+          startPlayback();
+        } else {
+          document.getElementById("stepperBar").style.display = "none";
+          render();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function updateAnalysisCard(data) {
+      const callout = document.getElementById("mathCallout");
+      const equation = data.analysis.cost_equation;
+      callout.innerHTML = `
+        <b>Optimal Cumulative Cost Equation:</b><br>
+        <code>${data.analysis.source_label} → ${data.analysis.target_label}</code>: 
+        <span style="color: var(--primary); font-weight: 600;">${equation}</span><br>
+        <span style="font-size: 0.76rem; color: var(--text-muted);">${data.analysis.optimality_rationale}</span>
+      `;
+
+      const tbody = document.getElementById("legsTableBody");
+      tbody.innerHTML = "";
+      if (data.path_segments && data.path_segments.length > 0) {
+        data.path_segments.forEach(seg => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td><span class="tag-badge">Leg ${seg.leg}</span></td>
+            <td style="font-weight: 600; color: var(--text-main);">${seg.from_name}</td>
+            <td style="font-weight: 600; color: var(--text-main);">${seg.to_name}</td>
+            <td><span style="font-family: 'JetBrains Mono';">${seg.distance.toFixed(1)} m</span></td>
+            <td><span style="font-family: 'JetBrains Mono'; color: var(--primary); font-weight: 600;">${seg.accumulated.toFixed(1)} m</span></td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+
+      document.getElementById("algoComplexityTag").innerText = data.stats.time_complexity;
+    }
+
+    function updateAlgoTheory() {
+      const algo = document.getElementById("algoSelect").value;
+      const desc = document.getElementById("algoProfileText");
+      if (algo === "astar") {
+        desc.innerHTML = `<b>A* Search Algorithm:</b> Evaluates <code>f(n) = g(n) + h(n)</code> where <code>h(n)</code> is Euclidean distance to the goal. Prunes exploration directions moving away from the target.`;
+      } else if (algo === "bellman-ford") {
+        desc.innerHTML = `<b>Bellman-Ford Algorithm:</b> Iteratively relaxes all |E| edges |V|-1 times ($O(V\\cdot E)$). Capable of negative weight detection and convergence tracking.`;
+      } else if (algo === "bfs") {
+        desc.innerHTML = `<b>Breadth-First Search (BFS):</b> Level-order queue traversal ($O(V+E)$). Computes minimum unweighted hop count regardless of physical aisle distance.`;
+      } else {
+        desc.innerHTML = `<b>Dijkstra's Algorithm:</b> Greedily settles the closest unsettled vertex at each iteration via min-priority heap ($O((V+E)\\log V)$). Provably optimal for non-negative graphs.`;
+      }
+    }
+
+    async function computeTSP() {
+      const entrance = selectedStart;
+      const items = Array.from(selectedTspItems);
+      if (items.length === 0) {
+        alert("Select at least 1 shelf item.");
+        return;
+      }
+
+      const res = await fetch(`${API_BASE}/api/optimize-shopping-list`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ entrance, items })
+      });
+      const data = await res.json();
+
+      activePath = data.full_path;
+      pathSegments = data.legs || [];
+      activeTrace = [];
+
+      document.getElementById("kpiDistance").innerText = `${data.total_cost.toFixed(1)} m`;
+      document.getElementById("kpiHops").innerText = `${data.stops_count} stops`;
+      document.getElementById("kpiTime").innerText = `${data.execution_time_ms} ms`;
+      document.getElementById("kpiRelaxations").innerText = `${data.stops_count} waypoints`;
+
+      document.getElementById("mathCallout").innerHTML = `
+        <b>Held-Karp Exact TSP Sequence:</b><br>
+        <code>${data.visit_sequence.join(' → ')}</code> | Total Walking Cost: <b>${data.total_cost.toFixed(1)} m</b>
+      `;
+
+      const tbody = document.getElementById("legsTableBody");
+      tbody.innerHTML = "";
+      (data.legs || []).forEach((leg, i) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><span class="tag-badge emerald">Stop ${i+1}</span></td>
+          <td style="font-weight: 600;">${leg.from_name}</td>
+          <td style="font-weight: 600;">${leg.to_name}</td>
+          <td><span style="font-family: 'JetBrains Mono';">${leg.distance.toFixed(1)} m</span></td>
+          <td><span style="font-family: 'JetBrains Mono'; color: var(--emerald); font-weight: 600;">${leg.distance.toFixed(1)} m</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      render();
+    }
+
+    async function runBenchmark() {
+      const res = await fetch(`${API_BASE}/api/benchmark/live`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ source: selectedStart, destination: selectedDest })
+      });
+      const data = await res.json();
+      const tbody = document.getElementById("benchTableBody");
+      tbody.innerHTML = "";
+
+      data.benchmark_data.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td style="font-weight: 600; color: var(--text-main);">${item.algorithm}</td>
+          <td><span style="font-family: 'JetBrains Mono';">${item.time_ms.toFixed(3)} ms</span></td>
+          <td>${item.relaxations}</td>
+          <td>${item.operations}</td>
+          <td><span style="font-family: 'JetBrains Mono'; font-weight: 600; color: var(--emerald);">${item.cost !== null ? item.cost.toFixed(1) + ' m' : '∞'}</span></td>
+          <td><span class="tag-badge">${item.time_complexity}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function switchToolTab(tab) {
+      document.querySelectorAll(".tool-tab-btn").forEach((b, i) => {
+        b.classList.toggle("active", (i === 0 && tab === 'tsp') || (i === 1 && tab === 'congestion') || (i === 2 && tab === 'benchmark'));
+      });
+      document.querySelectorAll(".tool-panel").forEach(p => p.classList.remove("active"));
+      document.getElementById(`tool-${tab}`).classList.add("active");
+    }
+
+    async function injectCongestionWeight() {
+      const u = parseInt(document.getElementById("edgeUSel").value);
+      const v = parseInt(document.getElementById("edgeVSel").value);
+      const weight = parseFloat(document.getElementById("weightSlider").value);
+      await fetch(`${API_BASE}/api/aisle/update`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ u, v, new_weight: weight })
+      });
+      await fetchGraph();
+      if (activePath.length > 0) computeRoute(false);
+    }
+
+    // Modal Handling
+    function openEdgeModal(edge) {
+      activeModalEdge = edge;
+      const uName = graphData.nodes[edge.u]?.name || `Node ${edge.u}`;
+      const vName = graphData.nodes[edge.v]?.name || `Node ${edge.v}`;
+      document.getElementById("modalAisleDesc").innerText = `Aisle connecting ${uName} and ${vName}`;
+      document.getElementById("modalSlider").value = edge.weight;
+      document.getElementById("modalWeightVal").innerText = edge.weight.toFixed(1) + "m";
+      document.getElementById("modalBackdrop").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("modalBackdrop").style.display = "none";
+      activeModalEdge = null;
+    }
+
+    async function saveModalWeight() {
+      if (!activeModalEdge) return;
+      const weight = parseFloat(document.getElementById("modalSlider").value);
+      await fetch(`${API_BASE}/api/aisle/update`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ u: activeModalEdge.u, v: activeModalEdge.v, new_weight: weight })
+      });
+      closeModal();
+      await fetchGraph();
+      if (activePath.length > 0) computeRoute(false);
+    }
+
+    // --- Traversal Stepper Player ---
+    function startPlayback() {
+      currentStepIdx = 0;
+      document.getElementById("stepperBar").style.display = "flex";
+      document.getElementById("stepperSlider").max = activeTrace.length - 1;
+      updateStepUI();
+      play();
+    }
+
+    function play() {
+      isPlaying = true;
+      document.getElementById("playBtn").innerText = "⏸";
+      clearInterval(playInterval);
+      playInterval = setInterval(() => {
+        if (currentStepIdx < activeTrace.length - 1) {
+          currentStepIdx++;
+          updateStepUI();
+        } else {
+          pause();
+        }
+      }, 400);
+    }
+
+    function pause() {
+      isPlaying = false;
+      document.getElementById("playBtn").innerText = "▶";
+      clearInterval(playInterval);
+    }
+
+    function togglePlay() {
+      if (isPlaying) pause();
+      else play();
+    }
+
+    function stopPlayback() {
+      pause();
+      document.getElementById("stepperBar").style.display = "none";
+    }
+
+    function stepForward() {
+      pause();
+      if (currentStepIdx < activeTrace.length - 1) {
+        currentStepIdx++;
+        updateStepUI();
+      }
+    }
+
+    function stepBackward() {
+      pause();
+      if (currentStepIdx > 0) {
+        currentStepIdx--;
+        updateStepUI();
+      }
+    }
+
+    function jumpToStep(idx) {
+      currentStepIdx = Math.max(0, Math.min(idx, activeTrace.length - 1));
+      updateStepUI();
+    }
+
+    function jumpToEnd() {
+      pause();
+      currentStepIdx = activeTrace.length - 1;
+      updateStepUI();
+    }
+
+    function updateStepUI() {
+      const step = activeTrace[currentStepIdx];
+      if (!step) return;
+      document.getElementById("stepperSlider").value = currentStepIdx;
+      document.getElementById("stepperDesc").innerText = `Step ${currentStepIdx + 1}/${activeTrace.length}: ${step.description}`;
+
+      const frontierEl = document.getElementById("frontierList");
+      if (step.frontier && step.frontier.length > 0) {
+        frontierEl.innerHTML = step.frontier.map(n => `<span class="tag-badge emerald">Node ${n}</span>`).join(" ");
+      } else {
+        frontierEl.innerHTML = `<span class="tag-badge">Settled</span>`;
+      }
+      render();
+    }
+
+    // --- Canvas Rendering (Architectural Blueprint Light Theme) ---
+    function centerGraph() {
+      if (graphData.nodes.length === 0) return;
+      const rect = canvas.getBoundingClientRect();
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      graphData.nodes.forEach(n => {
+        if (n.x < minX) minX = n.x;
+        if (n.x > maxX) maxX = n.x;
+        if (n.y < minY) minY = n.y;
+        if (n.y > maxY) maxY = n.y;
+      });
+
+      const w = maxX - minX + 220;
+      const h = maxY - minY + 180;
+      zoomLevel = Math.min(rect.width / w, rect.height / h, 1.1);
+      panOffset.x = (rect.width / 2) - ((minX + maxX) / 2) * zoomLevel;
+      panOffset.y = (rect.height / 2) - ((minY + maxY) / 2) * zoomLevel;
+    }
+
+    function zoom(factor) {
+      zoomLevel = Math.max(0.4, Math.min(zoomLevel * factor, 2.5));
+      render();
+    }
+
+    function resetView() {
+      centerGraph();
+      render();
+    }
+
+    function render() {
+      const rect = canvas.getBoundingClientRect();
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      ctx.save();
+      ctx.translate(panOffset.x, panOffset.y);
+      ctx.scale(zoomLevel, zoomLevel);
+
+      // 1. Subtle Clean Floorplan Grid
+      drawGrid();
+
+      // Step trace data
+      const currentStep = activeTrace[currentStepIdx];
+      const visitedSet = new Set(currentStep?.visited_nodes || []);
+      const frontierSet = new Set(currentStep?.frontier || []);
+
+      // 2. Render Aisles (Edges)
+      graphData.edges.forEach(edge => {
+        const u = graphData.nodes[edge.u];
+        const v = graphData.nodes[edge.v];
+        if (!u || !v) return;
+
+        const isPath = isEdgeInPath(edge.u, edge.v);
+        const isHovered = (hoveredEdge === edge);
+        const isCongested = edge.weight >= 12;
 
         ctx.beginPath();
-        ctx.arc(n.x, n.y, 18, 0, 2 * Math.PI);
-        ctx.fillStyle = active ? "#22c55e" : "#0284c7";
-        ctx.fill();
-        ctx.strokeStyle = "#f8fafc";
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        ctx.moveTo(u.x, u.y);
+        ctx.lineTo(v.x, v.y);
 
-        // Label
-        ctx.fillStyle = "#f8fafc";
-        ctx.font = "bold 12px sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(id, n.x, n.y);
+        if (isPath) {
+          ctx.strokeStyle = "#059669"; // Emerald solid line
+          ctx.lineWidth = 4.5;
+          ctx.stroke();
+        } else if (isHovered) {
+          ctx.strokeStyle = "#2563eb";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        } else {
+          ctx.strokeStyle = isCongested ? "#fca5a5" : "#e2e8f0";
+          ctx.lineWidth = isCongested ? 2.5 : 2;
+          ctx.stroke();
+        }
 
-        ctx.fillStyle = "#94a3b8";
-        ctx.font = "11px sans-serif";
-        ctx.fillText(n.name, n.x, n.y + 28);
+        // Draw Weight Pill
+        const midX = (u.x + v.x) / 2;
+        const midY = (u.y + v.y) / 2;
+        drawWeightTag(midX, midY, edge.weight, isPath, isCongested);
       });
+
+      // 3. Render Store Zones (Nodes)
+      graphData.nodes.forEach(node => {
+        const isStart = (node.id === selectedStart);
+        const isDest = (node.id === selectedDest);
+        const inPath = activePath.includes(node.id);
+        const isCurrent = (currentStep?.current_node === node.id);
+        const isVisited = visitedSet.has(node.id);
+
+        drawNode(node, { isStart, isDest, inPath, isCurrent, isVisited });
+      });
+
+      ctx.restore();
+    }
+
+    function drawGrid() {
+      ctx.save();
+      ctx.strokeStyle = "#f1f5f9";
+      ctx.lineWidth = 1;
+      const size = 50;
+      for (let x = -500; x < 2000; x += size) {
+        ctx.beginPath();
+        ctx.moveTo(x, -500);
+        ctx.lineTo(x, 1500);
+        ctx.stroke();
+      }
+      for (let y = -500; y < 1500; y += size) {
+        ctx.beginPath();
+        ctx.moveTo(-500, y);
+        ctx.lineTo(2000, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawWeightTag(x, y, weight, isPath, isCongested) {
+      ctx.save();
+      const txt = `${weight.toFixed(1)}m`;
+      ctx.font = "600 10.5px 'JetBrains Mono', monospace";
+      const w = ctx.measureText(txt).width + 10;
+      const h = 18;
+
+      ctx.beginPath();
+      ctx.roundRect(x - w/2, y - h/2, w, h, 4);
+      ctx.fillStyle = isPath ? "#059669" : isCongested ? "#fff1f2" : "#ffffff";
+      ctx.fill();
+      ctx.strokeStyle = isPath ? "#059669" : isCongested ? "#fda4af" : "#cbd5e1";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.fillStyle = isPath ? "#ffffff" : isCongested ? "#e11d48" : "#475569";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(txt, x, y);
+      ctx.restore();
+    }
+
+    function drawNode(node, flags) {
+      ctx.save();
+      const { isStart, isDest, inPath, isCurrent } = flags;
+      const radius = 22;
+
+      // Outer Card Capsule
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+
+      let fill = "#ffffff";
+      let stroke = "#cbd5e1";
+      let strokeWidth = 2;
+
+      if (isStart) {
+        fill = "#ecfdf5";
+        stroke = "#059669";
+        strokeWidth = 3;
+      } else if (isDest) {
+        fill = "#eff6ff";
+        stroke = "#2563eb";
+        strokeWidth = 3;
+      } else if (isCurrent) {
+        fill = "#fef3c7";
+        stroke = "#d97706";
+        strokeWidth = 3;
+      } else if (inPath) {
+        fill = "#f0fdf4";
+        stroke = "#10b981";
+        strokeWidth = 2.5;
+      }
+
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = strokeWidth;
+      ctx.stroke();
+
+      // Draw Crisp Vector Icon
+      const iconDrawer = vectorIcons[node.icon] || vectorIcons["shopping-bag"];
+      ctx.strokeStyle = isStart ? "#059669" : isDest ? "#2563eb" : inPath ? "#059669" : "#334155";
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.lineWidth = 1.75;
+      iconDrawer(ctx, node.x, node.y - 2, 18);
+
+      // Node ID Badge
+      ctx.beginPath();
+      ctx.roundRect(node.x - 10, node.y + 12, 20, 13, 4);
+      ctx.fillStyle = stroke;
+      ctx.fill();
+
+      ctx.font = "bold 9px 'JetBrains Mono', monospace";
+      ctx.fillStyle = "#ffffff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(node.id, node.x, node.y + 19);
+
+      // Clean Node Name Below
+      ctx.font = "600 11px 'Inter', sans-serif";
+      ctx.fillStyle = (isStart || isDest || inPath) ? "#0f172a" : "#475569";
+      ctx.textAlign = "center";
+      ctx.fillText(node.name, node.x, node.y + 38);
+
+      ctx.restore();
     }
 
     function isEdgeInPath(u, v) {
-      for (let i = 0; i < highlightedPath.length - 1; i++) {
-        if (
-          (highlightedPath[i] === u && highlightedPath[i + 1] === v) ||
-          (highlightedPath[i] === v && highlightedPath[i + 1] === u)
-        ) {
+      if (!activePath || activePath.length < 2) return false;
+      for (let i = 0; i < activePath.length - 1; i++) {
+        if ((activePath[i] === u && activePath[i + 1] === v) ||
+            (activePath[i] === v && activePath[i + 1] === u)) {
           return true;
         }
       }
       return false;
     }
 
-    async function fetchRoute() {
-      const src = parseInt(document.getElementById("srcNode").value);
-      const dest = parseInt(document.getElementById("destNode").value);
-      const algo = document.getElementById("algoSelect").value;
-
-      try {
-        const res = await fetch(`${API_URL}/api/route`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ source: src, destination: dest, algorithm: algo })
-        });
-        const data = await res.json();
-        highlightedPath = data.path || [];
-        document.getElementById("statusBar").innerText = 
-          `[${algo.toUpperCase()}] Path: ${highlightedPath.join(" → ")} | Cost: ${data.total_distance ?? data.accumulated_cost}`;
-        draw();
-      } catch (err) {
-        document.getElementById("statusBar").innerText = "Error: Failed to connect to FastAPI backend.";
-      }
+    // Mouse Interactions
+    function toWorld(sx, sy) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (sx - rect.left - panOffset.x) / zoomLevel,
+        y: (sy - rect.top - panOffset.y) / zoomLevel
+      };
     }
 
-    async function fetchBatchItinerary() {
-      const items = document.getElementById("targetItems").value
-        .split(",")
-        .map(x => parseInt(x.trim()))
-        .filter(x => !isNaN(x));
+    canvas.addEventListener("mousedown", (e) => {
+      const pos = toWorld(e.clientX, e.clientY);
+      const node = findNode(pos.x, pos.y);
 
-      try {
-        const res = await fetch(`${API_URL}/api/optimize-shopping-list`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ entrance: 0, items: items })
-        });
-        const data = await res.json();
-        highlightedPath = data.route || data.optimized_order || [];
-        document.getElementById("statusBar").innerText = 
-          `[SHOPPING TSP] Route Sequence: ${highlightedPath.join(" → ")} | Total Distance: ${data.total_cost ?? data.total_estimated_time}`;
-        draw();
-      } catch (err) {
-        document.getElementById("statusBar").innerText = "Error: Failed to optimize itinerary.";
+      if (node) {
+        if (e.button === 0) { // Set Start
+          selectedStart = node.id;
+          document.getElementById("srcNodeSelect").value = selectedStart;
+        } else if (e.button === 2) { // Set Target
+          selectedDest = node.id;
+          document.getElementById("destNodeSelect").value = selectedDest;
+        }
+        render();
+        return;
       }
+
+      const edge = findEdge(pos.x, pos.y);
+      if (edge) {
+        openEdgeModal(edge);
+        return;
+      }
+
+      isDragging = true;
+      dragStart = { x: e.clientX - panOffset.x, y: e.clientY - panOffset.y };
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        panOffset.x = e.clientX - dragStart.x;
+        panOffset.y = e.clientY - dragStart.y;
+        render();
+        return;
+      }
+
+      const pos = toWorld(e.clientX, e.clientY);
+      const node = findNode(pos.x, pos.y);
+      const tip = document.getElementById("tooltip");
+
+      if (node) {
+        hoveredNode = node;
+        tip.style.display = "block";
+        tip.style.left = `${e.clientX}px`;
+        tip.style.top = `${e.clientY}px`;
+        tip.innerHTML = `<b>${node.name}</b> (Zone ${node.id})<br><span style="color: #94a3b8;">Left: Set Start | Right: Set Target</span>`;
+      } else {
+        hoveredNode = null;
+        const edge = findEdge(pos.x, pos.y);
+        if (edge) {
+          hoveredEdge = edge;
+          tip.style.display = "block";
+          tip.style.left = `${e.clientX}px`;
+          tip.style.top = `${e.clientY}px`;
+          tip.innerHTML = `Aisle (${edge.u} ↔ ${edge.v}): <b>${edge.weight.toFixed(1)}m</b> (Click to edit)`;
+        } else {
+          hoveredEdge = null;
+          tip.style.display = "none";
+        }
+      }
+      render();
+    });
+
+    window.addEventListener("mouseup", () => { isDragging = false; });
+    canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+    canvas.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      zoom(e.deltaY < 0 ? 1.1 : 0.9);
+    });
+
+    function findNode(wx, wy) {
+      for (const n of graphData.nodes) {
+        if (Math.hypot(n.x - wx, n.y - wy) <= 24) return n;
+      }
+      return null;
     }
 
-    async function injectTelemetry() {
-      const u = parseInt(document.getElementById("edgeU").value);
-      const v = parseInt(document.getElementById("edgeV").value);
-      const weight = parseFloat(document.getElementById("newWeight").value);
-
-      try {
-        await fetch(`${API_URL}/api/aisle/update`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ u, v, new_weight: weight })
-        });
-
-        // Update local edge state
-        edges.forEach(e => {
-          if ((e.u === u && e.v === v) || (e.u === v && e.v === u)) {
-            e.weight = weight;
-          }
-        });
-
-        document.getElementById("statusBar").innerText = `Dynamic update applied: Edge (${u}, ${v}) weight set to ${weight}`;
-        draw();
-      } catch (err) {
-        document.getElementById("statusBar").innerText = "Error: Failed to inject weight telemetry.";
+    function findEdge(wx, wy) {
+      for (const edge of graphData.edges) {
+        const u = graphData.nodes[edge.u];
+        const v = graphData.nodes[edge.v];
+        if (!u || !v) continue;
+        if (distToSegment(wx, wy, u.x, u.y, v.x, v.y) <= 10) return edge;
       }
+      return null;
     }
 
-    setTimeout(resize, 50);
+    function distToSegment(px, py, x1, y1, x2, y2) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const lenSq = dx * dx + dy * dy;
+      if (lenSq === 0) return Math.hypot(px - x1, py - y1);
+      let t = Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / lenSq));
+      return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+    }
   </script>
 </body>
 </html>
