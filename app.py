@@ -108,47 +108,47 @@ def init_store_preset(preset: str = "vidyalankar") -> StoreEngine:
     # Featured Blueprint Preset: "vidyalankar" (36 Nodes, 3 Tiers, Multi-level stairs & bridges)
     st = StoreEngine(36)
     nodes = [
-        # Tier 1: Outdoor Campus Grounds & Roadways (Top)
-        (0, "Football Ground", "Outdoor Sports", "trophy", 140, 70),
-        (1, "Y-Block (GND)", "Academic Block", "building", 370, 70),
-        (2, "DEN Block", "Academic Block", "building", 370, 125),
-        (3, "CLD / Y-Block Gate (N1)", "Campus Gate", "door-open", 370, 180),
-        (4, "Main College Ground", "Outdoor Campus", "map-pin", 550, 100),
-        (5, "Basketball Court & Parking", "Sports & Parking", "car", 740, 100),
-        (6, "West Campus Avenue", "Campus Avenue", "compass", 120, 230),
-        (7, "Avenue Junction (M-Block North)", "Avenue Hub", "compass", 250, 230),
-        (8, "Central Avenue Junction (N2)", "Main Avenue Hub", "compass", 420, 230),
-        (9, "East Avenue (VP Gate N5)", "Avenue Hub", "compass", 600, 230),
-        (10, "East Avenue End (N3)", "Avenue Hub", "compass", 760, 230),
-        (11, "VP Block", "Academic Block", "building", 640, 300),
+        # Panel 1: Campus Grounds & Main Avenue (Top)
+        (0, "Football Ground", "Outdoor Sports", "trophy", 140, 80),
+        (1, "Y-Block (GND)", "Academic Block", "building", 320, 60),
+        (2, "DEN Block", "Academic Block", "building", 460, 60),
+        (3, "CLD Gate (N1)", "Campus Gate", "door-open", 620, 80),
+        (4, "Main Ground", "Outdoor Campus", "map-pin", 820, 80),
+        (5, "Parking & Courts", "Sports & Parking", "car", 1240, 80),
+        (6, "West Avenue", "Campus Avenue", "compass", 120, 170),
+        (7, "M-Block North", "Avenue Hub", "compass", 320, 170),
+        (8, "Central Ave (N2)", "Main Avenue Hub", "compass", 620, 170),
+        (9, "East Ave (N5)", "Avenue Hub", "compass", 920, 170),
+        (10, "East Ave End", "Avenue Hub", "compass", 1180, 170),
+        (11, "VP Block", "Academic Block", "building", 920, 250),
 
-        # Tier 2: M-Block & Ground Floor Lab Corridor (Middle)
-        (12, "M-Block Main Entrance (N6/N4)", "M-Block Entry", "door-open", 250, 310),
-        (13, "Innovation Lab & Auditorium", "M-Block Labs", "laptop", 160, 400),
-        (14, "M-Block Canteen (Basement)", "Amenities", "coffee", 130, 510),
-        (15, "Stairs to 1st Floor / Canteen", "Vertical Stairs", "stairs", 270, 450),
-        (16, "M-Block Corridor Junction N1", "Lab Corridor", "navigation", 360, 450),
-        (17, "Computer Labs (West Wing)", "Laboratories", "monitor", 360, 390),
-        (18, "Corridor Central Junction N2", "Lab Corridor", "navigation", 500, 450),
-        (19, "Electronics Labs (Central Wing)", "Laboratories", "cpu", 500, 390),
-        (20, "Corridor East Junction", "Lab Corridor", "navigation", 640, 450),
-        (21, "Research Labs (East Wing)", "Laboratories", "microscope", 640, 390),
-        (22, "M-Block East Vertical Stairs", "Vertical Stairs", "stairs", 740, 450),
+        # Panel 2: M-Block Ground Floor & Lab Corridor (Middle)
+        (12, "M-Block Entry", "M-Block Entry", "door-open", 320, 250),
+        (13, "Innovation Lab", "M-Block Labs", "laptop", 200, 390),
+        (14, "Canteen Basement", "Amenities", "coffee", 120, 500),
+        (15, "West Stairs", "Vertical Stairs", "stairs", 280, 500),
+        (16, "Corridor N1", "Lab Corridor", "navigation", 440, 500),
+        (17, "Computer Labs", "Laboratories", "monitor", 440, 390),
+        (18, "Central Corridor", "Lab Corridor", "navigation", 680, 500),
+        (19, "Electronics Labs", "Laboratories", "cpu", 680, 390),
+        (20, "East Corridor", "Lab Corridor", "navigation", 920, 500),
+        (21, "Research Labs", "Laboratories", "microscope", 920, 390),
+        (22, "East Stairs", "Vertical Stairs", "stairs", 1200, 500),
 
-        # Tier 3: VIT Academic Block View (1st Floor / Upper Level - Bottom)
-        (23, "VIT Main Entrance (N3)", "VIT Campus Core", "door-open", 420, 310),
-        (24, "Stairs to Canteen Annex", "Vertical Stairs", "stairs", 220, 640),
-        (25, "VIT West Junction N3", "VIT Walkways", "navigation", 340, 660),
-        (26, "E-Block", "Academic Block", "book-open", 360, 580),
-        (27, "Bridge N1 (E-Block to F-Block)", "Elevated Bridge", "bridge", 460, 560),
-        (28, "F-Block", "Academic Block", "book-open", 550, 580),
-        (29, "Bridge N2 (Central Skybridge)", "Elevated Bridge", "bridge", 500, 670),
-        (30, "VIT Central Library (Node N1)", "Academic Core", "library", 650, 590),
-        (31, "East Bridge N2 (to A/B Block)", "Elevated Bridge", "bridge", 740, 670),
-        (32, "A-Block", "Academic Block", "building", 770, 780),
-        (33, "B-Block & B-Block Stairs", "Academic Block", "building", 640, 780),
-        (34, "D-Block", "Academic Block", "building", 360, 780),
-        (35, "Nescafe & Central Canteen", "Amenities", "coffee", 500, 780)
+        # Panel 3: VIT Academic Block & Skybridges (Bottom)
+        (23, "VIT Entry (N3)", "VIT Campus Core", "door-open", 540, 580),
+        (24, "Annex Stairs", "Vertical Stairs", "stairs", 120, 710),
+        (25, "West Hub (N3)", "VIT Walkways", "navigation", 280, 740),
+        (26, "E-Block", "Academic Block", "book-open", 400, 660),
+        (27, "Bridge N1", "Elevated Bridge", "bridge", 540, 660),
+        (28, "F-Block", "Academic Block", "book-open", 680, 660),
+        (29, "Central Bridge N2", "Elevated Bridge", "bridge", 780, 740),
+        (30, "VIT Library", "Academic Core", "library", 980, 660),
+        (31, "East Bridge N2", "Elevated Bridge", "bridge", 1140, 740),
+        (32, "A-Block", "Academic Block", "building", 1140, 830),
+        (33, "B-Block", "Academic Block", "building", 980, 830),
+        (34, "D-Block", "Academic Block", "building", 400, 830),
+        (35, "Nescafe & Canteen", "Amenities", "coffee", 680, 830)
     ]
     for nid, name, cat, icon, x, y in nodes:
         st.set_node_metadata(nid, name, cat, icon, x, y)

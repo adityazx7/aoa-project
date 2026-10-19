@@ -1,11 +1,11 @@
-# Project Report: Store Navigator Pro
+# Project Report: Spatial Navigator
 ## An Algorithmic Graph Intelligence and Spatial Indoor Routing System
 
 ---
 
 ## 1. Executive Summary
 
-**Store Navigator Pro** is an end-to-end spatial routing and indoor graph optimization platform engineered to demonstrate core principles of the **Analysis of Algorithms (AOA)**. The system models physical retail floorplans as weighted, directed/undirected spatial graphs, providing real-time multi-criteria pathfinding, dynamic congestion telemetry, and exact multi-stop order fulfillment optimization.
+**Spatial Navigator** is an end-to-end spatial routing and indoor graph optimization platform engineered to demonstrate core principles of the **Analysis of Algorithms (AOA)**. The system models physical retail floorplans as weighted, directed/undirected spatial graphs, providing real-time multi-criteria pathfinding, dynamic congestion telemetry, and exact multi-stop order fulfillment optimization.
 
 The project combines a high-performance **Python/FastAPI** algorithmic engine with an interactive, editorial **HTML5 Canvas** interface. It implements, evaluates, and contrasts four fundamental graph traversal paradigms alongside dynamic programming formulations for NP-hard routing:
 1. **Dijkstra’s Algorithm** (Greedy Single-Source Shortest Path via Min-Heap Priority Queue)
@@ -445,7 +445,7 @@ python benchmark.py
 
 ## 10. Conclusion & Future Work
 
-**Store Navigator Pro** demonstrates how algorithmic design paradigms directly resolve spatial optimization problems. By pairing theoretical guarantees (Dijkstra, A\*, Bellman-Ford, Floyd-Warshall, and Held-Karp) with a modern, responsive interface, the project provides an interactive laboratory for analyzing algorithm performance under variable topology and dynamic network conditions.
+**Spatial Navigator** demonstrates how algorithmic design paradigms directly resolve spatial optimization problems. By pairing theoretical guarantees (Dijkstra, A\*, Bellman-Ford, Floyd-Warshall, and Held-Karp) with a modern, responsive interface, the project provides an interactive laboratory for analyzing algorithm performance under variable topology and dynamic network conditions.
 
 ### Future Extensions
 1. **Dynamic Obstacle Routing**: Incorporating real-time temporary blockades requiring dynamic D\* Lite or Lifelong Planning A\* (LPA\*) re-planning.

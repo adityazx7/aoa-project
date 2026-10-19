@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vidyalankar Campus & Retail Spatial Routing Engine</title>
+  <title>Spatial Navigator - Algorithmic Spatial Intelligence</title>
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -470,7 +470,7 @@
     }
 
     .canvas-container {
-      height: 520px;
+      height: 680px;
       position: relative;
       background: #fafbfc;
       overflow: hidden;
@@ -814,8 +814,8 @@
         </svg>
       </div>
       <div>
-        <span class="brand-title">Vidyalankar Campus & Spatial Navigator</span>
-        <span class="brand-pill" style="margin-left: 6px;">AOA Graph Engine</span>
+        <span class="brand-title">Spatial Navigator</span>
+        <span class="brand-pill" style="margin-left: 6px;">Spatial Graph Engine</span>
       </div>
     </div>
 
@@ -1822,15 +1822,15 @@
         if (n.y > maxY) maxY = n.y;
       });
 
-      const w = maxX - minX + 220;
-      const h = maxY - minY + 180;
-      zoomLevel = Math.min(rect.width / w, rect.height / h, 1.15);
+      const w = maxX - minX + 160;
+      const h = maxY - minY + 120;
+      zoomLevel = Math.min(rect.width / w, rect.height / h, 1.0);
       panOffset.x = (rect.width / 2) - ((minX + maxX) / 2) * zoomLevel;
       panOffset.y = (rect.height / 2) - ((minY + maxY) / 2) * zoomLevel;
     }
 
     function zoom(factor) {
-      zoomLevel = Math.max(0.3, Math.min(zoomLevel * factor, 2.8));
+      zoomLevel = Math.max(0.35, Math.min(zoomLevel * factor, 2.5));
       render();
     }
 
@@ -1853,7 +1853,6 @@
       // Step trace data
       const currentStep = activeTrace[currentStepIdx];
       const visitedSet = new Set(currentStep?.visited_nodes || []);
-      const frontierSet = new Set(currentStep?.frontier || []);
 
       // 2. Render Pathways, Stairs, and Bridges
       graphData.edges.forEach(edge => {
@@ -1873,20 +1872,20 @@
         if (isPath) {
           ctx.strokeStyle = "#059669"; // Emerald solid line
           ctx.lineWidth = 4.5;
-          if (isStairs) ctx.setLineDash([7, 4]); // stairs dashed
+          if (isStairs) ctx.setLineDash([8, 4]); // stairs dashed
           else ctx.setLineDash([]);
           ctx.stroke();
           ctx.setLineDash([]);
         } else if (isHovered) {
           ctx.strokeStyle = "#2563eb";
           ctx.lineWidth = 3.5;
-          if (isStairs) ctx.setLineDash([6, 4]);
+          if (isStairs) ctx.setLineDash([7, 4]);
           else ctx.setLineDash([]);
           ctx.stroke();
           ctx.setLineDash([]);
         } else {
           if (isStairs) {
-            ctx.strokeStyle = "#b45309"; // Amber dashed stairs
+            ctx.strokeStyle = "#d97706"; // Amber dashed stairs
             ctx.lineWidth = 2.5;
             ctx.setLineDash([6, 4]);
             ctx.stroke();
@@ -1924,48 +1923,73 @@
 
     function drawGrid() {
       ctx.save();
-      ctx.strokeStyle = "#f1f5f9";
+      ctx.strokeStyle = "rgba(241, 245, 249, 0.85)";
       ctx.lineWidth = 1;
       const size = 50;
-      for (let x = -500; x < 2000; x += size) {
+      for (let x = -500; x < 2400; x += size) {
         ctx.beginPath();
         ctx.moveTo(x, -500);
-        ctx.lineTo(x, 1500);
+        ctx.lineTo(x, 1800);
         ctx.stroke();
       }
-      for (let y = -500; y < 1500; y += size) {
+      for (let y = -500; y < 1800; y += size) {
         ctx.beginPath();
         ctx.moveTo(-500, y);
-        ctx.lineTo(2000, y);
+        ctx.lineTo(2400, y);
         ctx.stroke();
       }
 
-      // Draw subtle zone tier backgrounds if Vidyalankar preset
+      // Draw spacious architectural panel cards for Vidyalankar layout
       if (graphData.preset === "vidyalankar") {
-        ctx.fillStyle = "rgba(241, 245, 249, 0.45)";
-        ctx.roundRect(80, 40, 720, 210, 8); // Tier 1: Grounds
-        ctx.fill();
-        ctx.roundRect(80, 280, 720, 210, 8); // Tier 2: M-Block Labs
-        ctx.fill();
-        ctx.roundRect(80, 520, 720, 300, 8); // Tier 3: VIT Blocks
-        ctx.fill();
+        const panels = [
+          { x: 60, y: 20, w: 1260, h: 260, title: "PANEL 1 · CAMPUS GROUNDS & MAIN AVENUE" },
+          { x: 60, y: 310, w: 1260, h: 240, title: "PANEL 2 · M-BLOCK GROUND FLOOR & LAB CORRIDOR" },
+          { x: 60, y: 580, w: 1260, h: 290, title: "PANEL 3 · VIT ACADEMIC BLOCK & SKYBRIDGES" }
+        ];
 
-        ctx.font = "600 11px 'Inter', sans-serif";
-        ctx.fillStyle = "#94a3b8";
-        ctx.fillText("TIER 1: CAMPUS GROUNDS & MAIN AVENUE", 95, 60);
-        ctx.fillText("TIER 2: M-BLOCK LAB CORRIDOR & BASEMENT", 95, 300);
-        ctx.fillText("TIER 3: VIT ACADEMIC BLOCKS & SKYBRIDGES", 95, 540);
+        panels.forEach(p => {
+          ctx.fillStyle = "rgba(248, 250, 252, 0.75)";
+          ctx.beginPath();
+          ctx.roundRect(p.x, p.y, p.w, p.h, 10);
+          ctx.fill();
+
+          ctx.strokeStyle = "rgba(203, 213, 225, 0.85)";
+          ctx.lineWidth = 1;
+          ctx.setLineDash([6, 5]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Panel Label Tag
+          ctx.fillStyle = "rgba(226, 232, 240, 0.9)";
+          ctx.beginPath();
+          ctx.roundRect(p.x + 14, p.y + 10, ctx.measureText(p.title).width + 24, 20, 4);
+          ctx.fill();
+
+          ctx.font = "700 10px 'JetBrains Mono', monospace";
+          ctx.fillStyle = "#64748b";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText(p.title, p.x + 26, p.y + 20);
+        });
       }
       ctx.restore();
     }
 
     function drawWeightTag(x, y, edge, isPath) {
+      const isStairs = (edge.edge_type === "stairs");
+      const isBridge = (edge.edge_type === "bridge");
+
+      // Hide unselected normal pathway tags at low zoom to keep layout pristine and untangled
+      if (!isPath && !isStairs && !isBridge && zoomLevel < 0.75 && edge !== hoveredEdge) {
+        return;
+      }
+
       ctx.save();
       let txt = `${edge.weight.toFixed(1)}m`;
-      if (edge.edge_type === "stairs") txt = `🪜 ${edge.weight.toFixed(1)}m`;
-      else if (edge.edge_type === "bridge") txt = `🌉 ${edge.weight.toFixed(1)}m`;
+      if (isStairs) txt = `🪜 ${edge.weight.toFixed(1)}m`;
+      else if (isBridge) txt = `🌉 ${edge.weight.toFixed(1)}m`;
 
-      ctx.font = "600 10.5px 'JetBrains Mono', monospace";
+      ctx.font = "600 10px 'JetBrains Mono', monospace";
       const w = ctx.measureText(txt).width + 10;
       const h = 18;
 
@@ -1980,11 +2004,11 @@
         fill = "#059669";
         stroke = "#059669";
         textCol = "#ffffff";
-      } else if (edge.edge_type === "stairs") {
+      } else if (isStairs) {
         fill = "#fffbeb";
         stroke = "#fde68a";
         textCol = "#b45309";
-      } else if (edge.edge_type === "bridge") {
+      } else if (isBridge) {
         fill = "#f5f3ff";
         stroke = "#ddd6fe";
         textCol = "#6d28d9";
@@ -2006,13 +2030,13 @@
     function drawNode(node, flags) {
       ctx.save();
       const { isStart, isDest, inPath, isCurrent } = flags;
-      const radius = 22;
+      const radius = 18;
 
       ctx.beginPath();
       ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
 
       let fill = "#ffffff";
-      let stroke = "#cbd5e1";
+      let stroke = "#94a3b8";
       let strokeWidth = 2;
 
       if (isStart) {
@@ -2039,30 +2063,49 @@
       ctx.lineWidth = strokeWidth;
       ctx.stroke();
 
-      // Vector Icon
+      // Vector Icon inside node
       const iconDrawer = vectorIcons[node.icon] || vectorIcons["map-pin"];
       ctx.strokeStyle = isStart ? "#059669" : isDest ? "#2563eb" : inPath ? "#059669" : "#334155";
       ctx.fillStyle = ctx.strokeStyle;
-      ctx.lineWidth = 1.75;
-      iconDrawer(ctx, node.x, node.y - 2, 18);
+      ctx.lineWidth = 1.6;
+      iconDrawer(ctx, node.x, node.y, 15);
 
-      // Node ID Badge
+      // Node ID Badge (Top-Right of node)
       ctx.beginPath();
-      ctx.roundRect(node.x - 10, node.y + 12, 20, 13, 4);
+      ctx.roundRect(node.x + 8, node.y - 18, 18, 12, 3);
       ctx.fillStyle = stroke;
       ctx.fill();
 
-      ctx.font = "bold 9px 'JetBrains Mono', monospace";
+      ctx.font = "bold 8.5px 'JetBrains Mono', monospace";
       ctx.fillStyle = "#ffffff";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(node.id, node.x, node.y + 19);
+      ctx.fillText(node.id, node.x + 17, node.y - 12);
 
-      // Node Name Label
-      ctx.font = "600 11px 'Inter', sans-serif";
-      ctx.fillStyle = (isStart || isDest || inPath) ? "#0f172a" : "#475569";
+      // Collision-Free Node Label Pill
+      // Smart placement: above node for top row nodes; below node for lower row nodes
+      const topRowIds = new Set([0, 1, 2, 3, 4, 5, 17, 19, 21, 26, 27, 28, 30]);
+      const isAbove = topRowIds.has(node.id);
+      const labelY = isAbove ? (node.y - 25) : (node.y + 26);
+
+      ctx.font = "600 10px 'Inter', sans-serif";
+      const nameTxt = node.name;
+      const textW = ctx.measureText(nameTxt).width;
+      const pillW = textW + 12;
+      const pillH = 16;
+
+      ctx.beginPath();
+      ctx.roundRect(node.x - pillW / 2, labelY - pillH / 2, pillW, pillH, 4);
+      ctx.fillStyle = (isStart || isDest || inPath) ? "rgba(255, 255, 255, 0.98)" : "rgba(255, 255, 255, 0.92)";
+      ctx.fill();
+      ctx.strokeStyle = (isStart || isDest || inPath) ? (isStart ? "#059669" : isDest ? "#2563eb" : "#10b981") : "rgba(203, 213, 225, 0.85)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.fillStyle = (isStart || isDest || inPath) ? "#0f172a" : "#334155";
       ctx.textAlign = "center";
-      ctx.fillText(node.name, node.x, node.y + 38);
+      ctx.textBaseline = "middle";
+      ctx.fillText(nameTxt, node.x, labelY);
 
       ctx.restore();
     }
