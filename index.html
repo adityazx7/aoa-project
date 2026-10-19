@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Store Navigator - Spatial Routing & Graph Intelligence</title>
+  <title>Vidyalankar Campus & Retail Spatial Routing Engine</title>
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -319,6 +319,105 @@
     .kpi-value.highlight { color: var(--emerald); }
     .kpi-value.blue { color: var(--primary); }
 
+    /* Walking Directions & Path Guidance ("Go from here to there") */
+    .directions-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .directions-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    .directions-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .route-chain-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-left: 4px solid var(--emerald);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #166534;
+      font-weight: 500;
+    }
+
+    .step-guidance-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .guidance-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.84rem;
+      transition: all 0.15s ease;
+    }
+
+    .guidance-step:hover {
+      background: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .step-number {
+      background: var(--primary);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-badge-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-walk { background: #e0f2fe; color: #0369a1; }
+    .badge-stairs { background: #fef3c7; color: #b45309; }
+    .badge-bridge { background: #ede9fe; color: #6d28d9; }
+    .badge-dest { background: #dcfce7; color: #15803d; }
+
     /* MIDDLE SECTION: Floorplan Canvas Stage */
     .canvas-card {
       background: var(--surface);
@@ -355,6 +454,7 @@
       gap: 16px;
       font-size: 0.76rem;
       color: var(--text-muted);
+      flex-wrap: wrap;
     }
 
     .legend-item {
@@ -370,9 +470,9 @@
     }
 
     .canvas-container {
-      height: 480px;
+      height: 520px;
       position: relative;
-      background: #fbfcfd;
+      background: #fafbfc;
       overflow: hidden;
     }
 
@@ -567,6 +667,12 @@
       border-color: rgba(5, 150, 105, 0.2);
     }
 
+    .tag-badge.blue {
+      background: var(--primary-subtle);
+      color: var(--primary);
+      border-color: rgba(37, 99, 235, 0.2);
+    }
+
     .math-callout {
       background: var(--surface-subtle);
       border-left: 3px solid var(--primary);
@@ -622,12 +728,14 @@
     }
     .tool-panel.active { display: block; }
 
-    /* Chips container for shopping items */
+    /* Chips container */
     .chip-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 8px;
       margin-top: 10px;
+      max-height: 240px;
+      overflow-y: auto;
     }
 
     .item-chip {
@@ -672,7 +780,7 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      width: 400px;
+      width: 420px;
       padding: 24px;
       display: flex;
       flex-direction: column;
@@ -706,16 +814,17 @@
         </svg>
       </div>
       <div>
-        <span class="brand-title">Store Navigator Pro</span>
-        <span class="brand-pill" style="margin-left: 6px;">AOA Spatial Intelligence</span>
+        <span class="brand-title">Vidyalankar Campus & Spatial Navigator</span>
+        <span class="brand-pill" style="margin-left: 6px;">AOA Graph Engine</span>
       </div>
     </div>
 
     <div class="header-controls">
       <!-- Layout Preset Toggle -->
       <div class="preset-toggle">
-        <button class="preset-btn active" id="btnMega" onclick="switchPreset('mega')">Mega Mart (13 Zones)</button>
-        <button class="preset-btn" id="btnClassic" onclick="switchPreset('classic')">Classic (6 Zones)</button>
+        <button class="preset-btn active" id="btnVidyalankar" onclick="switchPreset('vidyalankar')">VIT Campus (Vidyalankar)</button>
+        <button class="preset-btn" id="btnMega" onclick="switchPreset('mega')">Mega Mart</button>
+        <button class="preset-btn" id="btnClassic" onclick="switchPreset('classic')">Classic Store</button>
       </div>
 
       <button class="btn-outline" onclick="resetGraph()">
@@ -725,7 +834,7 @@
 
       <div class="status-badge">
         <div class="status-dot"></div>
-        <span>ENGINE ONLINE</span>
+        <span>CAMPUS ONLINE</span>
       </div>
     </div>
   </header>
@@ -737,7 +846,7 @@
         <div class="field-group">
           <label class="field-label">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-            Origin Zone
+            Origin Location
           </label>
           <select id="srcNodeSelect" onchange="onEndpointChange()"></select>
         </div>
@@ -745,7 +854,7 @@
         <div class="field-group">
           <label class="field-label">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            Target Zone
+            Target Destination
           </label>
           <select id="destNodeSelect" onchange="onEndpointChange()"></select>
         </div>
@@ -779,20 +888,44 @@
     <!-- KPI Summary Ribbon -->
     <section class="kpi-ribbon">
       <div class="kpi-card">
-        <span class="kpi-title">Total Travel Distance</span>
+        <span class="kpi-title">Weighted Travel Cost</span>
         <span class="kpi-value highlight" id="kpiDistance">0.0 m</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-title">Aisle Hops Count</span>
-        <span class="kpi-value" id="kpiHops">0</span>
+        <span class="kpi-title">Physical Walking Distance</span>
+        <span class="kpi-value" id="kpiPhysical">0.0 m</span>
       </div>
       <div class="kpi-card">
         <span class="kpi-title">Execution Latency</span>
         <span class="kpi-value blue" id="kpiTime">0.00 ms</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-title">Edge Relaxations</span>
-        <span class="kpi-value" id="kpiRelaxations">0</span>
+        <span class="kpi-title">Stairs / Bridges</span>
+        <span class="kpi-value" id="kpiTransitions">0 / 0</span>
+      </div>
+    </section>
+
+    <!-- Prominent Walking Directions & Guidance ("Go from here to there, then from there to...") -->
+    <section class="directions-card">
+      <div class="directions-header">
+        <div class="directions-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          Walking Guidance ("Go from here to there, then from here to there")
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <span class="tag-badge emerald" id="guidanceStairsBadge">🪜 0 Stairs Climbed</span>
+          <span class="tag-badge blue" id="guidanceBridgesBadge">🌉 0 Skybridges Crossed</span>
+        </div>
+      </div>
+
+      <div class="route-chain-box" id="guidanceChainBox">
+        <b>Quick Route Chain:</b> Select your origin and target points above and click <b>"Calculate Path"</b> to generate dynamic campus walking directions.
+      </div>
+
+      <div class="step-guidance-container" id="stepGuidanceList">
+        <div style="text-align: center; color: var(--text-muted); padding: 18px; font-size: 0.84rem;">
+          No active route computed yet.
+        </div>
       </div>
     </section>
 
@@ -801,7 +934,7 @@
       <div class="canvas-header">
         <div class="canvas-title">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-          Retail Floorplan & Spatial Graph
+          Campus Blueprint & Multi-Floor Spatial Graph
         </div>
         <div class="legend-bar">
           <div class="legend-item">
@@ -813,12 +946,16 @@
             <span>Destination</span>
           </div>
           <div class="legend-item">
-            <div class="legend-circle" style="background: #10b981; border: 2px dashed #059669;"></div>
-            <span>Optimal Route</span>
+            <div style="width: 14px; height: 3px; background: #059669;"></div>
+            <span>Optimal Pathway</span>
           </div>
           <div class="legend-item">
-            <div class="legend-circle" style="background: #f43f5e;"></div>
-            <span>Congested Aisle (≥12m)</span>
+            <div style="width: 14px; height: 3px; border-top: 2px dashed #b45309;"></div>
+            <span>🪜 Stairs (c = 1.5x / 2.0x)</span>
+          </div>
+          <div class="legend-item">
+            <div style="width: 14px; height: 6px; border: 1.5px solid #6d28d9; border-radius: 3px; background: #ede9fe;"></div>
+            <span>🌉 Elevated Bridge</span>
           </div>
         </div>
       </div>
@@ -873,13 +1010,14 @@
               <th>Leg</th>
               <th>Origin</th>
               <th>Destination</th>
-              <th>Aisle Weight</th>
-              <th>Cumulative Distance</th>
+              <th>Type</th>
+              <th>Weighted Cost</th>
+              <th>Accumulated</th>
             </tr>
           </thead>
           <tbody id="legsTableBody">
             <tr>
-              <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 18px;">
+              <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 18px;">
                 No active route computed. Select endpoints and click "Calculate Path".
               </td>
             </tr>
@@ -898,7 +1036,7 @@
         </div>
 
         <div style="font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5;" id="algoProfileText">
-          <b>Dijkstra's Algorithm:</b> Employs a min-priority heap to greedily settle the vertex with the lowest known path cost. Guarantees global optimality with non-negative edge weights.
+          <b>Dijkstra's Algorithm:</b> Employs a min-priority heap to greedily settle the vertex with lowest cumulative cost. Effectively balances stairs effort penalties ($c=1.5, 2.0$) against elevated horizontal bridges.
         </div>
 
         <div>
@@ -911,29 +1049,29 @@
         </div>
 
         <div style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 12px; font-size: 0.8rem; color: var(--text-muted);">
-          <b>Optimality Guarantee:</b> <span id="optimalityText">Evaluates all incoming incident edges and prunes higher-cost subtrees via dynamic relaxation.</span>
+          <b>Optimality Guarantee:</b> <span id="optimalityText">Evaluates vertical stair penalties vs direct skybridges to prove global minimal travel effort.</span>
         </div>
       </div>
     </section>
 
-    <!-- SECONDARY TOOLS SECTION (Tabbed: Shopping TSP, Congestion Control, Benchmark) -->
+    <!-- SECONDARY TOOLS SECTION (Tabbed: Shopping/Class Tour TSP, Congestion Control, Benchmark) -->
     <section class="tools-section">
       <div class="tools-nav">
-        <button class="tool-tab-btn active" onclick="switchToolTab('tsp')">Multi-Stop Order Picker (TSP)</button>
-        <button class="tool-tab-btn" onclick="switchToolTab('congestion')">Aisle Congestion Injection</button>
+        <button class="tool-tab-btn active" onclick="switchToolTab('tsp')">Multi-Stop Class / Location Tour (TSP)</button>
+        <button class="tool-tab-btn" onclick="switchToolTab('congestion')">Dynamic Corridor Congestion</button>
         <button class="tool-tab-btn" onclick="switchToolTab('benchmark')">Empirical Algorithm Benchmark</button>
       </div>
 
-      <!-- Tab 1: TSP Order Picker -->
+      <!-- Tab 1: TSP Class Tour Picker -->
       <div class="tool-panel active" id="tool-tsp">
         <p style="font-size: 0.84rem; color: var(--text-secondary);">
-          Select target store shelves to visit. The Held-Karp Dynamic Programming algorithm ($O(n^2 2^n)$) computes the global minimum walking itinerary connecting all stops with expanded aisle paths:
+          Select campus locations to visit (e.g. Football Ground, Innovation Lab, Library, Nescafe). The Held-Karp Dynamic Programming algorithm ($O(n^2 2^n)$) computes the global minimum tour:
         </p>
         <div class="chip-grid" id="tspChipsGrid"></div>
         <div style="margin-top: 16px;">
           <button class="btn-primary" style="background: var(--emerald);" onclick="computeTSP()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-            Solve Exact Order Itinerary
+            Solve Exact Campus Tour
           </button>
         </div>
       </div>
@@ -941,20 +1079,20 @@
       <!-- Tab 2: Congestion Simulator -->
       <div class="tool-panel" id="tool-congestion">
         <p style="font-size: 0.84rem; color: var(--text-secondary);">
-          Simulate high foot traffic or blocked supermarket aisles by injecting custom weights. You can also click any aisle directly on the map:
+          Simulate high foot traffic during lecture breaks or closed staircases by injecting penalty weights:
         </p>
-        <div style="display: flex; gap: 16px; margin-top: 12px; max-width: 600px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="display: flex; gap: 16px; margin-top: 12px; max-width: 620px; flex-wrap: wrap; align-items: flex-end;">
           <div class="field-group">
-            <label class="field-label">Aisle Origin</label>
+            <label class="field-label">Corridor Origin</label>
             <select id="edgeUSel"></select>
           </div>
           <div class="field-group">
-            <label class="field-label">Aisle Destination</label>
+            <label class="field-label">Corridor Destination</label>
             <select id="edgeVSel"></select>
           </div>
           <div class="field-group">
-            <label class="field-label">Penalty Weight: <span id="weightVal" style="color: var(--primary);">20.0m</span></label>
-            <input type="range" id="weightSlider" min="1" max="50" value="20" oninput="document.getElementById('weightVal').innerText = parseFloat(this.value).toFixed(1) + 'm'">
+            <label class="field-label">Penalty Weight: <span id="weightVal" style="color: var(--primary);">40.0m</span></label>
+            <input type="range" id="weightSlider" min="5" max="150" value="40" oninput="document.getElementById('weightVal').innerText = parseFloat(this.value).toFixed(1) + 'm'">
           </div>
           <button class="btn-primary" onclick="injectCongestionWeight()">
             Apply Weight
@@ -966,7 +1104,7 @@
       <div class="tool-panel" id="tool-benchmark">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <p style="font-size: 0.84rem; color: var(--text-secondary); margin: 0;">
-            Compare Dijkstra, A*, Bellman-Ford, and BFS simultaneously on the current graph topology:
+            Compare Dijkstra, A*, Bellman-Ford, and BFS simultaneously on the Vidyalankar campus graph:
           </p>
           <button class="btn-primary" onclick="runBenchmark()">
             Run Benchmark
@@ -995,19 +1133,19 @@
     </section>
   </main>
 
-  <!-- Edit Aisle Weight Modal -->
+  <!-- Edit Edge Weight Modal -->
   <div class="modal-backdrop" id="modalBackdrop">
     <div class="modal-box">
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h4 style="font-size: 1rem; font-weight: 700;">Update Aisle Weight</h4>
+        <h4 style="font-size: 1rem; font-weight: 700;">Update Pathway Weight</h4>
         <button style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);" onclick="closeModal()">✕</button>
       </div>
       <p style="font-size: 0.82rem; color: var(--text-secondary);" id="modalAisleDesc">
-        Aisle between node A and node B
+        Pathway between node A and node B
       </p>
       <div class="field-group">
-        <label class="field-label">Aisle Weight (m): <span id="modalWeightVal">15.0m</span></label>
-        <input type="range" id="modalSlider" min="1" max="50" value="15" oninput="document.getElementById('modalWeightVal').innerText = parseFloat(this.value).toFixed(1) + 'm'">
+        <label class="field-label">Weight (m): <span id="modalWeightVal">25.0m</span></label>
+        <input type="range" id="modalSlider" min="5" max="150" value="25" oninput="document.getElementById('modalWeightVal').innerText = parseFloat(this.value).toFixed(1) + 'm'">
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 8px;">
         <button class="btn-secondary" onclick="closeModal()">Cancel</button>
@@ -1024,10 +1162,10 @@
     const canvas = document.getElementById("storeCanvas");
     const ctx = canvas.getContext("2d");
 
-    let graphData = { nodes: [], edges: [], total_nodes: 0, preset: "mega" };
-    let selectedStart = 0;
-    let selectedDest = 12;
-    let selectedTspItems = new Set([1, 4, 7, 9]);
+    let graphData = { nodes: [], edges: [], total_nodes: 0, preset: "vidyalankar" };
+    let selectedStart = 0; // Football Ground
+    let selectedDest = 30; // VIT Central Library
+    let selectedTspItems = new Set([0, 13, 30, 35]);
 
     let activePath = [];
     let pathSegments = [];
@@ -1046,89 +1184,71 @@
 
     // Vector Icon Definitions (Lucide Vector Geometry)
     const vectorIcons = {
+      "trophy": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.arc(x, y - size*0.1, size*0.35, 0, Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y + size*0.25);
+        ctx.lineTo(x, y + size*0.45);
+        ctx.moveTo(x - size*0.25, y + size*0.45);
+        ctx.lineTo(x + size*0.25, y + size*0.45);
+        ctx.stroke();
+      },
+      "building": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.rect(x - size*0.35, y - size*0.45, size*0.7, size*0.9);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.rect(x - size*0.15, y - size*0.25, size*0.1, size*0.15);
+        ctx.rect(x + size*0.05, y - size*0.25, size*0.1, size*0.15);
+        ctx.stroke();
+      },
       "door-open": (ctx, x, y, size) => {
         ctx.beginPath();
         ctx.rect(x - size*0.4, y - size*0.5, size*0.8, size);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(x + size*0.15, y, size*0.1, 0, Math.PI * 2);
+        ctx.arc(x + size*0.15, y, size*0.08, 0, Math.PI * 2);
         ctx.fill();
       },
-      "apple": (ctx, x, y, size) => {
+      "map-pin": (ctx, x, y, size) => {
         ctx.beginPath();
-        ctx.arc(x, y + size*0.1, size*0.4, 0, Math.PI * 2);
+        ctx.arc(x, y - size*0.15, size*0.3, 0, Math.PI * 2);
         ctx.stroke();
         ctx.beginPath();
-        ctx.moveTo(x, y - size*0.3);
-        ctx.quadraticCurveTo(x + size*0.2, y - size*0.5, x + size*0.3, y - size*0.4);
-        ctx.stroke();
-      },
-      "croissant": (ctx, x, y, size) => {
-        ctx.beginPath();
-        ctx.ellipse(x, y, size*0.45, size*0.25, 0, 0, Math.PI * 2);
+        ctx.moveTo(x, y + size*0.15);
+        ctx.lineTo(x, y + size*0.5);
         ctx.stroke();
       },
-      "milk": (ctx, x, y, size) => {
+      "car": (ctx, x, y, size) => {
         ctx.beginPath();
-        ctx.rect(x - size*0.3, y - size*0.3, size*0.6, size*0.8);
+        ctx.roundRect(x - size*0.45, y - size*0.2, size*0.9, size*0.4, 4);
         ctx.stroke();
         ctx.beginPath();
-        ctx.moveTo(x - size*0.2, y - size*0.3);
-        ctx.lineTo(x, y - size*0.5);
-        ctx.lineTo(x + size*0.2, y - size*0.3);
-        ctx.stroke();
-      },
-      "beef": (ctx, x, y, size) => {
-        ctx.beginPath();
-        ctx.roundRect(x - size*0.4, y - size*0.3, size*0.8, size*0.6, 6);
+        ctx.arc(x - size*0.25, y + size*0.25, size*0.12, 0, Math.PI * 2);
+        ctx.arc(x + size*0.25, y + size*0.25, size*0.12, 0, Math.PI * 2);
         ctx.stroke();
       },
-      "cup-soda": (ctx, x, y, size) => {
-        ctx.beginPath();
-        ctx.moveTo(x - size*0.3, y - size*0.4);
-        ctx.lineTo(x + size*0.3, y - size*0.4);
-        ctx.lineTo(x + size*0.2, y + size*0.5);
-        ctx.lineTo(x - size*0.2, y + size*0.5);
-        ctx.closePath();
-        ctx.stroke();
-      },
-      "cookie": (ctx, x, y, size) => {
+      "compass": (ctx, x, y, size) => {
         ctx.beginPath();
         ctx.arc(x, y, size*0.42, 0, Math.PI * 2);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(x - size*0.15, y - size*0.1, 1.5, 0, Math.PI * 2);
-        ctx.arc(x + size*0.15, y - size*0.15, 1.5, 0, Math.PI * 2);
-        ctx.arc(x, y + size*0.15, 1.5, 0, Math.PI * 2);
-        ctx.fill();
-      },
-      "ice-cream": (ctx, x, y, size) => {
-        ctx.beginPath();
-        ctx.arc(x, y - size*0.15, size*0.35, Math.PI, 0);
-        ctx.lineTo(x, y + size*0.5);
+        ctx.moveTo(x, y - size*0.3);
+        ctx.lineTo(x + size*0.15, y + size*0.15);
+        ctx.lineTo(x, y + size*0.3);
+        ctx.lineTo(x - size*0.15, y - size*0.15);
         ctx.closePath();
         ctx.stroke();
       },
-      "sparkles": (ctx, x, y, size) => {
+      "navigation": (ctx, x, y, size) => {
         ctx.beginPath();
         ctx.moveTo(x, y - size*0.45);
-        ctx.lineTo(x + size*0.12, y - size*0.12);
-        ctx.lineTo(x + size*0.45, y);
-        ctx.lineTo(x + size*0.12, y + size*0.12);
-        ctx.lineTo(x, y + size*0.45);
-        ctx.lineTo(x - size*0.12, y + size*0.12);
-        ctx.lineTo(x - size*0.45, y);
-        ctx.lineTo(x - size*0.12, y - size*0.12);
+        ctx.lineTo(x + size*0.35, y + size*0.35);
+        ctx.lineTo(x, y + size*0.15);
+        ctx.lineTo(x - size*0.35, y + size*0.35);
         ctx.closePath();
-        ctx.stroke();
-      },
-      "pill": (ctx, x, y, size) => {
-        ctx.beginPath();
-        ctx.roundRect(x - size*0.45, y - size*0.2, size*0.9, size*0.4, size*0.2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x, y - size*0.2);
-        ctx.lineTo(x, y + size*0.2);
         ctx.stroke();
       },
       "laptop": (ctx, x, y, size) => {
@@ -1140,21 +1260,86 @@
         ctx.lineTo(x + size*0.5, y + size*0.2);
         ctx.stroke();
       },
-      "credit-card": (ctx, x, y, size) => {
+      "coffee": (ctx, x, y, size) => {
         ctx.beginPath();
-        ctx.roundRect(x - size*0.45, y - size*0.3, size*0.9, size*0.6, 4);
+        ctx.rect(x - size*0.3, y - size*0.2, size*0.6, size*0.6);
         ctx.stroke();
         ctx.beginPath();
-        ctx.moveTo(x - size*0.45, y - size*0.08);
-        ctx.lineTo(x + size*0.45, y - size*0.08);
+        ctx.arc(x + size*0.3, y, size*0.15, -Math.PI/2, Math.PI/2);
         ctx.stroke();
       },
-      "shopping-bag": (ctx, x, y, size) => {
+      "stairs": (ctx, x, y, size) => {
         ctx.beginPath();
-        ctx.rect(x - size*0.35, y - size*0.2, size*0.7, size*0.7);
+        ctx.moveTo(x - size*0.4, y + size*0.4);
+        ctx.lineTo(x - size*0.15, y + size*0.4);
+        ctx.lineTo(x - size*0.15, y + size*0.1);
+        ctx.lineTo(x + size*0.1, y + size*0.1);
+        ctx.lineTo(x + size*0.1, y - size*0.2);
+        ctx.lineTo(x + size*0.35, y - size*0.2);
+        ctx.lineTo(x + size*0.35, y - size*0.45);
+        ctx.stroke();
+      },
+      "bridge": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.moveTo(x - size*0.45, y - size*0.1);
+        ctx.lineTo(x + size*0.45, y - size*0.1);
+        ctx.moveTo(x - size*0.45, y + size*0.25);
+        ctx.lineTo(x + size*0.45, y + size*0.25);
+        ctx.moveTo(x - size*0.2, y - size*0.1);
+        ctx.lineTo(x - size*0.2, y + size*0.25);
+        ctx.moveTo(x + size*0.2, y - size*0.1);
+        ctx.lineTo(x + size*0.2, y + size*0.25);
+        ctx.stroke();
+      },
+      "monitor": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.rect(x - size*0.38, y - size*0.35, size*0.76, size*0.5);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(x, y - size*0.2, size*0.22, Math.PI, 0);
+        ctx.moveTo(x, y + size*0.15);
+        ctx.lineTo(x, y + size*0.35);
+        ctx.moveTo(x - size*0.2, y + size*0.35);
+        ctx.lineTo(x + size*0.2, y + size*0.35);
+        ctx.stroke();
+      },
+      "cpu": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.rect(x - size*0.3, y - size*0.3, size*0.6, size*0.6);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y - size*0.45); ctx.lineTo(x, y - size*0.3);
+        ctx.moveTo(x, y + size*0.3); ctx.lineTo(x, y + size*0.45);
+        ctx.stroke();
+      },
+      "microscope": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.arc(x, y - size*0.2, size*0.2, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y); ctx.lineTo(x, y + size*0.4);
+        ctx.moveTo(x - size*0.3, y + size*0.4); ctx.lineTo(x + size*0.3, y + size*0.4);
+        ctx.stroke();
+      },
+      "book-open": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.moveTo(x, y + size*0.2);
+        ctx.lineTo(x - size*0.4, y - size*0.2);
+        ctx.lineTo(x - size*0.4, y + size*0.3);
+        ctx.lineTo(x, y + size*0.4);
+        ctx.lineTo(x + size*0.4, y + size*0.3);
+        ctx.lineTo(x + size*0.4, y - size*0.2);
+        ctx.closePath();
+        ctx.stroke();
+      },
+      "library": (ctx, x, y, size) => {
+        ctx.beginPath();
+        ctx.moveTo(x - size*0.45, y - size*0.2);
+        ctx.lineTo(x, y - size*0.5);
+        ctx.lineTo(x + size*0.45, y - size*0.2);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.rect(x - size*0.35, y - size*0.2, size*0.7, size*0.6);
         ctx.stroke();
       }
     };
@@ -1235,29 +1420,37 @@
     }
 
     async function switchPreset(preset) {
+      document.getElementById('btnVidyalankar').classList.toggle('active', preset === 'vidyalankar');
       document.getElementById('btnMega').classList.toggle('active', preset === 'mega');
       document.getElementById('btnClassic').classList.toggle('active', preset === 'classic');
+
       const res = await fetch(`${API_BASE}/api/graph/preset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ preset })
       });
       graphData = await res.json();
-      selectedStart = 0;
-      selectedDest = graphData.nodes.length - 1;
-      selectedTspItems.clear();
-      if (preset === 'mega') {
-        selectedTspItems.add(1);
-        selectedTspItems.add(4);
-        selectedTspItems.add(7);
+
+      if (preset === 'vidyalankar') {
+        selectedStart = 0; // Football Ground
+        selectedDest = 30; // VIT Central Library
+        selectedTspItems = new Set([0, 13, 30, 35]);
+      } else if (preset === 'mega') {
+        selectedStart = 0;
+        selectedDest = 12;
+        selectedTspItems = new Set([1, 4, 7, 10]);
       } else {
-        selectedTspItems.add(2);
-        selectedTspItems.add(4);
+        selectedStart = 0;
+        selectedDest = 5;
+        selectedTspItems = new Set([1, 3, 5]);
       }
+
       activePath = [];
       pathSegments = [];
       activeTrace = [];
       document.getElementById("stepperBar").style.display = "none";
+      document.getElementById("stepGuidanceList").innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 18px; font-size: 0.84rem;">No active route computed yet.</div>';
+      document.getElementById("guidanceChainBox").innerHTML = '<b>Quick Route Chain:</b> Select your origin and target points above and click <b>"Calculate Path"</b> to generate dynamic walking directions.';
       populateDropdowns();
       centerGraph();
       render();
@@ -1279,7 +1472,7 @@
       const dst = selectedDest;
 
       if (src === dst) {
-        alert("Origin and target cannot be identical.");
+        alert("Origin and target destination cannot be identical.");
         return;
       }
 
@@ -1297,11 +1490,14 @@
 
         // Update KPIs
         document.getElementById("kpiDistance").innerText = `${data.total_travel_cost.toFixed(1)} m`;
-        document.getElementById("kpiHops").innerText = `${activePath.length - 1} hops`;
+        document.getElementById("kpiPhysical").innerText = `${data.analysis.total_base_meters.toFixed(1)} m`;
         document.getElementById("kpiTime").innerText = `${data.stats.execution_time_ms} ms`;
-        document.getElementById("kpiRelaxations").innerText = data.stats.relaxations_count;
+        document.getElementById("kpiTransitions").innerText = `🪜 ${data.analysis.stairs_count} | 🌉 ${data.analysis.bridges_count}`;
 
-        // Update Detailed Mathematical Analysis
+        // Update Walking Directions ("Go from here to there, then...")
+        updateWalkingDirections(data);
+
+        // Update Detailed Mathematical Analysis Table
         updateAnalysisCard(data);
 
         if (animate && activeTrace.length > 0) {
@@ -1313,6 +1509,51 @@
       } catch (err) {
         console.error(err);
       }
+    }
+
+    function updateWalkingDirections(data) {
+      // 1. Natural Language Chain text
+      const chainBox = document.getElementById("guidanceChainBox");
+      chainBox.innerHTML = `
+        <div style="font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--emerald); font-weight: 700; margin-bottom: 4px;">
+          Dynamic Turn-by-Turn Guidance Route Chain:
+        </div>
+        <div style="color: #0f172a; font-size: 0.92rem; font-weight: 600;">
+          ${data.analysis.natural_language_chain}
+        </div>
+      `;
+
+      // 2. Badges
+      document.getElementById("guidanceStairsBadge").innerText = `🪜 ${data.analysis.stairs_count} Stairs Climbed`;
+      document.getElementById("guidanceBridgesBadge").innerText = `🌉 ${data.analysis.bridges_count} Skybridges Crossed`;
+
+      // 3. Step Guidance Cards
+      const container = document.getElementById("stepGuidanceList");
+      container.innerHTML = "";
+
+      (data.analysis.step_by_step_guidance || []).forEach(g => {
+        const stepDiv = document.createElement("div");
+        stepDiv.className = "guidance-step";
+
+        let badgeHtml = "";
+        if (g.action === "walk") badgeHtml = `<span class="step-badge-tag badge-walk">🚶 Walkway</span>`;
+        else if (g.action === "climb") badgeHtml = `<span class="step-badge-tag badge-stairs">🪜 Vertical Stairs</span>`;
+        else if (g.action === "bridge") badgeHtml = `<span class="step-badge-tag badge-bridge">🌉 Skybridge</span>`;
+        else if (g.action === "start") badgeHtml = `<span class="step-badge-tag" style="background: #e2e8f0; color: #334155;">🏁 Origin</span>`;
+        else if (g.action === "arrive") badgeHtml = `<span class="step-badge-tag badge-dest">🎯 Destination</span>`;
+
+        stepDiv.innerHTML = `
+          <div class="step-number">${g.step}</div>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+              <span style="font-weight: 600; color: var(--text-main); font-size: 0.85rem;">${g.instruction}</span>
+              ${badgeHtml}
+            </div>
+            ${g.weighted_cost ? `<div style="font-size: 0.74rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">Segment Cost: ${g.weighted_cost.toFixed(1)}m ${g.distance !== g.weighted_cost ? `(Physical: ${g.distance.toFixed(1)}m)` : ''}</div>` : ''}
+          </div>
+        `;
+        container.appendChild(stepDiv);
+      });
     }
 
     function updateAnalysisCard(data) {
@@ -1330,10 +1571,15 @@
       if (data.path_segments && data.path_segments.length > 0) {
         data.path_segments.forEach(seg => {
           const row = document.createElement("tr");
+          let typeLabel = "🚶 Walkway";
+          if (seg.edge_type === "stairs") typeLabel = `🪜 Stairs (${seg.multiplier}x)`;
+          else if (seg.edge_type === "bridge") typeLabel = "🌉 Bridge";
+
           row.innerHTML = `
             <td><span class="tag-badge">Leg ${seg.leg}</span></td>
             <td style="font-weight: 600; color: var(--text-main);">${seg.from_name}</td>
             <td style="font-weight: 600; color: var(--text-main);">${seg.to_name}</td>
+            <td><span class="tag-badge" style="background: ${seg.edge_type === 'stairs' ? '#fef3c7' : seg.edge_type === 'bridge' ? '#ede9fe' : 'var(--surface-subtle)'};">${typeLabel}</span></td>
             <td><span style="font-family: 'JetBrains Mono';">${seg.distance.toFixed(1)} m</span></td>
             <td><span style="font-family: 'JetBrains Mono'; color: var(--primary); font-weight: 600;">${seg.accumulated.toFixed(1)} m</span></td>
           `;
@@ -1352,9 +1598,9 @@
       } else if (algo === "bellman-ford") {
         desc.innerHTML = `<b>Bellman-Ford Algorithm:</b> Iteratively relaxes all |E| edges |V|-1 times ($O(V\\cdot E)$). Capable of negative weight detection and convergence tracking.`;
       } else if (algo === "bfs") {
-        desc.innerHTML = `<b>Breadth-First Search (BFS):</b> Level-order queue traversal ($O(V+E)$). Computes minimum unweighted hop count regardless of physical aisle distance.`;
+        desc.innerHTML = `<b>Breadth-First Search (BFS):</b> Level-order queue traversal ($O(V+E)$). Computes minimum unweighted hop count regardless of physical distance or stair penalties.`;
       } else {
-        desc.innerHTML = `<b>Dijkstra's Algorithm:</b> Greedily settles the closest unsettled vertex at each iteration via min-priority heap ($O((V+E)\\log V)$). Provably optimal for non-negative graphs.`;
+        desc.innerHTML = `<b>Dijkstra's Algorithm:</b> Greedily settles the closest unsettled vertex at each iteration via min-priority heap ($O((V+E)\\log V)$). Balances stair effort penalties against elevated bridges.`;
       }
     }
 
@@ -1362,7 +1608,7 @@
       const entrance = selectedStart;
       const items = Array.from(selectedTspItems);
       if (items.length === 0) {
-        alert("Select at least 1 shelf item.");
+        alert("Select at least 1 destination location.");
         return;
       }
 
@@ -1378,13 +1624,17 @@
       activeTrace = [];
 
       document.getElementById("kpiDistance").innerText = `${data.total_cost.toFixed(1)} m`;
-      document.getElementById("kpiHops").innerText = `${data.stops_count} stops`;
+      document.getElementById("kpiPhysical").innerText = `${data.total_cost.toFixed(1)} m`;
       document.getElementById("kpiTime").innerText = `${data.execution_time_ms} ms`;
-      document.getElementById("kpiRelaxations").innerText = `${data.stops_count} waypoints`;
+      document.getElementById("kpiTransitions").innerText = `${data.stops_count} locations`;
 
-      document.getElementById("mathCallout").innerHTML = `
-        <b>Held-Karp Exact TSP Sequence:</b><br>
-        <code>${data.visit_sequence.join(' → ')}</code> | Total Walking Cost: <b>${data.total_cost.toFixed(1)} m</b>
+      document.getElementById("guidanceChainBox").innerHTML = `
+        <div style="font-size: 0.76rem; text-transform: uppercase; color: var(--emerald); font-weight: 700;">
+          Held-Karp Exact Multi-Destination Tour Sequence:
+        </div>
+        <div style="color: #0f172a; font-weight: 600; margin-top: 4px;">
+          ${data.visit_sequence.map(s => graphData.nodes[s]?.name || `Node ${s}`).join(' ➔ ')}
+        </div>
       `;
 
       const tbody = document.getElementById("legsTableBody");
@@ -1395,6 +1645,7 @@
           <td><span class="tag-badge emerald">Stop ${i+1}</span></td>
           <td style="font-weight: 600;">${leg.from_name}</td>
           <td style="font-weight: 600;">${leg.to_name}</td>
+          <td><span class="tag-badge">Tour Leg</span></td>
           <td><span style="font-family: 'JetBrains Mono';">${leg.distance.toFixed(1)} m</span></td>
           <td><span style="font-family: 'JetBrains Mono'; color: var(--emerald); font-weight: 600;">${leg.distance.toFixed(1)} m</span></td>
         `;
@@ -1454,7 +1705,7 @@
       activeModalEdge = edge;
       const uName = graphData.nodes[edge.u]?.name || `Node ${edge.u}`;
       const vName = graphData.nodes[edge.v]?.name || `Node ${edge.v}`;
-      document.getElementById("modalAisleDesc").innerText = `Aisle connecting ${uName} and ${vName}`;
+      document.getElementById("modalAisleDesc").innerText = `Pathway connecting ${uName} and ${vName}`;
       document.getElementById("modalSlider").value = edge.weight;
       document.getElementById("modalWeightVal").innerText = edge.weight.toFixed(1) + "m";
       document.getElementById("modalBackdrop").style.display = "flex";
@@ -1552,7 +1803,7 @@
 
       const frontierEl = document.getElementById("frontierList");
       if (step.frontier && step.frontier.length > 0) {
-        frontierEl.innerHTML = step.frontier.map(n => `<span class="tag-badge emerald">Node ${n}</span>`).join(" ");
+        frontierEl.innerHTML = step.frontier.map(n => `<span class="tag-badge emerald">${graphData.nodes[n]?.name || 'Node ' + n}</span>`).join(" ");
       } else {
         frontierEl.innerHTML = `<span class="tag-badge">Settled</span>`;
       }
@@ -1573,13 +1824,13 @@
 
       const w = maxX - minX + 220;
       const h = maxY - minY + 180;
-      zoomLevel = Math.min(rect.width / w, rect.height / h, 1.1);
+      zoomLevel = Math.min(rect.width / w, rect.height / h, 1.15);
       panOffset.x = (rect.width / 2) - ((minX + maxX) / 2) * zoomLevel;
       panOffset.y = (rect.height / 2) - ((minY + maxY) / 2) * zoomLevel;
     }
 
     function zoom(factor) {
-      zoomLevel = Math.max(0.4, Math.min(zoomLevel * factor, 2.5));
+      zoomLevel = Math.max(0.3, Math.min(zoomLevel * factor, 2.8));
       render();
     }
 
@@ -1596,7 +1847,7 @@
       ctx.translate(panOffset.x, panOffset.y);
       ctx.scale(zoomLevel, zoomLevel);
 
-      // 1. Subtle Clean Floorplan Grid
+      // 1. Blueprint Grid & Zone Boundaries
       drawGrid();
 
       // Step trace data
@@ -1604,7 +1855,7 @@
       const visitedSet = new Set(currentStep?.visited_nodes || []);
       const frontierSet = new Set(currentStep?.frontier || []);
 
-      // 2. Render Aisles (Edges)
+      // 2. Render Pathways, Stairs, and Bridges
       graphData.edges.forEach(edge => {
         const u = graphData.nodes[edge.u];
         const v = graphData.nodes[edge.v];
@@ -1612,7 +1863,8 @@
 
         const isPath = isEdgeInPath(edge.u, edge.v);
         const isHovered = (hoveredEdge === edge);
-        const isCongested = edge.weight >= 12;
+        const isStairs = (edge.edge_type === "stairs");
+        const isBridge = (edge.edge_type === "bridge");
 
         ctx.beginPath();
         ctx.moveTo(u.x, u.y);
@@ -1621,24 +1873,42 @@
         if (isPath) {
           ctx.strokeStyle = "#059669"; // Emerald solid line
           ctx.lineWidth = 4.5;
+          if (isStairs) ctx.setLineDash([7, 4]); // stairs dashed
+          else ctx.setLineDash([]);
           ctx.stroke();
+          ctx.setLineDash([]);
         } else if (isHovered) {
           ctx.strokeStyle = "#2563eb";
-          ctx.lineWidth = 3;
+          ctx.lineWidth = 3.5;
+          if (isStairs) ctx.setLineDash([6, 4]);
+          else ctx.setLineDash([]);
           ctx.stroke();
+          ctx.setLineDash([]);
         } else {
-          ctx.strokeStyle = isCongested ? "#fca5a5" : "#e2e8f0";
-          ctx.lineWidth = isCongested ? 2.5 : 2;
-          ctx.stroke();
+          if (isStairs) {
+            ctx.strokeStyle = "#b45309"; // Amber dashed stairs
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([6, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          } else if (isBridge) {
+            ctx.strokeStyle = "#7c3aed"; // Purple bridge
+            ctx.lineWidth = 3.5;
+            ctx.stroke();
+          } else {
+            ctx.strokeStyle = "#cbd5e1";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
         }
 
         // Draw Weight Pill
         const midX = (u.x + v.x) / 2;
         const midY = (u.y + v.y) / 2;
-        drawWeightTag(midX, midY, edge.weight, isPath, isCongested);
+        drawWeightTag(midX, midY, edge, isPath);
       });
 
-      // 3. Render Store Zones (Nodes)
+      // 3. Render Nodes
       graphData.nodes.forEach(node => {
         const isStart = (node.id === selectedStart);
         const isDest = (node.id === selectedDest);
@@ -1669,25 +1939,64 @@
         ctx.lineTo(2000, y);
         ctx.stroke();
       }
+
+      // Draw subtle zone tier backgrounds if Vidyalankar preset
+      if (graphData.preset === "vidyalankar") {
+        ctx.fillStyle = "rgba(241, 245, 249, 0.45)";
+        ctx.roundRect(80, 40, 720, 210, 8); // Tier 1: Grounds
+        ctx.fill();
+        ctx.roundRect(80, 280, 720, 210, 8); // Tier 2: M-Block Labs
+        ctx.fill();
+        ctx.roundRect(80, 520, 720, 300, 8); // Tier 3: VIT Blocks
+        ctx.fill();
+
+        ctx.font = "600 11px 'Inter', sans-serif";
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillText("TIER 1: CAMPUS GROUNDS & MAIN AVENUE", 95, 60);
+        ctx.fillText("TIER 2: M-BLOCK LAB CORRIDOR & BASEMENT", 95, 300);
+        ctx.fillText("TIER 3: VIT ACADEMIC BLOCKS & SKYBRIDGES", 95, 540);
+      }
       ctx.restore();
     }
 
-    function drawWeightTag(x, y, weight, isPath, isCongested) {
+    function drawWeightTag(x, y, edge, isPath) {
       ctx.save();
-      const txt = `${weight.toFixed(1)}m`;
+      let txt = `${edge.weight.toFixed(1)}m`;
+      if (edge.edge_type === "stairs") txt = `🪜 ${edge.weight.toFixed(1)}m`;
+      else if (edge.edge_type === "bridge") txt = `🌉 ${edge.weight.toFixed(1)}m`;
+
       ctx.font = "600 10.5px 'JetBrains Mono', monospace";
       const w = ctx.measureText(txt).width + 10;
       const h = 18;
 
       ctx.beginPath();
       ctx.roundRect(x - w/2, y - h/2, w, h, 4);
-      ctx.fillStyle = isPath ? "#059669" : isCongested ? "#fff1f2" : "#ffffff";
+
+      let fill = "#ffffff";
+      let stroke = "#cbd5e1";
+      let textCol = "#475569";
+
+      if (isPath) {
+        fill = "#059669";
+        stroke = "#059669";
+        textCol = "#ffffff";
+      } else if (edge.edge_type === "stairs") {
+        fill = "#fffbeb";
+        stroke = "#fde68a";
+        textCol = "#b45309";
+      } else if (edge.edge_type === "bridge") {
+        fill = "#f5f3ff";
+        stroke = "#ddd6fe";
+        textCol = "#6d28d9";
+      }
+
+      ctx.fillStyle = fill;
       ctx.fill();
-      ctx.strokeStyle = isPath ? "#059669" : isCongested ? "#fda4af" : "#cbd5e1";
+      ctx.strokeStyle = stroke;
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      ctx.fillStyle = isPath ? "#ffffff" : isCongested ? "#e11d48" : "#475569";
+      ctx.fillStyle = textCol;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(txt, x, y);
@@ -1699,7 +2008,6 @@
       const { isStart, isDest, inPath, isCurrent } = flags;
       const radius = 22;
 
-      // Outer Card Capsule
       ctx.beginPath();
       ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
 
@@ -1731,8 +2039,8 @@
       ctx.lineWidth = strokeWidth;
       ctx.stroke();
 
-      // Draw Crisp Vector Icon
-      const iconDrawer = vectorIcons[node.icon] || vectorIcons["shopping-bag"];
+      // Vector Icon
+      const iconDrawer = vectorIcons[node.icon] || vectorIcons["map-pin"];
       ctx.strokeStyle = isStart ? "#059669" : isDest ? "#2563eb" : inPath ? "#059669" : "#334155";
       ctx.fillStyle = ctx.strokeStyle;
       ctx.lineWidth = 1.75;
@@ -1750,7 +2058,7 @@
       ctx.textBaseline = "middle";
       ctx.fillText(node.id, node.x, node.y + 19);
 
-      // Clean Node Name Below
+      // Node Name Label
       ctx.font = "600 11px 'Inter', sans-serif";
       ctx.fillStyle = (isStart || isDest || inPath) ? "#0f172a" : "#475569";
       ctx.textAlign = "center";
@@ -1822,7 +2130,7 @@
         tip.style.display = "block";
         tip.style.left = `${e.clientX}px`;
         tip.style.top = `${e.clientY}px`;
-        tip.innerHTML = `<b>${node.name}</b> (Zone ${node.id})<br><span style="color: #94a3b8;">Left: Set Start | Right: Set Target</span>`;
+        tip.innerHTML = `<b>${node.name}</b> (Node ${node.id})<br><span style="color: #cbd5e1;">Category:</span> ${node.category}<br><span style="color: #94a3b8;">Left: Set Start | Right: Set Target</span>`;
       } else {
         hoveredNode = null;
         const edge = findEdge(pos.x, pos.y);
@@ -1831,7 +2139,8 @@
           tip.style.display = "block";
           tip.style.left = `${e.clientX}px`;
           tip.style.top = `${e.clientY}px`;
-          tip.innerHTML = `Aisle (${edge.u} ↔ ${edge.v}): <b>${edge.weight.toFixed(1)}m</b> (Click to edit)`;
+          let typeDesc = edge.edge_type === 'stairs' ? '🪜 Vertical Stairs (Effort Penalty c=' + edge.multiplier + 'x)' : edge.edge_type === 'bridge' ? '🌉 Elevated Bridge' : '🚶 Pathway';
+          tip.innerHTML = `<b>${edge.label || `Aisle (${edge.u} ↔ ${edge.v})`}</b><br>${typeDesc}<br>Weighted Cost: <b>${edge.weight.toFixed(1)}m</b> (Click to edit)`;
         } else {
           hoveredEdge = null;
           tip.style.display = "none";

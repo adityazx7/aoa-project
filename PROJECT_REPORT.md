@@ -15,13 +15,17 @@ The project combines a high-performance **Python/FastAPI** algorithmic engine wi
 5. **Floyd-Warshall Algorithm** (All-Pairs Shortest Path with Full Path Reconstruction)
 6. **Held-Karp Algorithm** (Exact Traveling Salesperson Problem via Bitmask Dynamic Programming)
 
+Additionally, the system features a **3-Tier Campus Blueprint Model** based on the real-world **Vidyalankar College (VIT / M-Block / Grounds)** architectural layout, incorporating multi-level vertical transitions (staircases with energy multipliers $c = 1.5, 2.0$), elevated cross-block skybridges, and human-readable natural language walking guidance (*"Go from here to there, then go to..."*).
+
 ---
 
 ## 2. Problem Statement & Motivation
 
 ### 2.1 The Indoor Navigation Challenge
-Modern retail hypermarkets and automated fulfillment warehouses encounter complex spatial layouts where customer transit time and order-picking efficiency directly impact operating margins and consumer satisfaction. Unlike open road networks modeled with GPS, indoor spatial navigation introduces unique constraints:
+Modern retail hypermarkets, automated fulfillment warehouses, and multi-tier academic/corporate campuses encounter complex spatial layouts where customer transit time and order-picking efficiency directly impact operating margins and consumer satisfaction. Unlike open road networks modeled with GPS, indoor spatial navigation introduces unique constraints:
 - Non-Euclidean aisle grid layouts with physical obstacles and fixed junctions.
+- Multi-tier elevation changes (ground avenues, basement lab corridors, elevated skybridges).
+- Vertical effort penalties where climbing stairs incurs significantly higher physical exertion ($c > 1.0$) compared to level skybridges or open ground paths.
 - Dynamic localized congestion (e.g., peak-hour foot traffic, shelf restocking).
 - Multi-stop order picking itineraries that require visiting arbitrary subsets of inventory locations in minimal time.
 
@@ -202,6 +206,32 @@ Once the optimal sequence of waypoints $[s, \pi_1, \pi_2, \dots, \pi_k]$ is dete
 #### Asymptotic Complexity
 - **Time Complexity**: $O(n^2 2^n)$ where $n = |S| + 1$.
 - **Space Complexity**: $O(n 2^n)$ for state memoization.
+
+---
+
+### 4.7 Multi-Tier Elevation, Vertical Stairs & Bridge Modeling (Vidyalankar College System)
+
+#### Real-World Blueprint Integration
+To evaluate algorithms on realistic heterogeneous physical spaces, the system incorporates the 36-node, 40-edge **Vidyalankar College (VIT / M-Block / Grounds)** architecture. The campus is partitioned into three functional tiers:
+1. **Tier 1 (Outdoor Grounds & Avenue)**: Nodes 0–8 (Football Ground, Y-Block GND/DEN/CLD, Central Avenue N2, VP Gate N5, Parking).
+2. **Tier 2 (M-Block Lab Corridor & Basement)**: Nodes 9–22 (Innovation Lab, West Stairs, Labs 1–14, East Vertical Stairs).
+3. **Tier 3 (VIT Academic Block & Skybridges)**: Nodes 23–35 (Main Entrance N3, Bridge N1, Central Skybridge N2, VIT Central Library, A-Block, B-Block, D-Block, Nescafe & Canteen).
+
+#### Dynamic Vertical Effort Penalties ($c$)
+In human indoor navigation, vertical stair ascents demand significantly higher metabolic and mechanical energy than horizontal planar walking. To model this dynamic, edges are augmented with physical distance $d$ (meters), edge type, and an exertion multiplier $c$:
+$$\text{Weight}(u, v) = d(u, v) \times c(u, v)$$
+
+- **Standard Pathway / Corridor**: $c = 1.0$ (e.g., Central Avenue $15.0\text{m} \implies \text{cost} = 15.0\text{m}$).
+- **Elevated Skybridges**: $c = 1.0$ (e.g., Bridge N2 to Library $30.0\text{m} \implies \text{cost} = 30.0\text{m}$). Bridges allow high-speed level traversal between separated academic blocks without descending to ground level.
+- **Moderate Staircases**: $c = 1.5$ (e.g., Canteen Annex Stairs $30.0\text{m} \implies \text{cost} = 45.0\text{m}$).
+- **High-Exertion Vertical Staircases**: $c = 2.0$ (e.g., Library down to B-Block $15.0\text{m} \times 2.0 = 30.0\text{m}$; M-Block East Vertical Stairs $30.0\text{m} \times 2.0 = 60.0\text{m}$).
+
+By factoring $c$ into the adjacency matrix weights, Dijkstra, A\*, and Bellman-Ford algorithms dynamically optimize paths that favor elevated skybridges over strenuous staircases unless the stair detour saves substantial total effort.
+
+#### Turn-by-Turn Natural Language Walking Guidance
+Beyond raw coordinate sequences, the path reconstruction engine produces:
+1. **Continuous Chain Guidance**: Concatenated directional guidance formatted as *"Go from [Origin] to [Hop 1], then go to [Hop 2], then go to [Hop 3]..."*
+2. **Step-by-Step Walking Directives**: Explicit instructions for each leg with action classification (`walk`, `stairs`, `bridge`, `arrive`), physical distance, exertion multipliers, and vertical stair/bridge counts.
 
 ---
 

@@ -11,6 +11,7 @@ class StoreEngine:
         self.matrix: List[List[float]] = [[float('inf')] * vertices for _ in range(vertices)]
         self.node_positions: Dict[int, Tuple[float, float]] = {}
         self.node_metadata: Dict[int, Dict[str, Any]] = {}
+        self.edge_attributes: Dict[Tuple[int, int], Dict[str, Any]] = {}
         for i in range(vertices):
             self.matrix[i][i] = 0.0
 
@@ -24,8 +25,8 @@ class StoreEngine:
             "y": y
         }
 
-    def add_aisle(self, u: int, v: int, weight: float, bidirectional: bool = True):
-        """Add or update an aisle connection with the specified weight."""
+    def add_aisle(self, u: int, v: int, weight: float, bidirectional: bool = True, edge_type: str = "pathway", multiplier: float = 1.0, label: str = ""):
+        """Add or update an aisle/pathway connection with specified weight and edge attributes."""
         weight = float(weight)
         # Remove existing if updating
         self.adj[u] = [(nbr, w) for nbr, w in self.adj[u] if nbr != v]
@@ -36,15 +37,24 @@ class StoreEngine:
         self.edges = [(su, sv, sw) for su, sv, sw in self.edges if not (su == u and sv == v)]
         self.edges.append((u, v, weight))
 
+        attr = {
+            "type": edge_type,
+            "multiplier": multiplier,
+            "label": label,
+            "base_distance": round(weight / multiplier, 1) if multiplier else weight
+        }
+        self.edge_attributes[(u, v)] = attr
+
         if bidirectional:
             self.adj[v] = [(nbr, w) for nbr, w in self.adj[v] if nbr != u]
             self.adj[v].append((u, weight))
             self.matrix[v][u] = weight
             self.edges = [(su, sv, sw) for su, sv, sw in self.edges if not (su == v and sv == u)]
             self.edges.append((v, u, weight))
+            self.edge_attributes[(v, u)] = attr
 
-    def update_aisle(self, u: int, v: int, new_weight: float, bidirectional: bool = True):
-        self.add_aisle(u, v, new_weight, bidirectional)
+    def update_aisle(self, u: int, v: int, new_weight: float, bidirectional: bool = True, edge_type: str = "pathway", multiplier: float = 1.0, label: str = ""):
+        self.add_aisle(u, v, new_weight, bidirectional, edge_type, multiplier, label)
 
     def heuristic(self, u: int, v: int) -> float:
         """Euclidean distance heuristic for A* using node 2D coordinates."""

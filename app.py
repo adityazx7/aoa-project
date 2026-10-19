@@ -8,8 +8,8 @@ from engine import StoreEngine
 
 app = FastAPI(
     title="Store Navigator Pro - Spatial Routing & Graph Engine",
-    version="2.1.0",
-    description="Analysis of Algorithms (AOA) Indoor Retail Pathfinding & Routing Intelligence API"
+    version="2.2.0",
+    description="Analysis of Algorithms (AOA) Campus & Retail Pathfinding Engine (featuring Vidyalankar College System)"
 )
 
 app.add_middleware(
@@ -21,10 +21,10 @@ app.add_middleware(
 )
 
 # Global layout store
-current_preset_name = "mega"
-current_store: StoreEngine = StoreEngine(13)
+current_preset_name = "vidyalankar"
+current_store: StoreEngine = StoreEngine(36)
 
-def init_store_preset(preset: str = "mega") -> StoreEngine:
+def init_store_preset(preset: str = "vidyalankar") -> StoreEngine:
     global current_store, current_preset_name
     current_preset_name = preset
 
@@ -42,56 +42,175 @@ def init_store_preset(preset: str = "mega") -> StoreEngine:
             st.set_node_metadata(nid, name, cat, icon, x, y)
 
         edges = [
-            (0, 1, 4), (0, 2, 2), (1, 2, 1), (1, 3, 5),
-            (2, 3, 8), (2, 4, 10), (3, 5, 6), (4, 5, 2)
+            (0, 1, 4.0, "pathway", 1.0, "Entrance to Produce"),
+            (0, 2, 2.0, "pathway", 1.0, "Entrance to Bakery"),
+            (1, 2, 1.0, "pathway", 1.0, "Produce to Bakery Aisle"),
+            (1, 3, 5.0, "pathway", 1.0, "Produce to Dairy"),
+            (2, 3, 8.0, "pathway", 1.0, "Bakery to Dairy Central"),
+            (2, 4, 10.0, "pathway", 1.0, "Bakery to Beverages"),
+            (3, 5, 6.0, "pathway", 1.0, "Dairy to Checkout"),
+            (4, 5, 2.0, "pathway", 1.0, "Beverages to Checkout")
         ]
-        for u, v, w in edges:
-            st.add_aisle(u, v, w)
+        for u, v, w, et, mult, lbl in edges:
+            st.add_aisle(u, v, w, bidirectional=True, edge_type=et, multiplier=mult, label=lbl)
         current_store = st
         return st
 
-    # Default: "mega" layout (13 realistic retail zones)
-    st = StoreEngine(13)
+    elif preset == "mega":
+        st = StoreEngine(13)
+        nodes = [
+            (0, "Main Entrance", "Entry", "door-open", 90, 330),
+            (1, "Fresh Produce", "Grocery", "apple", 240, 150),
+            (2, "Artisan Bakery", "Bakery", "croissant", 240, 510),
+            (3, "Dairy & Eggs", "Chilled", "milk", 440, 150),
+            (4, "Meat & Seafood", "Fresh", "beef", 440, 510),
+            (5, "Beverages & Drinks", "Drinks", "cup-soda", 640, 150),
+            (6, "Snacks & Pantry", "Grocery", "cookie", 640, 330),
+            (7, "Frozen Treats", "Frozen", "ice-cream", 640, 510),
+            (8, "Household & Cleaners", "Home", "sparkles", 840, 150),
+            (9, "Pharmacy & Health", "Health", "pill", 840, 330),
+            (10, "Electronics & Tech", "Tech", "laptop", 840, 510),
+            (11, "Express Self-Checkout", "Checkout", "credit-card", 1020, 220),
+            (12, "Main Cashier & Exit", "Exit", "shopping-bag", 1020, 440)
+        ]
+        for nid, name, cat, icon, x, y in nodes:
+            st.set_node_metadata(nid, name, cat, icon, x, y)
+
+        edges = [
+            (0, 1, 4.0, "pathway", 1.0, "Entrance to Produce"),
+            (0, 2, 3.0, "pathway", 1.0, "Entrance to Bakery"),
+            (1, 2, 5.0, "pathway", 1.0, "Produce to Bakery Aisle"),
+            (1, 3, 4.0, "pathway", 1.0, "Produce to Dairy"),
+            (2, 4, 4.0, "pathway", 1.0, "Bakery to Meat"),
+            (3, 4, 6.0, "pathway", 1.0, "Dairy to Meat"),
+            (3, 5, 4.0, "pathway", 1.0, "Dairy to Beverages"),
+            (3, 6, 5.0, "pathway", 1.0, "Dairy to Snacks"),
+            (4, 6, 5.0, "pathway", 1.0, "Meat to Snacks"),
+            (4, 7, 4.0, "pathway", 1.0, "Meat to Frozen"),
+            (5, 6, 3.0, "pathway", 1.0, "Beverages to Snacks"),
+            (5, 8, 4.0, "pathway", 1.0, "Beverages to Household"),
+            (6, 7, 3.0, "pathway", 1.0, "Snacks to Frozen"),
+            (6, 9, 4.0, "pathway", 1.0, "Snacks to Pharmacy"),
+            (7, 10, 4.0, "pathway", 1.0, "Frozen to Tech"),
+            (8, 9, 3.0, "pathway", 1.0, "Household to Pharmacy"),
+            (8, 11, 4.0, "pathway", 1.0, "Household to Express Checkout"),
+            (9, 10, 3.0, "pathway", 1.0, "Pharmacy to Tech"),
+            (9, 11, 3.0, "pathway", 1.0, "Pharmacy to Express Checkout"),
+            (9, 12, 3.0, "pathway", 1.0, "Pharmacy to Exit"),
+            (10, 12, 4.0, "pathway", 1.0, "Tech to Exit"),
+            (11, 12, 2.0, "pathway", 1.0, "Express Checkout to Exit")
+        ]
+        for u, v, w, et, mult, lbl in edges:
+            st.add_aisle(u, v, w, bidirectional=True, edge_type=et, multiplier=mult, label=lbl)
+        current_store = st
+        return st
+
+    # Featured Blueprint Preset: "vidyalankar" (36 Nodes, 3 Tiers, Multi-level stairs & bridges)
+    st = StoreEngine(36)
     nodes = [
-        (0, "Main Entrance", "Entry", "door-open", 90, 330),
-        (1, "Fresh Produce", "Grocery", "apple", 240, 150),
-        (2, "Artisan Bakery", "Bakery", "croissant", 240, 510),
-        (3, "Dairy & Eggs", "Chilled", "milk", 440, 150),
-        (4, "Meat & Seafood", "Fresh", "beef", 440, 510),
-        (5, "Beverages & Drinks", "Drinks", "cup-soda", 640, 150),
-        (6, "Snacks & Pantry", "Grocery", "cookie", 640, 330),
-        (7, "Frozen Treats", "Frozen", "ice-cream", 640, 510),
-        (8, "Household & Cleaners", "Home", "sparkles", 840, 150),
-        (9, "Pharmacy & Health", "Health", "pill", 840, 330),
-        (10, "Electronics & Tech", "Tech", "laptop", 840, 510),
-        (11, "Express Self-Checkout", "Checkout", "credit-card", 1020, 220),
-        (12, "Main Cashier & Exit", "Exit", "shopping-bag", 1020, 440)
+        # Tier 1: Outdoor Campus Grounds & Roadways (Top)
+        (0, "Football Ground", "Outdoor Sports", "trophy", 140, 70),
+        (1, "Y-Block (GND)", "Academic Block", "building", 370, 70),
+        (2, "DEN Block", "Academic Block", "building", 370, 125),
+        (3, "CLD / Y-Block Gate (N1)", "Campus Gate", "door-open", 370, 180),
+        (4, "Main College Ground", "Outdoor Campus", "map-pin", 550, 100),
+        (5, "Basketball Court & Parking", "Sports & Parking", "car", 740, 100),
+        (6, "West Campus Avenue", "Campus Avenue", "compass", 120, 230),
+        (7, "Avenue Junction (M-Block North)", "Avenue Hub", "compass", 250, 230),
+        (8, "Central Avenue Junction (N2)", "Main Avenue Hub", "compass", 420, 230),
+        (9, "East Avenue (VP Gate N5)", "Avenue Hub", "compass", 600, 230),
+        (10, "East Avenue End (N3)", "Avenue Hub", "compass", 760, 230),
+        (11, "VP Block", "Academic Block", "building", 640, 300),
+
+        # Tier 2: M-Block & Ground Floor Lab Corridor (Middle)
+        (12, "M-Block Main Entrance (N6/N4)", "M-Block Entry", "door-open", 250, 310),
+        (13, "Innovation Lab & Auditorium", "M-Block Labs", "laptop", 160, 400),
+        (14, "M-Block Canteen (Basement)", "Amenities", "coffee", 130, 510),
+        (15, "Stairs to 1st Floor / Canteen", "Vertical Stairs", "stairs", 270, 450),
+        (16, "M-Block Corridor Junction N1", "Lab Corridor", "navigation", 360, 450),
+        (17, "Computer Labs (West Wing)", "Laboratories", "monitor", 360, 390),
+        (18, "Corridor Central Junction N2", "Lab Corridor", "navigation", 500, 450),
+        (19, "Electronics Labs (Central Wing)", "Laboratories", "cpu", 500, 390),
+        (20, "Corridor East Junction", "Lab Corridor", "navigation", 640, 450),
+        (21, "Research Labs (East Wing)", "Laboratories", "microscope", 640, 390),
+        (22, "M-Block East Vertical Stairs", "Vertical Stairs", "stairs", 740, 450),
+
+        # Tier 3: VIT Academic Block View (1st Floor / Upper Level - Bottom)
+        (23, "VIT Main Entrance (N3)", "VIT Campus Core", "door-open", 420, 310),
+        (24, "Stairs to Canteen Annex", "Vertical Stairs", "stairs", 220, 640),
+        (25, "VIT West Junction N3", "VIT Walkways", "navigation", 340, 660),
+        (26, "E-Block", "Academic Block", "book-open", 360, 580),
+        (27, "Bridge N1 (E-Block to F-Block)", "Elevated Bridge", "bridge", 460, 560),
+        (28, "F-Block", "Academic Block", "book-open", 550, 580),
+        (29, "Bridge N2 (Central Skybridge)", "Elevated Bridge", "bridge", 500, 670),
+        (30, "VIT Central Library (Node N1)", "Academic Core", "library", 650, 590),
+        (31, "East Bridge N2 (to A/B Block)", "Elevated Bridge", "bridge", 740, 670),
+        (32, "A-Block", "Academic Block", "building", 770, 780),
+        (33, "B-Block & B-Block Stairs", "Academic Block", "building", 640, 780),
+        (34, "D-Block", "Academic Block", "building", 360, 780),
+        (35, "Nescafe & Central Canteen", "Amenities", "coffee", 500, 780)
     ]
     for nid, name, cat, icon, x, y in nodes:
         st.set_node_metadata(nid, name, cat, icon, x, y)
 
     edges = [
-        (0, 1, 4), (0, 2, 3),
-        (1, 2, 5), (1, 3, 4),
-        (2, 4, 4),
-        (3, 4, 6), (3, 5, 4), (3, 6, 5),
-        (4, 6, 5), (4, 7, 4),
-        (5, 6, 3), (5, 8, 4),
-        (6, 7, 3), (6, 9, 4),
-        (7, 10, 4),
-        (8, 9, 3), (8, 11, 4),
-        (9, 10, 3), (9, 11, 3), (9, 12, 3),
-        (10, 12, 4),
-        (11, 12, 2)
+        # Top Tier: Outdoor Campus & Roadways
+        (6, 7, 30.0, "pathway", 1.0, "West Avenue (30m)"),
+        (7, 8, 45.0, "pathway", 1.0, "Main Avenue West (45m)"),
+        (7, 12, 35.0, "pathway", 1.0, "M-Block North Approach (35m)"),
+        (8, 9, 35.0, "pathway", 1.0, "Main Avenue East (35m)"),
+        (9, 10, 40.0, "pathway", 1.0, "East Avenue Pathway (40m)"),
+        (10, 5, 20.0, "pathway", 1.0, "Parking Approach (20m)"),
+        (9, 11, 15.0, "pathway", 1.0, "VP Block Entrance (15m)"),
+        (8, 23, 15.0, "pathway", 1.0, "VIT Main Entrance Walkway (15m)"),
+        (8, 3, 22.5, "pathway", 1.5, "Avenue to Y-Block Gate (15m, c=1.5)"),
+        (3, 2, 15.0, "pathway", 1.0, "CLD to DEN Pathway (15m)"),
+        (2, 1, 45.0, "pathway", 1.0, "DEN to GND Pathway (45m)"),
+        (1, 0, 30.0, "pathway", 1.0, "GND to Football Ground (30m)"),
+        (2, 4, 25.0, "pathway", 1.0, "DEN to Main Ground (25m)"),
+        (12, 7, 52.5, "stairs", 1.5, "M-Block N6 Ramp/Stairs (35m, c=1.5)"),
+
+        # Middle Tier: M-Block Labs & Corridors
+        (12, 13, 25.0, "pathway", 1.0, "M-Block Entry to Innovation Lab"),
+        (13, 14, 20.0, "pathway", 1.0, "Innovation Lab to Canteen Basement"),
+        (13, 15, 22.5, "stairs", 1.5, "Innovation Lab to 1st Floor Stairs (15m, c=1.5)"),
+        (14, 15, 18.0, "stairs", 1.5, "Canteen to Upper Floor Stairs (12m, c=1.5)"),
+        (15, 16, 35.0, "pathway", 1.0, "Stairs to Corridor Junction N1 (35m)"),
+        (16, 17, 15.0, "pathway", 1.0, "Hallway to Computer Labs (15m)"),
+        (16, 18, 30.0, "pathway", 1.0, "Corridor N1 to Central N2 (30m)"),
+        (18, 19, 45.0, "pathway", 1.0, "Central Hallway to Electronics Labs (45m)"),
+        (18, 20, 45.0, "pathway", 1.0, "Corridor N2 to East Wing (45m)"),
+        (20, 21, 45.0, "pathway", 1.0, "East Hallway to Research Labs (45m)"),
+        (20, 22, 90.0, "stairs", 2.0, "Corridor to East Vertical Stairs (45m, c=2.0)"),
+
+        # Inter-Floor Vertical Connectors (M-Block to VIT Upper Floor)
+        (15, 24, 50.0, "stairs", 2.0, "West Stairs to VIT Canteen Annex (25m, c=2.0)"),
+        (22, 31, 60.0, "stairs", 2.0, "East Stairs to Bridge N2 (30m, c=2.0)"), # blue arrow in blueprint
+
+        # Bottom Tier: VIT Academic Block View
+        (23, 27, 25.0, "pathway", 1.0, "VIT Entrance to Bridge N1 (25m)"),
+        (24, 25, 45.0, "stairs", 1.5, "Stairs to Canteen Annex to N3 (30m, c=1.5)"),
+        (25, 26, 30.0, "pathway", 1.0, "Junction N3 to E-Block (30m)"),
+        (26, 27, 20.0, "bridge", 1.0, "Bridge N1: E-Block to F-Block (20m)"),
+        (27, 28, 25.0, "bridge", 1.0, "Bridge N1: Connector to F-Block (25m)"),
+        (27, 29, 45.0, "pathway", 1.0, "Bridge N1 to Central Bridge N2 (45m)"),
+        (29, 30, 30.0, "bridge", 1.0, "Bridge N2: Central Skybridge to Library (30m)"),
+        (30, 31, 25.0, "bridge", 1.0, "East Bridge N2: Library to East Wing (25m)"),
+        (31, 32, 20.0, "pathway", 1.0, "East Bridge to A-Block (20m)"),
+        (30, 33, 30.0, "stairs", 2.0, "Stairs from Library down to B-Block (15m, c=2.0)"),
+        (25, 34, 35.0, "pathway", 1.0, "Junction N3 to D-Block (35m)"),
+        (34, 35, 25.0, "bridge", 1.0, "Bridge: D-Block to Nescafe & Canteen (25m)"),
+        (35, 33, 20.0, "pathway", 1.0, "Nescafe to B-Block Walkway (20m)"),
+        (33, 32, 25.0, "pathway", 1.0, "B-Block to A-Block Walkway (25m)")
     ]
-    for u, v, w in edges:
-        st.add_aisle(u, v, w)
+    for u, v, w, et, mult, lbl in edges:
+        st.add_aisle(u, v, w, bidirectional=True, edge_type=et, multiplier=mult, label=lbl)
 
     current_store = st
     return st
 
-# Initialize store on startup
-init_store_preset("mega")
+# Initialize store on startup with the featured Vidyalankar campus system
+init_store_preset("vidyalankar")
 
 # Request Models
 class RouteRequest(BaseModel):
@@ -102,22 +221,22 @@ class RouteRequest(BaseModel):
 class DynamicWeightUpdate(BaseModel):
     u: int = Field(..., ge=0)
     v: int = Field(..., ge=0)
-    new_weight: float = Field(..., ge=0.1, description="Congestion or adjusted aisle weight")
+    new_weight: float = Field(..., ge=0.1, description="Congestion or adjusted weight")
 
 class ShoppingListRequest(BaseModel):
     entrance: int = Field(0, ge=0)
-    items: List[int] = Field(..., min_length=1, description="List of shelf node IDs")
+    items: List[int] = Field(..., min_length=1, description="List of node IDs to visit")
 
 class PresetRequest(BaseModel):
-    preset: str = Field("mega", description="'mega' or 'classic'")
+    preset: str = Field("vidyalankar", description="'vidyalankar', 'mega', or 'classic'")
 
 class BenchmarkRequest(BaseModel):
     source: int = Field(0, ge=0)
-    destination: int = Field(12, ge=0)
+    destination: int = Field(30, ge=0)
 
 @app.get("/api/graph", status_code=status.HTTP_200_OK)
 def get_graph():
-    """Returns nodes, edges, and metadata for current layout."""
+    """Returns nodes, edges, and rich metadata for current layout."""
     node_list = []
     for nid in range(current_store.V):
         meta = current_store.node_metadata.get(nid, {
@@ -134,11 +253,16 @@ def get_graph():
         edge_key = tuple(sorted((u, v)))
         if edge_key not in seen:
             seen.add(edge_key)
+            attr = current_store.edge_attributes.get((u, v), {})
             edge_list.append({
                 "u": u,
                 "v": v,
                 "weight": w,
-                "congested": w >= 12
+                "congested": w >= 40.0,
+                "edge_type": attr.get("type", "pathway"),
+                "multiplier": attr.get("multiplier", 1.0),
+                "base_distance": attr.get("base_distance", w),
+                "label": attr.get("label", f"Aisle {u}-{v}")
             })
 
     return {
@@ -150,7 +274,7 @@ def get_graph():
 
 @app.post("/api/route", status_code=status.HTTP_200_OK)
 def compute_route(payload: RouteRequest):
-    """Computes shortest route using chosen algorithm and returns step trace & deep analysis."""
+    """Computes shortest route using chosen algorithm and returns step trace, natural language guidance, and deep analysis."""
     if payload.source >= current_store.V or payload.destination >= current_store.V:
         raise HTTPException(status_code=400, detail="Invalid node index for current layout.")
 
@@ -187,23 +311,96 @@ def compute_route(payload: RouteRequest):
 
         # Detailed path segments & cost accumulation
         path_segments = []
+        step_by_step_guidance = []
         total_accumulated = 0.0
-        for i in range(len(path) - 1):
-            u, v = path[i], path[i + 1]
-            w = next((w for sv, w in current_store.adj[u] if sv == v), 1.0)
-            total_accumulated += w
-            path_segments.append({
-                "leg": i + 1,
-                "from_id": u,
-                "from_name": current_store.node_metadata.get(u, {}).get("name", f"Node {u}"),
-                "to_id": v,
-                "to_name": current_store.node_metadata.get(v, {}).get("name", f"Node {v}"),
-                "distance": round(w, 2),
-                "accumulated": round(total_accumulated, 2)
-            })
+        total_base_meters = 0.0
+        stairs_count = 0
+        bridges_count = 0
 
         src_name = current_store.node_metadata.get(payload.source, {}).get("name", f"Node {payload.source}")
         dst_name = current_store.node_metadata.get(payload.destination, {}).get("name", f"Node {payload.destination}")
+
+        step_by_step_guidance.append({
+            "step": 1,
+            "action": "start",
+            "icon": "flag",
+            "instruction": f"Start at {src_name}."
+        })
+
+        for i in range(len(path) - 1):
+            u, v = path[i], path[i + 1]
+            w = next((w for sv, w in current_store.adj[u] if sv == v), 1.0)
+            attr = current_store.edge_attributes.get((u, v), {})
+            edge_type = attr.get("type", "pathway")
+            mult = attr.get("multiplier", 1.0)
+            base_d = attr.get("base_distance", w)
+            lbl = attr.get("label", "")
+
+            total_accumulated += w
+            total_base_meters += base_d
+
+            u_name = current_store.node_metadata.get(u, {}).get("name", f"Node {u}")
+            v_name = current_store.node_metadata.get(v, {}).get("name", f"Node {v}")
+
+            if edge_type == "stairs":
+                stairs_count += 1
+                instruction = f"Take stairs from {u_name} to {v_name} (climb {base_d:.1f}m, vertical effort penalty {mult:.1f}x -> weighted cost: {w:.1f}m)."
+                action_type = "climb"
+                icon_type = "stairs"
+            elif edge_type == "bridge":
+                bridges_count += 1
+                instruction = f"Cross elevated skybridge from {u_name} to {v_name} ({base_d:.1f}m bridge connectivity)."
+                action_type = "bridge"
+                icon_type = "bridge"
+            else:
+                instruction = f"Walk along pathway from {u_name} to {v_name} (distance: {base_d:.1f}m)."
+                action_type = "walk"
+                icon_type = "navigation"
+
+            step_by_step_guidance.append({
+                "step": i + 2,
+                "action": action_type,
+                "icon": icon_type,
+                "from_name": u_name,
+                "to_name": v_name,
+                "edge_type": edge_type,
+                "distance": round(base_d, 1),
+                "weighted_cost": round(w, 1),
+                "instruction": instruction
+            })
+
+            path_segments.append({
+                "leg": i + 1,
+                "from_id": u,
+                "from_name": u_name,
+                "to_id": v,
+                "to_name": v_name,
+                "edge_type": edge_type,
+                "multiplier": mult,
+                "distance": round(w, 2),
+                "base_distance": round(base_d, 2),
+                "accumulated": round(total_accumulated, 2),
+                "label": lbl
+            })
+
+        step_by_step_guidance.append({
+            "step": len(path) + 1,
+            "action": "arrive",
+            "icon": "map-pin",
+            "instruction": f"Arrive at destination: {dst_name}."
+        })
+
+        # Generate "Go from here to there, then from there to..." natural language chain text
+        chain_hops = [current_store.node_metadata.get(p, {}).get("name", f"Node {p}") for p in path]
+        if len(chain_hops) == 1:
+            natural_language_chain = f"Already at destination: {dst_name}."
+        elif len(chain_hops) == 2:
+            natural_language_chain = f"Go directly from {chain_hops[0]} to {chain_hops[1]}."
+        else:
+            chain_parts = [f"Go from {chain_hops[0]} to {chain_hops[1]}"]
+            for hop in chain_hops[2:]:
+                chain_parts.append(f"then go to {hop}")
+            natural_language_chain = ", ".join(chain_parts) + "."
 
         # Deep analysis metrics
         cost_val = dists[payload.destination]
@@ -216,25 +413,31 @@ def compute_route(payload: RouteRequest):
             "target_label": dst_name,
             "total_hops": len(path) - 1,
             "total_distance": round(cost_val, 2),
+            "total_base_meters": round(total_base_meters, 2),
+            "stairs_count": stairs_count,
+            "bridges_count": bridges_count,
             "cost_equation": f"{cost_formula} = {cost_val:.1f}m",
             "time_complexity": stats["time_complexity"],
             "space_complexity": stats["space_complexity"],
             "operations_count": stats["operations_count"],
             "relaxations_count": stats["relaxations_count"],
             "nodes_visited_count": stats["nodes_visited"],
+            "natural_language_chain": natural_language_chain,
+            "step_by_step_guidance": step_by_step_guidance,
             "optimality_rationale": (
-                f"The path traverses {len(path)} zones: {' → '.join(str(p) for p in path)}. "
-                f"At each junction, edges with greater weights or congestion penalties were rejected in favor of the minimum cumulative distance ({cost_val:.1f}m)."
+                f"The algorithm evaluated paths across {len(path)} waypoints ({' → '.join(str(p) for p in path)}). "
+                f"Path balances vertical stairs climbing penalties (count: {stairs_count}) with elevated bridges (count: {bridges_count}) "
+                f"to achieve the mathematical minimum travel cost ({cost_val:.1f}m)."
             )
         }
 
         explanation = (
             f"### Algorithmic Execution Summary\n"
             f"- **Algorithm**: {algo_name} ({paradigms})\n"
-            f"- **Route**: {src_name} → {dst_name} across **{len(path) - 1} aisle hops**.\n"
-            f"- **Total Distance / Cost**: **{cost_val:.1f} meters** (`{cost_formula}`)\n"
+            f"- **Route**: {src_name} → {dst_name} across **{len(path) - 1} hops** (**{total_base_meters:.1f}m physical meters**, weighted cost **{cost_val:.1f}m**).\n"
+            f"- **Vertical Transitions**: **{stairs_count} staircases** climbed | **{bridges_count} elevated skybridges** crossed.\n"
             f"- **Execution Metrics**: Completed in **{stats['execution_time_ms']} ms** with **{stats['operations_count']} operations** and **{stats['relaxations_count']} edge relaxations**.\n\n"
-            f"**Optimality Guarantee**: {analysis['optimality_rationale']}"
+            f"**Turn-by-Turn Guidance**: {natural_language_chain}"
         )
 
         return {
@@ -262,12 +465,12 @@ def optimize_shopping_list(payload: ShoppingListRequest):
 
     visit_names = [current_store.node_metadata.get(s, {}).get('name', f'Node {s}') for s in result['visit_sequence']]
     explanation = (
-        f"### Multi-Stop Order Picking Analysis\n"
+        f"### Multi-Destination Route Optimization\n"
         f"- **Algorithm Strategy**: Held-Karp Dynamic Programming (Exact TSP formulation)\n"
-        f"- **Stops Visited**: {len(result['visit_sequence'])} destinations ({' → '.join(visit_names)})\n"
-        f"- **Total Distance**: **{result['total_cost']:.1f} meters** across **{len(result['full_path']) - 1} aisle steps**\n"
+        f"- **Waypoints Visited**: {len(result['visit_sequence'])} destinations ({' → '.join(visit_names)})\n"
+        f"- **Total Distance / Weighted Cost**: **{result['total_cost']:.1f} meters** across **{len(result['full_path']) - 1} steps**\n"
         f"- **Computational Complexity**: $O(n^2 2^n)$ solved in **{result['execution_time_ms']} ms** via bitmask state memoization.\n\n"
-        f"**Efficiency Impact**: Compared to walking shelves in arbitrary order, dynamic programming guarantees the mathematical minimum walking distance, reducing warehouse/shopper retrieval fatigue."
+        f"**Efficiency Impact**: Compared to walking stops in arbitrary order, dynamic programming guarantees the mathematical minimum walking distance."
     )
 
     return {
@@ -288,7 +491,7 @@ def update_aisle(payload: DynamicWeightUpdate):
         "u": payload.u,
         "v": payload.v,
         "new_weight": payload.new_weight,
-        "message": f"Aisle ({payload.u} ↔ {payload.v}) weight successfully updated to {payload.new_weight}m."
+        "message": f"Connection ({payload.u} ↔ {payload.v}) weight successfully updated to {payload.new_weight}m."
     }
 
 @app.post("/api/graph/preset", status_code=status.HTTP_200_OK)
