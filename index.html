@@ -915,6 +915,7 @@
         <!-- Action Controls -->
         <div class="route-actions-group">
           <button id="btnCampusClear" class="route-ghost-btn" title="Reset current route">Reset</button>
+          <button id="btnShareRoute" class="route-ghost-btn" title="Copy shareable link to this route">🔗 Share</button>
           <button id="btnTogglePrefs" class="route-options-btn" onclick="toggleRoutePreferences()" title="Customize Routing Preferences">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             Preferences
@@ -929,8 +930,9 @@
           <div class="pref-col">
             <span class="pref-title">Algorithm Engine</span>
             <select id="campusAlgoSelect" class="pref-select">
-              <option value="dijkstra" selected>Dijkstra's (Optimal Min-Heap Queue)</option>
+              <option value="dijkstra" selected>Dijkstra (Binary Heap)</option>
               <option value="astar">A* Search (Euclidean Heuristic)</option>
+              <option value="alt">ALT (Landmarks + Triangle Inequality)</option>
               <option value="bidirectional">Bidirectional Dijkstra (Dual Frontier)</option>
               <option value="bfs">Breadth-First Search (Fewest Hops)</option>
             </select>
@@ -996,7 +998,7 @@
 
           <!-- 3D Three.js Container -->
           <div id="campus3DContainer" style="display: none; width: 100%; height: 100%; min-height: 520px;">
-            <div class="threed-controls-overlay">
+            <div id="threedExplodeOverlay" class="threed-controls-overlay" style="display: none;">
               <span>Explode Floor Slabs:</span>
               <input type="range" id="threedExplodeSlider" min="0" max="30" value="12" style="width: 110px;" />
               <span id="explodeValBadge" style="font-weight: 700; color: var(--c-acc);">12m</span>
@@ -1005,8 +1007,7 @@
 
           <!-- Minimap Box (Top-Right) -->
           <div id="campusMinimapBox" class="campus-minimap-box" title="Global Overview Minimap">
-            <svg id="campusMinimap" width="160" height="95" viewBox="0 0 1650 930"></svg>
-            <div id="minimapViewport" class="minimap-viewport-rect"></div>
+            <svg id="campusMinimap" width="170" height="105" viewBox="0 0 1650 930" preserveAspectRatio="xMidYMid meet"></svg>
           </div>
 
           <!-- Search Frontier Replay Bar -->

@@ -89,6 +89,7 @@
       initFuse();
       render2D();
       renderMinimap();
+      initUrlState();
     } catch (err) {
       console.error("[Campus Navigator]", err);
     }
@@ -467,16 +468,118 @@
 
     if ($("btnCampusClear")) $("btnCampusClear").onclick = clearSelection;
     if ($("btnCampusRun")) $("btnCampusRun").onclick = calculateCampusRoute;
+
+    if ($("btnSwapEndpoints")) {
+      $("btnSwapEndpoints").onclick = () => {
+        if (!store.fromId && !store.toId) return;
+        const tmp = store.fromId;
+        store.fromId = store.toId;
+        store.toId = tmp;
+        if ($("fromInput")) $("fromInput").value = store.nodesMap[store.fromId]?.label || "";
+        if ($("toInput")) $("toInput").value = store.nodesMap[store.toId]?.label || "";
+        updateActiveHighlights();
+        if (store.fromId && store.toId) {
+          calculateCampusRoute();
+        } else {
+          render2D();
+        }
+      };
+    }
+
+    if ($("btnShareRoute")) {
+      $("btnShareRoute").onclick = () => {
+        updateUrlState();
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(window.location.href).then(() => {
+            showToast("🔗 Shareable route link copied to clipboard!");
+          }).catch(() => {
+            showToast("Copied: " + window.location.href);
+          });
+        } else {
+          showToast("Route link: " + window.location.href);
+        }
+      };
+    }
+  }
+
+  function showToast(msg) {
+    const existing = document.querySelector(".toast-bubble");
+    if (existing) existing.remove();
+
+    const toast = document.createElement("div");
+    toast.className = "toast-bubble";
+    toast.innerText = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      toast.style.transition = "opacity 0.3s ease";
+      setTimeout(() => toast.remove(), 300);
+    }, 2500);
+  }
+
+  function initUrlState() {
+    const params = new URLSearchParams(window.location.search);
+    const from = params.get("from");
+    const to = params.get("to");
+    const algo = params.get("algo");
+    const avoidStairs = params.get("avoid_stairs");
+    const accessible = params.get("accessible");
+    const indoor = params.get("indoor");
+
+    if (algo && $("campusAlgoSelect")) {
+      $("campusAlgoSelect").value = algo;
+      store.activeAlgo = algo;
+    }
+    if (avoidStairs !== null && $("chkAvoidStairs")) {
+      $("chkAvoidStairs").checked = (avoidStairs === "true");
+      store.options.avoidStairs = (avoidStairs === "true");
+    }
+    if (accessible !== null && $("chkAccessibleOnly")) {
+      $("chkAccessibleOnly").checked = (accessible === "true");
+      store.options.accessibleOnly = (accessible === "true");
+    }
+    if (indoor !== null && $("chkPreferIndoor")) {
+      $("chkPreferIndoor").checked = (indoor === "true");
+      store.options.preferIndoor = (indoor === "true");
+    }
+
+    if (from && store.nodesMap[from]) {
+      store.fromId = from;
+      if ($("fromInput")) $("fromInput").value = store.nodesMap[from].label;
+    }
+    if (to && store.nodesMap[to]) {
+      store.toId = to;
+      if ($("toInput")) $("toInput").value = store.nodesMap[to].label;
+    }
+
+    if (store.fromId && store.toId) {
+      calculateCampusRoute();
+    }
+  }
+
+  function updateUrlState() {
+    if (store.fromId && store.toId) {
+      const params = new URLSearchParams();
+      params.set("from", store.fromId);
+      params.set("to", store.toId);
+      params.set("algo", store.activeAlgo);
+      if (store.options.avoidStairs) params.set("avoid_stairs", "true");
+      if (store.options.accessibleOnly) params.set("accessible", "true");
+      if (store.options.preferIndoor) params.set("indoor", "true");
+      window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+    }
   }
 
   function handleViewModeChange() {
     const is3D = store.viewMode && store.viewMode.startsWith("3");
     const isEditor = store.viewMode === "editor";
+    const isExploded = store.viewMode === "3f";
 
     if ($("campusSvgContainer")) $("campusSvgContainer").style.display = is3D ? "none" : "block";
     if ($("campus3DContainer")) $("campus3DContainer").style.display = is3D ? "block" : "none";
     if ($("campusMinimapBox")) $("campusMinimapBox").style.display = is3D ? "none" : "block";
     if ($("editorDrawer")) $("editorDrawer").style.display = isEditor ? "block" : "none";
+    if ($("threedExplodeOverlay")) $("threedExplodeOverlay").style.display = isExploded ? "flex" : "none";
 
     store.editor.enabled = isEditor;
 
@@ -578,6 +681,12 @@
       updateDirections(data);
       updateComparisonTable(data.comparison);
       setupReplay(data.primary.visitedOrder);
+      updateUrlState();
+
+      // Auto-fit view to calculated route
+      if (data.primary && data.primary.path) {
+        fitToBounds(data.primary.path);
+      }
 
       if (store.viewMode && store.viewMode.startsWith("3")) {
         render3D(store.viewMode);
@@ -587,7 +696,7 @@
     }
   }
 
-  // --- 2D RENDERING (SVG + D3-ZOOM + DRAG IN EDITOR) ---
+  // --- 2D RENDERING (SVG + D3-ZOOM + POLYLINE ROUTES) ---
   function render2D() {
     if (!store.graph) return;
     const svgEl = $("campusSvg");
@@ -601,15 +710,20 @@
 
     let html = '<g id="zoomGroup">';
 
-    // 1. Rooms
+    // 1. Rooms with clamped internal labels
     store.graph.rooms
       .filter((r) => r.level === level)
       .forEach((r) => {
-        const rx = r.kind === "bridge" || r.kind === "stair" ? 12 : 8;
+        const rx = r.kind === "bridge" || r.kind === "stair" ? 10 : 6;
         html += `<rect class="r k_${r.kind}" x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" rx="${rx}"/>`;
         if (r.label) {
-          const fs = r.width < 110 ? (level === "c" ? 18 : 14) : level === "c" ? 28 : 20;
-          html += `<text class="r-label" x="${r.x + r.width / 2}" y="${r.y + r.height / 2 + 7}" font-size="${fs}">${r.label}</text>`;
+          const fs = Math.max(9, Math.min(level === "c" ? 16 : 13, r.width / 6.5, r.height / 2.2));
+          const maxChars = Math.max(3, Math.floor((r.width - 8) / (fs * 0.58)));
+          const truncated = r.label.length > maxChars ? r.label.slice(0, maxChars - 1) + "…" : r.label;
+          html += `<text class="r-label" x="${r.x + r.width / 2}" y="${r.y + r.height / 2 + fs / 2.6}" font-size="${fs}" text-anchor="middle">
+            <title>${r.label}</title>
+            ${truncated}
+          </text>`;
         }
       });
 
@@ -621,37 +735,78 @@
       if (na.level !== level || nb.level !== level) return;
 
       html += `<line class="e ${e.type}" data-a="${e.a}" data-b="${e.b}" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}">
-        <title>Cost: ${e.cost.toFixed(1)}m | Type: ${e.type} | Accessible: ${e.accessible}</title>
+        <title>${e.kind || e.type} | Cost: ${(e.time_s || e.cost || 0).toFixed(1)}s</title>
       </line>`;
     });
 
-    // 2b. Active Route Path Segments (Continuous connected stroke)
+    // 2b. Active Route: Solid on active level, ghosted on other levels!
     if (store.routeData && store.routeData.primary && store.routeData.primary.path) {
       const p = store.routeData.primary.path;
       for (let i = 0; i < p.length - 1; i++) {
         const na = store.nodesMap[p[i]];
         const nb = store.nodesMap[p[i + 1]];
-        if (na && nb && na.level === level && nb.level === level) {
+        if (!na || !nb) continue;
+
+        const onCurrentLevel = (na.level === level && nb.level === level);
+        if (onCurrentLevel) {
           html += `<line class="path-line path-animated" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}"/>`;
+        } else if (na.level !== "c" && level !== "c") {
+          // Ghosted overview between interior floors
+          html += `<line class="path-line-ghosted" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}"/>`;
+        }
+
+        // Portal transition chips
+        if ((na.level === level && nb.level !== level) || (nb.level === level && na.level !== level)) {
+          const currentEnd = na.level === level ? na : nb;
+          const otherEnd = na.level === level ? nb : na;
+          const icon = (na.type === "l" || nb.type === "l") ? "🛗" : "🪜";
+          const destName = LEVEL_NAMES[otherEnd.level] || otherEnd.level;
+          html += `
+            <g class="portal-chip-marker" transform="translate(${currentEnd.x}, ${currentEnd.y - 18})">
+              <rect x="-48" y="-11" width="96" height="22" rx="11" fill="var(--c-card)" stroke="var(--c-acc)" stroke-width="1.8" />
+              <text class="portal-chip-text" x="0" y="4">${icon} ${destName}</text>
+            </g>
+          `;
         }
       }
     }
 
-    // 3. Nodes
+    // 3. Nodes: Hide junctions unless in Dev Editor
     store.graph.nodes
       .filter((n) => n.level === level)
       .forEach((n) => {
+        if (n.type === "j" && !store.editor.enabled) return;
+
         let cls = `n ${n.type}`;
         if (n.id === store.fromId) cls += " fr";
         else if (n.id === store.toId) cls += " to";
-        else if (store.routeData && store.routeData.primary && store.routeData.primary.path.includes(n.id) && n.type !== "j") {
+        else if (store.routeData && store.routeData.primary && store.routeData.primary.path.includes(n.id)) {
           cls += " on";
         }
 
-        const r = (n.id === store.fromId || n.id === store.toId) ? 12 : n.type === "j" ? 5 : 9;
+        const isTerminal = (n.id === store.fromId || n.id === store.toId);
+        const r = isTerminal ? 11 : n.type === "j" ? 4 : 8;
+
         html += `<circle class="${cls}" data-id="${n.id}" cx="${n.x}" cy="${n.y}" r="${r}">
           <title>${n.label} (${n.id})</title>
         </circle>`;
+
+        // Terminal markers
+        if (n.id === store.fromId) {
+          html += `
+            <g transform="translate(${n.x}, ${n.y - 20})">
+              <rect x="-24" y="-10" width="48" height="18" rx="9" fill="#059669" />
+              <text x="0" y="3" fill="#ffffff" font-size="10" font-weight="700" text-anchor="middle">START</text>
+            </g>
+          `;
+        } else if (n.id === store.toId) {
+          html += `
+            <g transform="translate(${n.x}, ${n.y - 20})">
+              <rect x="-20" y="-10" width="40" height="18" rx="9" fill="#dc2626" />
+              <text x="0" y="3" fill="#ffffff" font-size="10" font-weight="700" text-anchor="middle">END</text>
+            </g>
+          `;
+        }
       });
 
     html += "</g>";
@@ -673,7 +828,7 @@
     // D3 Zoom & Drag
     if (window.d3) {
       const svgSel = d3.select(svgEl);
-      const zoom = d3
+      store.zoomBehavior = d3
         .zoom()
         .scaleExtent([0.3, 4.5])
         .filter((event) => !store.editor.enabled || event.type !== "mousedown")
@@ -681,10 +836,16 @@
           d3.select("#zoomGroup").attr("transform", event.transform);
           updateMinimap(event.transform, vb);
         });
-      svgSel.call(zoom);
+      svgSel.call(store.zoomBehavior);
 
       if ($("btnZoomReset")) {
-        $("btnZoomReset").onclick = () => svgSel.transition().duration(400).call(zoom.transform, d3.zoomIdentity);
+        $("btnZoomReset").onclick = () => {
+          if (store.routeData && store.routeData.primary && store.routeData.primary.path) {
+            fitToBounds(store.routeData.primary.path);
+          } else {
+            fitToBounds([]);
+          }
+        };
       }
 
       // Drag in editor mode
@@ -703,6 +864,50 @@
         })
       );
     }
+  }
+
+  // --- FIT TO BOUNDS (AUTO-FRAME WITH 10% PADDING) ---
+  function fitToBounds(nodesList, padding = 0.12) {
+    const svgEl = $("campusSvg");
+    if (!svgEl || !window.d3 || !store.zoomBehavior) return;
+
+    const level = store.viewMode === "editor" ? "c" : (store.viewMode || "c");
+    const vb = VIEWBOXES[level] || VIEWBOXES.c;
+
+    let targetNodes = [];
+    if (nodesList && nodesList.length > 0) {
+      targetNodes = nodesList
+        .map((id) => store.nodesMap[id])
+        .filter((n) => n && n.level === level);
+    }
+    if (targetNodes.length === 0) {
+      targetNodes = store.graph.nodes.filter((n) => n.level === level);
+    }
+    if (targetNodes.length === 0) return;
+
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    targetNodes.forEach((n) => {
+      if (n.x < minX) minX = n.x;
+      if (n.x > maxX) maxX = n.x;
+      if (n.y < minY) minY = n.y;
+      if (n.y > maxY) maxY = n.y;
+    });
+
+    const w = Math.max(maxX - minX, 120);
+    const h = Math.max(maxY - minY, 120);
+    const padX = w * padding + 40;
+    const padY = h * padding + 40;
+
+    const bboxW = w + 2 * padX;
+    const bboxH = h + 2 * padY;
+
+    const k = Math.min(vb[2] / bboxW, vb[3] / bboxH, 2.5);
+    const tx = (vb[2] - (minX + maxX) * k) / 2;
+    const ty = (vb[3] - (minY + maxY) * k) / 2;
+
+    const svgSel = d3.select(svgEl);
+    const zoomTransform = d3.zoomIdentity.translate(tx, ty).scale(k);
+    svgSel.transition().duration(500).call(store.zoomBehavior.transform, zoomTransform);
   }
 
   function handleEditorNodeClick(id) {
@@ -750,30 +955,45 @@
     });
   }
 
-  // --- MINIMAP ---
+  // --- MINIMAP (CLEAN SCALED SVG RADAR) ---
   function renderMinimap() {
     const mini = $("campusMinimap");
     if (!mini || !store.graph) return;
     const level = store.viewMode === "editor" ? "c" : store.viewMode;
-    if (level[0] === "3") return;
+    if (level && level.startsWith("3")) return;
 
     const vb = VIEWBOXES[level] || VIEWBOXES.c;
     mini.setAttribute("viewBox", vb.join(" "));
 
     let h = "";
+    // Draw rooms
     store.graph.rooms
       .filter((r) => r.level === level)
       .forEach((r) => {
-        h += `<rect fill="rgba(148, 163, 184, 0.4)" x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}"/>`;
+        h += `<rect fill="rgba(148, 163, 184, 0.4)" rx="3" x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}"/>`;
       });
-    h += `<rect id="minimapViewport" class="minimap-viewport-rect" x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}"/>`;
+
+    // Draw active route on minimap
+    if (store.routeData && store.routeData.primary && store.routeData.primary.path) {
+      const p = store.routeData.primary.path;
+      for (let i = 0; i < p.length - 1; i++) {
+        const na = store.nodesMap[p[i]];
+        const nb = store.nodesMap[p[i + 1]];
+        if (na && nb && na.level === level && nb.level === level) {
+          h += `<line x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}" stroke="#ea580c" stroke-width="12" stroke-linecap="round"/>`;
+        }
+      }
+    }
+
+    // Viewport bounding box
+    h += `<rect id="minimapViewport" class="minimap-viewport-rect" x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}" rx="4"/>`;
     mini.innerHTML = h;
   }
 
   function updateMinimap(transform, vb) {
     const rect = $("minimapViewport");
     if (!rect) return;
-    const k = transform.k;
+    const k = transform.k || 1;
     const w = vb[2] / k;
     const h = vb[3] / k;
     const x = vb[0] - transform.x / k;
@@ -873,28 +1093,67 @@
     });
   }
 
-  // --- DIRECTIONS & COMPARISON TABLE ---
+  // --- TURN-BY-TURN GUIDANCE & BENCHMARK COMPARISON ---
   function updateDirections(data) {
     const list = $("directionsList");
     if (!list) return;
 
-    $("totalDistanceBadge").innerText = `${data.primary.totalCost.toFixed(1)} m`;
-    const mins = Math.ceil(data.estimatedSeconds / 60);
-    $("estimatedTimeBadge").innerText = `~${mins} min walk`;
+    const distM = data.total_m || data.primary?.total_m || 0;
+    const timeS = data.total_s || data.primary?.total_s || data.estimatedSeconds || 0;
+
+    if ($("totalDistanceBadge")) $("totalDistanceBadge").innerText = `${distM.toFixed(1)} m`;
+
+    const mins = Math.floor(timeS / 60);
+    const secs = Math.round(timeS % 60);
+    if ($("estimatedTimeBadge")) {
+      $("estimatedTimeBadge").innerText = mins > 0 ? `~${mins} min ${secs}s` : `~${secs}s walk`;
+    }
 
     let html = "";
-    data.directions.forEach((d) => {
+    const legs = (data.legs && data.legs.length > 0) ? data.legs : (data.directions || []);
+
+    legs.forEach((leg) => {
+      const icon = (leg.type === "stairs" || leg.edge_type === "s") ? "🪜" :
+                   (leg.type === "lift" || leg.edge_type === "l") ? "🛗" :
+                   (leg.type === "door" || leg.edge_type === "d") ? "🚪" :
+                   (leg.type === "bridge" || leg.edge_type === "b") ? "🌉" : "🚶‍♂️";
+
+      const lvName = LEVEL_NAMES[leg.level] || (leg.level === "f1" ? "Floor 1 Walkway" : leg.level === "f0" ? "Basement Labs" : "Campus Grounds");
+      const instr = leg.instructions || leg.instruction || "Proceed along corridor";
+      const lm = leg.landmark ? `📍 Near ${leg.landmark}` : "";
+      const distStr = leg.distance_m ? `${leg.distance_m.toFixed(1)}m` : (leg.cost ? `${leg.cost.toFixed(1)}m` : "");
+      const timeStr = leg.time_s ? `~${Math.round(leg.time_s)}s` : "";
+      const pathAttr = JSON.stringify(leg.path || []).replace(/"/g, '&quot;');
+
       html += `
-        <div class="dir-step-item ${d.edge_type}">
-          <div style="font-weight: 700; color: var(--c-acc);">${d.step}</div>
-          <div style="flex: 1;">
-            <div>${d.instruction}</div>
-            <div style="font-size: 0.74rem; color: var(--c-mut); font-family: 'JetBrains Mono', monospace;">Leg cost: ${d.cost.toFixed(1)}m</div>
+        <div class="turn-leg-card" onclick="CampusNavigator.focusLeg('${leg.level}', ${pathAttr})">
+          <div class="turn-icon-badge">${icon}</div>
+          <div class="turn-content">
+            <div class="turn-title">${instr}</div>
+            <div class="turn-meta">
+              <span class="combobox-item-badge">${lvName}</span>
+              ${distStr ? `<span>${distStr}</span>` : ""}
+              ${timeStr ? `<span>${timeStr}</span>` : ""}
+              ${lm ? `<span style="color: var(--c-acc); font-weight: 500;">${lm}</span>` : ""}
+            </div>
           </div>
         </div>
       `;
     });
     list.innerHTML = html;
+  }
+
+  function focusLeg(level, path) {
+    if (level && level !== store.viewMode && !level.startsWith("3")) {
+      store.viewMode = level;
+      $$(".campus-tab-btn").forEach((b) =>
+        b.classList.toggle("active", (b.dataset.tab || b.dataset.view) === level)
+      );
+      handleViewModeChange();
+    }
+    if (path && path.length > 0) {
+      setTimeout(() => fitToBounds(path, 0.2), 50);
+    }
   }
 
   function updateComparisonTable(comparison) {
@@ -903,9 +1162,19 @@
 
     let h = "";
     comparison.forEach((row) => {
+      const costStr = row.total_s !== undefined ? `${row.total_s.toFixed(1)}s` : `${row.cost.toFixed(1)}s`;
       h += `
         <tr>
           <td style="font-weight: 600;">${row.name}</td>
+          <td style="font-family: 'JetBrains Mono', monospace; color: var(--c-path); font-weight: 600;">${costStr}</td>
+          <td style="font-family: 'JetBrains Mono', monospace;">${row.nodesExpanded}</td>
+          <td style="font-family: 'JetBrains Mono', monospace;">${row.timeMs} ms</td>
+          <td><code style="font-size: 0.74rem;">${row.complexity}</code></td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = h;
+  }
           <td style="font-family: 'JetBrains Mono'; color: var(--c-path); font-weight: 600;">${row.cost.toFixed(1)}m</td>
           <td style="font-family: 'JetBrains Mono';">${row.nodesExpanded}</td>
           <td style="font-family: 'JetBrains Mono';">${row.hops} hops</td>
@@ -1153,6 +1422,8 @@
     clearSelection,
     clearEndpoint,
     setEndpoint,
+    focusLeg,
+    fitToBounds,
     exportGraphJson,
     saveGraphToServer,
     addEditorNode
