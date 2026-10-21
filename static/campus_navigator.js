@@ -340,6 +340,37 @@
     }
   }
 
+  function clearEndpoint(role) {
+    if (role === "from") {
+      store.fromId = "";
+      if ($("fromInput")) $("fromInput").value = "";
+    } else {
+      store.toId = "";
+      if ($("toInput")) $("toInput").value = "";
+    }
+    store.routeData = null;
+    if (!store.fromId && !store.toId) {
+      clearSelection();
+    } else if (store.fromId) {
+      setDynamicStatus("picking-dest", `📍 Start set: <b>${store.nodesMap[store.fromId]?.label}</b>. Click destination on blueprint.`);
+      updateActiveHighlights();
+      render2D();
+    } else {
+      setDynamicStatus("picking-start", `🏁 Destination set: <b>${store.nodesMap[store.toId]?.label}</b>. Click start on blueprint.`);
+      updateActiveHighlights();
+      render2D();
+    }
+  }
+
+  window.toggleRoutePreferences = function () {
+    const drawer = document.getElementById("routePreferencesDrawer");
+    const btn = document.getElementById("btnTogglePrefs");
+    if (!drawer) return;
+    const isHidden = drawer.style.display === "none";
+    drawer.style.display = isHidden ? "block" : "none";
+    if (btn) btn.classList.toggle("active", isHidden);
+  };
+
   function initComboboxes() {
     if ($("btnSwapEndpoints")) {
       $("btnSwapEndpoints").onclick = () => {
@@ -364,7 +395,7 @@
   function initShortcuts() {
     $$(".shortcut-chip").forEach((chip) => {
       chip.onclick = async () => {
-        const type = chip.dataset.type;
+        const type = chip.dataset.shortcut || chip.dataset.type;
         const current = store.fromId || store.toId || "GATE";
 
         try {
@@ -396,7 +427,8 @@
       btn.onclick = () => {
         $$(".campus-tab-btn").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
-        store.viewMode = btn.dataset.view;
+        const mode = btn.dataset.tab || btn.dataset.view || "c";
+        store.viewMode = mode;
         handleViewModeChange();
       };
     });
@@ -438,7 +470,7 @@
   }
 
   function handleViewModeChange() {
-    const is3D = store.viewMode === "3c" || store.viewMode === "3i";
+    const is3D = store.viewMode && store.viewMode.startsWith("3");
     const isEditor = store.viewMode === "editor";
 
     if ($("campusSvgContainer")) $("campusSvgContainer").style.display = is3D ? "none" : "block";
@@ -450,6 +482,14 @@
 
     if (is3D) {
       init3D();
+      if (store.threed.renderer && store.threed.camera) {
+        const container = $("campus3DContainer");
+        const w = container.clientWidth || (container.parentElement ? container.parentElement.clientWidth : 1000) || 1000;
+        const h = 540;
+        store.threed.renderer.setSize(w, h);
+        store.threed.camera.aspect = w / h;
+        store.threed.camera.updateProjectionMatrix();
+      }
       render3D(store.viewMode);
     } else {
       if (store.threed.raf) cancelAnimationFrame(store.threed.raf);
@@ -523,12 +563,13 @@
         fromNode &&
         toNode &&
         fromNode.level === toNode.level &&
-        store.viewMode[0] !== "3" &&
+        store.viewMode &&
+        !store.viewMode.startsWith("3") &&
         store.viewMode !== "editor"
       ) {
         store.viewMode = fromNode.level;
         $$(".campus-tab-btn").forEach((b) =>
-          b.classList.toggle("active", b.dataset.view === store.viewMode)
+          b.classList.toggle("active", (b.dataset.tab || b.dataset.view) === store.viewMode)
         );
       }
 
@@ -538,7 +579,7 @@
       updateComparisonTable(data.comparison);
       setupReplay(data.primary.visitedOrder);
 
-      if (store.viewMode === "3c" || store.viewMode === "3i") {
+      if (store.viewMode && store.viewMode.startsWith("3")) {
         render3D(store.viewMode);
       }
     } catch (e) {
@@ -552,19 +593,11 @@
     const svgEl = $("campusSvg");
     if (!svgEl) return;
 
-    const level = store.viewMode === "editor" ? "c" : store.viewMode;
-    if (level[0] === "3") return;
+    const level = store.viewMode === "editor" ? "c" : (store.viewMode || "c");
+    if (level.startsWith("3")) return;
 
     const vb = VIEWBOXES[level] || VIEWBOXES.c;
     svgEl.setAttribute("viewBox", vb.join(" "));
-
-    const activeEdgesSet = new Set();
-    if (store.routeData && store.routeData.primary) {
-      store.routeData.primary.edges.forEach((e) => {
-        activeEdgesSet.add(`${e.a}-${e.b}`);
-        activeEdgesSet.add(`${e.b}-${e.a}`);
-      });
-    }
 
     let html = '<g id="zoomGroup">';
 
@@ -580,22 +613,29 @@
         }
       });
 
-    // 2. Edges
+    // 2. Base Edges
     store.graph.edges.forEach((e) => {
       const na = store.nodesMap[e.a];
       const nb = store.nodesMap[e.b];
       if (!na || !nb) return;
       if (na.level !== level || nb.level !== level) return;
 
-      const isPath = activeEdgesSet.has(`${e.a}-${e.b}`);
       html += `<line class="e ${e.type}" data-a="${e.a}" data-b="${e.b}" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}">
         <title>Cost: ${e.cost.toFixed(1)}m | Type: ${e.type} | Accessible: ${e.accessible}</title>
       </line>`;
-
-      if (isPath) {
-        html += `<line class="path-line path-animated" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}"/>`;
-      }
     });
+
+    // 2b. Active Route Path Segments (Continuous connected stroke)
+    if (store.routeData && store.routeData.primary && store.routeData.primary.path) {
+      const p = store.routeData.primary.path;
+      for (let i = 0; i < p.length - 1; i++) {
+        const na = store.nodesMap[p[i]];
+        const nb = store.nodesMap[p[i + 1]];
+        if (na && nb && na.level === level && nb.level === level) {
+          html += `<line class="path-line path-animated" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}"/>`;
+        }
+      }
+    }
 
     // 3. Nodes
     store.graph.nodes
@@ -604,11 +644,11 @@
         let cls = `n ${n.type}`;
         if (n.id === store.fromId) cls += " fr";
         else if (n.id === store.toId) cls += " to";
-        else if (store.routeData && store.routeData.primary.path.includes(n.id) && n.type !== "j") {
+        else if (store.routeData && store.routeData.primary && store.routeData.primary.path.includes(n.id) && n.type !== "j") {
           cls += " on";
         }
 
-        const r = n.type === "j" ? 5 : 10;
+        const r = (n.id === store.fromId || n.id === store.toId) ? 12 : n.type === "j" ? 5 : 9;
         html += `<circle class="${cls}" data-id="${n.id}" cx="${n.x}" cy="${n.y}" r="${r}">
           <title>${n.label} (${n.id})</title>
         </circle>`;
@@ -1111,6 +1151,7 @@
     store,
     calculateRoute: calculateCampusRoute,
     clearSelection,
+    clearEndpoint,
     setEndpoint,
     exportGraphJson,
     saveGraphToServer,

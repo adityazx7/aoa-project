@@ -880,167 +880,110 @@
     <!-- 1. VIT CAMPUS BLUEPRINT (2D / 3D) SYSTEM                         -->
     <!-- ================================================================= -->
     <section id="campusBlueprintSection" class="campus-view-wrapper">
-      <!-- Blueprint Level and 3D View Tabs -->
-      <div class="campus-tabs-bar" role="tablist">
-        <button class="campus-tab-btn active" data-tab="c" role="tab" aria-selected="true" aria-controls="campusSvgContainer">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-          Campus Grounds (2D)
-        </button>
-        <button class="campus-tab-btn" data-tab="f1" role="tab" aria-selected="false">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          VIT Floor 1 Walkway (2D)
-        </button>
-        <button class="campus-tab-btn" data-tab="f0" role="tab" aria-selected="false">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-          VIT Basement Labs (2D)
-        </button>
-        <button class="campus-tab-btn" data-tab="3c" role="tab" aria-selected="false">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-          3D Campus Extruded
-        </button>
-        <button class="campus-tab-btn" data-tab="3f" role="tab" aria-selected="false">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><line x1="12" y1="22" x2="12" y2="12"/><polyline points="2 12 12 17 22 12"/></svg>
-          3D Exploded VIT Interior
-        </button>
-        <button class="campus-tab-btn" data-tab="editor" role="tab" aria-selected="false" style="margin-left: auto;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          Dev Graph Editor
-          <span class="campus-tab-badge">PRO</span>
-        </button>
-      </div>
-
-      <!-- Searchable Origin/Destination Comboboxes & Settings Deck -->
-      <div class="campus-control-deck">
-        <div class="campus-deck-row">
-          <!-- Origin Search Combobox -->
-          <div class="combobox-container">
-            <label class="field-label" for="fromInput">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-              Origin Location
-            </label>
-            <div class="combobox-input-wrapper">
-              <input type="text" id="fromInput" class="combobox-input" placeholder="Search origin (e.g. Main Gate, Lab T3, Canteen)..." autocomplete="off" aria-label="Origin Location" />
-              <button type="button" class="combobox-clear" onclick="CampusNavigator.setEndpoint('from', null); document.getElementById('fromInput').value = '';" title="Clear">✕</button>
-            </div>
+      
+      <!-- Minimalist Dynamic Route Console -->
+      <div class="campus-route-console">
+        <div class="route-input-group">
+          <!-- Origin Location Search -->
+          <div class="route-input-box">
+            <span class="route-pin origin" title="Origin Location">📍</span>
+            <input type="text" id="fromInput" class="route-search-input" placeholder="Start location (or click map)..." autocomplete="off" aria-label="Origin Location" />
+            <button type="button" class="route-clear-btn" onclick="CampusNavigator.clearEndpoint('from')" title="Clear Origin">✕</button>
             <div id="fromDropdown" class="combobox-dropdown" role="listbox"></div>
           </div>
 
-          <!-- Swap Button -->
-          <button id="btnSwapEndpoints" class="btn-icon-swap" title="Swap Origin and Destination" aria-label="Swap endpoints">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m7 16-4-4 4-4"/><path d="M3 12h18"/><path d="m17 8 4 4-4 4"/></svg>
+          <!-- Swap Endpoints Button -->
+          <button id="btnSwapEndpoints" class="route-swap-btn" title="Swap Start & Destination" aria-label="Swap endpoints">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m7 16-4-4 4-4"/><path d="M3 12h18"/><path d="m17 8 4 4-4 4"/></svg>
           </button>
 
-          <!-- Target Destination Search Combobox -->
-          <div class="combobox-container">
-            <label class="field-label" for="toInput">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-              Target Destination
-            </label>
-            <div class="combobox-input-wrapper">
-              <input type="text" id="toInput" class="combobox-input" placeholder="Search destination (e.g. Lab T10, Gate 2, Library)..." autocomplete="off" aria-label="Target Destination" />
-              <button type="button" class="combobox-clear" onclick="CampusNavigator.setEndpoint('to', null); document.getElementById('toInput').value = '';" title="Clear">✕</button>
-            </div>
+          <!-- Target Destination Search -->
+          <div class="route-input-box">
+            <span class="route-pin dest" title="Target Destination">🏁</span>
+            <input type="text" id="toInput" class="route-search-input" placeholder="Destination (or click map)..." autocomplete="off" aria-label="Target Destination" />
+            <button type="button" class="route-clear-btn" onclick="CampusNavigator.clearEndpoint('to')" title="Clear Destination">✕</button>
             <div id="toDropdown" class="combobox-dropdown" role="listbox"></div>
           </div>
+        </div>
 
-          <!-- Algorithm Picker -->
-          <div class="field-group" style="min-width: 220px;">
-            <label class="field-label" for="campusAlgoSelect">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-              Algorithm
-            </label>
-            <select id="campusAlgoSelect" class="combobox-input" style="height: 40px; cursor: pointer;">
-              <option value="dijkstra">Dijkstra's (Min-Heap Priority Queue)</option>
-              <option value="astar">A* (Admissible Euclidean Heuristic)</option>
+        <!-- Dynamic Live Feedback Badge -->
+        <div id="dynamicStatusPill" class="dynamic-status-pill idle">
+          <span class="pulse-indicator"></span>
+          <span id="dynamicStatusText">Click any node on the blueprint to set <b>Start</b>.</span>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="route-actions-group">
+          <button id="btnCampusClear" class="route-ghost-btn" title="Reset current route">Reset</button>
+          <button id="btnTogglePrefs" class="route-options-btn" onclick="toggleRoutePreferences()" title="Customize Routing Preferences">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Preferences
+            <span class="route-chevron" id="prefsChevron">▼</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Collapsible Preferences Drawer -->
+      <div id="routePreferencesDrawer" class="route-prefs-drawer" style="display: none;">
+        <div class="prefs-grid">
+          <div class="pref-col">
+            <span class="pref-title">Algorithm Engine</span>
+            <select id="campusAlgoSelect" class="pref-select">
+              <option value="dijkstra" selected>Dijkstra's (Optimal Min-Heap Queue)</option>
+              <option value="astar">A* Search (Euclidean Heuristic)</option>
               <option value="bidirectional">Bidirectional Dijkstra (Dual Frontier)</option>
               <option value="bfs">Breadth-First Search (Fewest Hops)</option>
             </select>
           </div>
-
-          <!-- Compute / Clear Actions -->
-          <div style="display: flex; gap: 8px; align-items: flex-end;">
-            <button id="btnCampusRun" class="btn-campus-go">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              Find Path
-            </button>
-            <button id="btnCampusClear" class="btn-campus-clear" title="Clear Path & Selection">
-              Reset
-            </button>
+          <div class="pref-col">
+            <span class="pref-title">Routing Constraints</span>
+            <div class="pref-checks">
+              <label class="pref-check"><input type="checkbox" id="chkAvoidStairs" /> Avoid Stairs (Prefer Elevators)</label>
+              <label class="pref-check"><input type="checkbox" id="chkAccessibleOnly" /> Wheelchair Accessible Only</label>
+              <label class="pref-check"><input type="checkbox" id="chkPreferIndoor" /> Prefer Indoor Corridors</label>
+              <label class="pref-check"><input type="checkbox" id="chkAlternatives" /> Show 3 Alternative Detours (Yen's)</label>
+            </div>
           </div>
-        </div>
-
-        <!-- Quick Shortcuts & Routing Options -->
-        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 10px; border-top: 1px solid var(--c-border); padding-top: 10px;">
-          <!-- Shortcuts from origin -->
-          <div class="shortcuts-bar">
-            <span style="font-size: 0.72rem; font-weight: 600; color: var(--c-mut); text-transform: uppercase;">Shortcuts:</span>
-            <button class="shortcut-chip" data-shortcut="entrance">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-              Nearest Entrance
-            </button>
-            <button class="shortcut-chip" data-shortcut="stairs">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 20 8 20 8 16 12 16 12 12 16 12 16 8 20 8 20 4"/></svg>
-              Nearest Stairs
-            </button>
-            <button class="shortcut-chip" data-shortcut="lift">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="7 10 10 7 13 10"/><polyline points="7 14 10 17 13 14"/></svg>
-              Nearest Lift
-            </button>
-          </div>
-
-          <!-- Constraints & Flags -->
-          <div class="options-bar">
-            <label class="option-checkbox-label">
-              <input type="checkbox" id="chkAvoidStairs" />
-              <span>Avoid Stairs (4x Penalty)</span>
-            </label>
-            <label class="option-checkbox-label">
-              <input type="checkbox" id="chkAccessibleOnly" />
-              <span>Wheelchair Accessible Only</span>
-            </label>
-            <label class="option-checkbox-label">
-              <input type="checkbox" id="chkPreferIndoor" />
-              <span>Prefer Indoor Paths</span>
-            </label>
-            <label class="option-checkbox-label">
-              <input type="checkbox" id="chkAlternatives" />
-              <span>Show 3 Alternatives (Yen's Algo)</span>
-            </label>
+          <div class="pref-col">
+            <span class="pref-title">Target Shortcuts</span>
+            <div class="pref-chips">
+              <button class="shortcut-chip" data-shortcut="entrance">🚪 Nearest Entrance</button>
+              <button class="shortcut-chip" data-shortcut="stairs">🪜 Nearest Stairs</button>
+              <button class="shortcut-chip" data-shortcut="lift">🛗 Nearest Lift</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Dynamic Interactive Point-to-Point Mode Status Bar -->
-      <div id="dynamicRoutingStatusBar" class="dynamic-routing-bar">
-        <div class="dynamic-status-pill idle" id="dynamicStatusPill">
-          <span class="pulse-indicator"></span>
-          <span id="dynamicStatusText">Interactive Point-to-Point Mode: Click any node on the blueprint to set <b>Start Point</b>.</span>
-        </div>
-        <div class="dynamic-quick-actions">
-          <button id="btnSetStartMode" class="dynamic-mini-btn" title="Next click on map sets Start point">
-            📍 Pick Start
-          </button>
-          <button id="btnSetDestMode" class="dynamic-mini-btn" title="Next click on map sets Destination point">
-            🏁 Pick Destination
-          </button>
-          <button id="btnAutoRouteMode" class="dynamic-mini-btn active-state" title="Automatically applies algorithm upon selecting both points">
-            ⚡ Auto-Apply Algorithm: ON
-          </button>
-        </div>
-      </div>
-
-      <!-- Stage Card: 2D SVG & 3D WebGL Canvas with Minimap and Controls -->
+      <!-- Stage Card: 2D Blueprint & 3D WebGL Canvas -->
       <div class="campus-stage-card">
         <div class="campus-stage-header">
-          <div class="stage-title">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-            <span>Interactive Blueprint Canvas</span>
-            <span id="canvasLevelBadge" style="font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--c-room); color: var(--c-mut); border: 1px solid var(--c-border);">Campus Grounds</span>
+          <!-- Segmented Floor & View Control -->
+          <div class="campus-segmented-bar" role="tablist">
+            <button class="campus-tab-btn active" data-tab="c" role="tab" title="Campus Outdoors">
+              🗺️ Campus Grounds
+            </button>
+            <button class="campus-tab-btn" data-tab="f1" role="tab" title="Floor 1 Walkway">
+              🏛️ Floor 1 Walkway
+            </button>
+            <button class="campus-tab-btn" data-tab="f0" role="tab" title="Basement Labs">
+              🔬 Basement Labs
+            </button>
+            <button class="campus-tab-btn" data-tab="3c" role="tab" title="3D Extruded Campus">
+              🌐 3D Campus
+            </button>
+            <button class="campus-tab-btn" data-tab="3f" role="tab" title="3D Exploded Floor Slabs">
+              🏢 3D Exploded
+            </button>
           </div>
+
           <div class="stage-controls">
-            <button id="btnZoomReset" class="stage-btn" title="Reset Pan & Zoom (60fps D3-Zoom)">
+            <button id="btnZoomReset" class="stage-btn" title="Center View">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
               Center View
+            </button>
+            <button class="stage-btn campus-tab-btn" data-tab="editor" title="Dev Graph Editor">
+              ✏️ Dev Editor
             </button>
           </div>
         </div>
@@ -1054,7 +997,7 @@
           <!-- 3D Three.js Container -->
           <div id="campus3DContainer" style="display: none; width: 100%; height: 100%; min-height: 520px;">
             <div class="threed-controls-overlay">
-              <span>Explode Floors:</span>
+              <span>Explode Floor Slabs:</span>
               <input type="range" id="threedExplodeSlider" min="0" max="30" value="12" style="width: 110px;" />
               <span id="explodeValBadge" style="font-weight: 700; color: var(--c-acc);">12m</span>
             </div>
@@ -1062,12 +1005,12 @@
 
           <!-- Minimap Box (Top-Right) -->
           <div id="campusMinimapBox" class="campus-minimap-box" title="Global Overview Minimap">
-            <svg id="campusMinimap" width="180" height="110" viewBox="0 0 1650 930"></svg>
+            <svg id="campusMinimap" width="160" height="95" viewBox="0 0 1650 930"></svg>
             <div id="minimapViewport" class="minimap-viewport-rect"></div>
           </div>
 
           <!-- Search Frontier Replay Bar -->
-          <div id="frontierStepperBar" class="frontier-stepper-bar">
+          <div id="frontierStepperBar" class="frontier-stepper-bar" style="display: none;">
             <button id="btnStepBack" class="stage-btn" title="Step Back">⏮</button>
             <button id="btnPlayPause" class="stage-btn" style="min-width: 32px;" title="Play/Pause">▶</button>
             <button id="btnStepForward" class="stage-btn" title="Step Forward">⏭</button>
@@ -1095,56 +1038,56 @@
           <div style="display: flex; gap: 8px;">
             <button class="stage-btn" onclick="CampusNavigator.addEditorNode()">+ Add Node</button>
             <button class="stage-btn" onclick="CampusNavigator.exportGraphJson()">Export JSON</button>
-            <button class="btn-campus-go" style="padding: 6px 12px; font-size: 0.78rem;" onclick="CampusNavigator.saveGraphToServer()">Validate & Save to Server</button>
+            <button class="stage-btn" style="background: var(--c-acc); color: white; border-color: var(--c-acc);" onclick="CampusNavigator.saveGraphToServer()">Save to Server</button>
           </div>
         </div>
       </div>
 
-      <!-- Deep Analysis & Live Benchmark Comparison -->
-      <div class="comparison-grid">
-        <!-- Step-by-Step Turn Directions -->
+      <!-- Journey Results & Live Benchmarks -->
+      <div class="journey-results-deck">
+        <!-- Turn-by-Turn Directions -->
         <div class="campus-card-box">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--c-border); padding-bottom: 8px;">
-            <h3 style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-              Turn-by-Turn Guidance
-            </h3>
-            <div style="display: flex; gap: 6px;">
-              <span id="totalDistanceBadge" class="tag-badge emerald">0.0 m</span>
-              <span id="estimatedTimeBadge" class="tag-badge blue">~0 min walk</span>
+          <div class="journey-card-header">
+            <div class="journey-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              <span>Optimal Route Itinerary</span>
+            </div>
+            <div class="journey-badges">
+              <span id="totalDistanceBadge" class="journey-pill emerald">0.0 m</span>
+              <span id="estimatedTimeBadge" class="journey-pill blue">~0 min walk</span>
             </div>
           </div>
           <div id="directionsList" class="directions-step-list">
-            <div style="padding: 24px; text-align: center; color: var(--c-mut); font-size: 0.82rem;">
-              Select origin and target destination on the blueprint or dropdowns to view walking navigation.
+            <div class="directions-empty-state">
+              Click any node on the blueprint to set <b>Start</b>, then click destination to calculate the optimal path.
             </div>
           </div>
         </div>
 
         <!-- Live Multi-Algorithm Benchmark Comparison Table -->
         <div class="campus-card-box">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--c-border); padding-bottom: 8px;">
-            <h3 style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-              Algorithm Benchmark Parity
-            </h3>
-            <span style="font-size: 0.72rem; color: var(--c-mut); font-family: 'JetBrains Mono', monospace;">Budget: &lt; 5.0 ms</span>
+          <div class="journey-card-header">
+            <div class="journey-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <span>Algorithm Comparison & Benchmarks (AOA)</span>
+            </div>
+            <span class="complexity-budget">Budget: &lt; 5.0 ms</span>
           </div>
-          <div style="overflow-x: auto; margin-top: 6px;">
+          <div style="overflow-x: auto; margin-top: 8px;">
             <table class="data-table" aria-label="Algorithm Benchmark Comparison">
               <thead>
                 <tr>
                   <th>Algorithm</th>
                   <th>Path Cost</th>
                   <th>Nodes Expanded</th>
-                  <th>Time (ms)</th>
-                  <th>Complexity</th>
+                  <th>Execution Time</th>
+                  <th>Theoretical Complexity</th>
                 </tr>
               </thead>
               <tbody id="comparisonTableBody">
                 <tr>
                   <td colspan="5" style="text-align: center; color: var(--c-mut); padding: 20px;">
-                    Execute a campus route search to compare Dijkstra, A*, Bidirectional Dijkstra, and BFS.
+                    Select two points on the blueprint to run side-by-side benchmark comparison.
                   </td>
                 </tr>
               </tbody>
