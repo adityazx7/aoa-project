@@ -39,8 +39,8 @@
       controls: null,
       raf: null,
       explodeDist: 12.0,
-      raycaster: new THREE.Raycaster(),
-      mouse: new THREE.Vector2(),
+      raycaster: null,
+      mouse: null,
       clickableNodes: [],
       walkerMesh: null,
       walkerCurve: null,
@@ -68,14 +68,20 @@
   const $ = (id) => document.getElementById(id);
   const $$ = (sel) => document.querySelectorAll(sel);
 
-  window.addEventListener("DOMContentLoaded", () => {
+  function initApp() {
     initTabs();
     initComboboxes();
     initDynamicSelectionControls();
     initShortcuts();
     initReplayControls();
     fetchCampusGraph();
-  });
+  }
+
+  if (document.readyState === "loading") {
+    window.addEventListener("DOMContentLoaded", initApp);
+  } else {
+    initApp();
+  }
 
   async function fetchCampusGraph() {
     try {
@@ -1208,16 +1214,6 @@
     });
     tbody.innerHTML = h;
   }
-          <td style="font-family: 'JetBrains Mono'; color: var(--c-path); font-weight: 600;">${row.cost.toFixed(1)}m</td>
-          <td style="font-family: 'JetBrains Mono';">${row.nodesExpanded}</td>
-          <td style="font-family: 'JetBrains Mono';">${row.hops} hops</td>
-          <td style="font-family: 'JetBrains Mono';">${row.timeMs} ms</td>
-          <td><code style="font-size: 0.74rem;">${row.complexity}</code></td>
-        </tr>
-      `;
-    });
-    tbody.innerHTML = h;
-  }
 
   // --- THREE.JS 3D ENGINE ---
   function init3D() {
@@ -1256,7 +1252,13 @@
     store.threed.camera = camera;
     store.threed.controls = controls;
 
+    if (typeof THREE !== "undefined") {
+      if (!store.threed.raycaster) store.threed.raycaster = new THREE.Raycaster();
+      if (!store.threed.mouse) store.threed.mouse = new THREE.Vector2();
+    }
+
     ren.domElement.addEventListener("click", (e) => {
+      if (!store.threed.raycaster || !store.threed.mouse) return;
       const rect = ren.domElement.getBoundingClientRect();
       store.threed.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       store.threed.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
