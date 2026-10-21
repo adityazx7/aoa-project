@@ -188,9 +188,42 @@
       }
     });
 
+    let activeIndex = -1;
+
+    input.addEventListener("keydown", (e) => {
+      const items = dropdown.querySelectorAll(".combobox-item");
+      if (dropdown.style.display !== "block" || items.length === 0) {
+        if (e.key === "ArrowDown") {
+          input.dispatchEvent(new Event("focus"));
+        }
+        return;
+      }
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeIndex = (activeIndex + 1) % items.length;
+        items.forEach((it, idx) => it.classList.toggle("focused", idx === activeIndex));
+        items[activeIndex]?.scrollIntoView({ block: "nearest" });
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeIndex = (activeIndex - 1 + items.length) % items.length;
+        items.forEach((it, idx) => it.classList.toggle("focused", idx === activeIndex));
+        items[activeIndex]?.scrollIntoView({ block: "nearest" });
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeIndex >= 0 && items[activeIndex]) {
+          items[activeIndex].click();
+        }
+      } else if (e.key === "Escape") {
+        dropdown.style.display = "none";
+        activeIndex = -1;
+      }
+    });
+
     document.addEventListener("click", (e) => {
       if (!dropdown.contains(e.target) && e.target !== input) {
         dropdown.style.display = "none";
+        activeIndex = -1;
       }
     });
   }
