@@ -1201,19 +1201,21 @@
 
     const scene = new THREE.Scene();
     const isDark = document.documentElement.dataset.theme === "dark" || matchMedia("(prefers-color-scheme: dark)").matches;
-    scene.background = new THREE.Color(isDark ? 0x0f172a : 0xf8fafc);
+    scene.background = new THREE.Color(isDark ? 0x0f172a : 0xf1f5f9);
 
     const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
-    camera.position.set(40, 65, 75);
+    camera.position.set(45, 65, 80);
 
     const controls = new THREE.OrbitControls(camera, ren.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
+    controls.target.set(35, 5, 25);
 
-    const amb = new THREE.AmbientLight(0xffffff, 0.75);
-    scene.add(amb);
-    const dir = new THREE.DirectionalLight(0xffffff, 0.65);
-    dir.position.set(50, 100, 30);
+    // Soft Hemisphere + Directional lighting
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x334155, 0.75);
+    scene.add(hemi);
+    const dir = new THREE.DirectionalLight(0xffffff, 0.7);
+    dir.position.set(60, 120, 50);
     scene.add(dir);
 
     store.threed.renderer = ren;
@@ -1243,10 +1245,58 @@
     }
   }
 
+  function makeTextSprite(message, bgColor = "rgba(15, 23, 42, 0.85)") {
+    const canvas = document.createElement("canvas");
+    canvas.width = 256;
+    canvas.height = 64;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    ctx.fillStyle = bgColor;
+    if (ctx.roundRect) ctx.roundRect(8, 8, 240, 48, 10);
+    else ctx.fillRect(8, 8, 240, 48);
+    ctx.fill();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 18px -apple-system, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(message, 128, 32);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false });
+    const sprite = new THREE.Sprite(spriteMat);
+    sprite.scale.set(6.5, 1.6, 1);
+    return sprite;
+  }
+
+  function setCameraPreset(preset) {
+    if (!store.threed.camera || !store.threed.controls) return;
+    const cam = store.threed.camera;
+    const ctrl = store.threed.controls;
+
+    if (preset === "top") {
+      cam.position.set(35, 120, 25);
+      ctrl.target.set(35, 0, 25);
+    } else if (preset === "route" && store.threed.routeCenter) {
+      cam.position.set(store.threed.routeCenter.x + 20, store.threed.routeCenter.y + 35, store.threed.routeCenter.z + 40);
+      ctrl.target.copy(store.threed.routeCenter);
+    } else {
+      // Overview
+      cam.position.set(45, 65, 80);
+      ctrl.target.set(35, 5, 25);
+    }
+    ctrl.update();
+  }
+
   function render3D(mode) {
     const sc = store.threed.scene;
     if (!sc) return;
 
+    const isDark = document.documentElement.dataset.theme === "dark" || matchMedia("(prefers-color-scheme: dark)").matches;
+    sc.background = new THREE.Color(isDark ? 0x0f172a : 0xf1f5f9);
+
+    // Clean up previous meshes (keep lights at index 0 and 1)
     while (sc.children.length > 2) {
       const obj = sc.children[sc.children.length - 1];
       if (obj.geometry) obj.geometry.dispose();
@@ -1263,36 +1313,82 @@
     const S = isCampus ? 1 / 20 : 1 / 25;
     const baseElevation = { c: 0, f0: 0, f1: store.threed.explodeDist };
 
+    // 1. Ground Plane
+    const groundGeo = new THREE.PlaneGeometry(240, 240);
+    const groundMat = new THREE.MeshLambertMaterial({
+      color: isDark ? 0x1e293b : 0xe2e8f0,
+      depthWrite: false
+    });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -0.15;
+    sc.add(ground);
+
     const colors = {
       bld: 0x93c5fd,
       room: 0xbfdbfe,
       lab: 0x6ee7b7,
       stair: 0xf59e0b,
-      bridge: 0xc4b5fd,
-      field: 0x86efac,
+      bridge: 0x94a3b8,
+      field: 0x4ade80,
       park: 0xcbd5e1,
       floor: 0xe2e8f0,
       road: 0xe2e8f0
     };
 
-    // 1. Rooms & building slabs
+    // 2. Extruded Rooms & Atrium architecture modeled from photos
     store.graph.rooms
       .filter((r) => levels.includes(r.level))
       .forEach((r) => {
         const b = baseElevation[r.level] || 0;
         let h = 0.4;
+        let matColor = colors[r.kind] || 0xcccccc;
+        let isTransparent = false;
+        let opacityVal = 1.0;
+
         if (isCampus) {
-          if (r.kind === "bld") h = r.label === "VIT" ? 14 : r.label === "M block" ? 12 : r.label === "VP" ? 11 : 8;
+          if (r.kind === "bld") {
+            h = r.label === "VIT" ? 16 : r.label === "M block" ? 13 : r.label === "VP" ? 11 : 8;
+            matColor = 0x60a5fa;
+          } else if (r.kind === "field") {
+            h = 0.1;
+            matColor = 0x22c55e;
+          } else if (r.kind === "park") {
+            h = 0.15;
+            matColor = 0x94a3b8;
+          }
         } else {
-          h = { room: 4.5, bld: 4.5, lab: 4.5, stair: 1.5, bridge: 0.8, floor: 0.3 }[r.kind] || 0.4;
+          // Interior Mode: Cantilevered colored volumes modeled from photos
+          if (r.label.includes("A1") || r.label.includes("Seminar")) {
+            matColor = 0xf59e0b; // Yellow volume
+            h = 5.0;
+          } else if (r.label.includes("B1") || r.label.includes("Bio")) {
+            matColor = 0xf97316; // Orange volume
+            h = 5.0;
+          } else if (r.kind === "lab") {
+            matColor = 0x0ea5e9; // Blue glass box
+            isTransparent = true;
+            opacityVal = 0.65;
+            h = 4.5;
+          } else if (r.kind === "bridge") {
+            matColor = 0x64748b; // Steel bridge
+            h = 0.6;
+          } else if (r.kind === "stair") {
+            matColor = 0xd97706; // Timber stair
+            h = 2.0;
+          } else {
+            h = 4.5;
+            isTransparent = true;
+            opacityVal = 0.45;
+          }
         }
 
         const geo = new THREE.BoxGeometry(r.width * S, h, r.height * S);
         const mat = new THREE.MeshLambertMaterial({
-          color: colors[r.kind] || 0xcccccc,
-          transparent: !isCampus && r.kind !== "floor",
-          opacity: !isCampus && r.kind !== "floor" ? 0.45 : 1.0,
-          depthWrite: isCampus || r.kind === "floor"
+          color: matColor,
+          transparent: isTransparent,
+          opacity: opacityVal,
+          depthWrite: !isTransparent
         });
 
         const mesh = new THREE.Mesh(geo, mat);
@@ -1300,8 +1396,27 @@
         sc.add(mesh);
       });
 
-    // 2. Nodes
-    const pos = (n) => new THREE.Vector3(n.x * S, (baseElevation[n.level] || 0) + (isCampus ? 0.9 : 0.7), n.y * S);
+    // 3. Roof Truss Lines hint over the Atrium in interior mode
+    if (!isCampus) {
+      const trussGeo = new THREE.BufferGeometry();
+      const trussPts = [];
+      const f1Y = baseElevation.f1 + 7.0;
+      for (let x = 15; x <= 55; x += 8) {
+        trussPts.push(new THREE.Vector3(x, f1Y, 10));
+        trussPts.push(new THREE.Vector3(x, f1Y, 35));
+      }
+      for (let z = 10; z <= 35; z += 6) {
+        trussPts.push(new THREE.Vector3(15, f1Y, z));
+        trussPts.push(new THREE.Vector3(55, f1Y, z));
+      }
+      trussGeo.setFromPoints(trussPts);
+      const trussMat = new THREE.LineBasicMaterial({ color: isDark ? 0x475569 : 0x94a3b8, transparent: true, opacity: 0.5 });
+      const trussMesh = new THREE.LineSegments(trussGeo, trussMat);
+      sc.add(trussMesh);
+    }
+
+    // 4. Nodes and Billboard Labels
+    const pos = (n) => new THREE.Vector3(n.x * S, (baseElevation[n.level] || 0) + (isCampus ? 1.0 : 0.8), n.y * S);
 
     store.graph.nodes
       .filter((n) => levels.includes(n.level) && n.type !== "j")
@@ -1313,18 +1428,29 @@
         else if (n.type === "s") col = 0xf59e0b;
         else if (n.type === "l") col = 0x8b5cf6;
 
+        const isTerminal = (n.id === store.fromId || n.id === store.toId);
         const sphere = new THREE.Mesh(
-          new THREE.SphereGeometry(n.id === store.fromId || n.id === store.toId ? 0.9 : 0.5, 12, 10),
-          new THREE.MeshBasicMaterial({ color: col })
+          new THREE.SphereGeometry(isTerminal ? 1.0 : 0.55, 14, 12),
+          new THREE.MeshLambertMaterial({ color: col })
         );
         sphere.position.copy(pos(n));
         sphere.userData = { nodeId: n.id };
         sc.add(sphere);
         store.threed.clickableNodes.push(sphere);
+
+        // Billboard Labels for terminal or landmark nodes
+        if (isTerminal || n.type === "e" || n.landmark) {
+          const lblText = isTerminal ? (n.id === store.fromId ? "🟢 START" : "🏁 END") : n.label;
+          const sprite = makeTextSprite(lblText, isTerminal ? (n.id === store.fromId ? "rgba(5, 150, 105, 0.9)" : "rgba(220, 38, 38, 0.9)") : "rgba(15, 23, 42, 0.75)");
+          if (sprite) {
+            sprite.position.copy(pos(n)).add(new THREE.Vector3(0, 2.2, 0));
+            sc.add(sprite);
+          }
+        }
       });
 
-    // 3. 3D Route Tube & Walking Marker
-    if (store.routeData && store.routeData.primary) {
+    // 5. 3D Route Ribbon & Moving Marker
+    if (store.routeData && store.routeData.primary && store.routeData.primary.path) {
       const pts = [];
       store.routeData.primary.path.forEach((id) => {
         const n = store.nodesMap[id];
@@ -1335,13 +1461,14 @@
         const curve = new THREE.CatmullRomCurve3(pts);
         store.threed.walkerCurve = curve;
         const tube = new THREE.Mesh(
-          new THREE.TubeGeometry(curve, pts.length * 6, 0.35, 8, false),
-          new THREE.MeshBasicMaterial({ color: 0xea580c })
+          new THREE.TubeGeometry(curve, pts.length * 8, 0.45, 8, false),
+          new THREE.MeshLambertMaterial({ color: 0xea580c })
         );
         sc.add(tube);
 
+        // Animated walker marker
         const walker = new THREE.Mesh(
-          new THREE.SphereGeometry(0.7, 16, 12),
+          new THREE.SphereGeometry(0.85, 16, 14),
           new THREE.MeshBasicMaterial({ color: 0xfacc15 })
         );
         sc.add(walker);
@@ -1349,6 +1476,7 @@
 
         const box = new THREE.Box3().setFromPoints(pts);
         const center = box.getCenter(new THREE.Vector3());
+        store.threed.routeCenter = center;
         store.threed.controls.target.copy(center);
       }
     }
@@ -1424,6 +1552,7 @@
     setEndpoint,
     focusLeg,
     fitToBounds,
+    setCameraPreset,
     exportGraphJson,
     saveGraphToServer,
     addEditorNode
