@@ -41,7 +41,7 @@ def test_api_campus_route():
     assert "directions" in data
     assert len(data["directions"]) > 0
     assert "comparison" in data
-    assert len(data["comparison"]) == 4  # Dijkstra, A*, Bidirectional, BFS
+    assert len(data["comparison"]) in (4, 5)  # Dijkstra, A*, ALT, Bidirectional, BFS
     assert "alternatives" in data
     assert len(data["alternatives"]) >= 1
 

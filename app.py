@@ -682,6 +682,8 @@ async def compute_campus_route(payload: CampusRouteRequest):
     def _run_search():
         if algo in ("astar", "a*"):
             primary = campus_router_instance.astar(payload.source, payload.destination, opt)
+        elif algo == "alt":
+            primary = campus_router_instance.alt(payload.source, payload.destination, opt)
         elif algo == "bfs":
             primary = campus_router_instance.bfs(payload.source, payload.destination, opt)
         elif algo in ("bidirectional", "bidi", "bidirectionaldijkstra"):
@@ -692,22 +694,26 @@ async def compute_campus_route(payload: CampusRouteRequest):
         # Comparative benchmark across algorithms
         r_dijk = campus_router_instance.dijkstra(payload.source, payload.destination, opt)
         r_astar = campus_router_instance.astar(payload.source, payload.destination, opt)
-        r_bfs = campus_router_instance.bfs(payload.source, payload.destination, opt)
+        r_alt = campus_router_instance.alt(payload.source, payload.destination, opt)
         r_bidi = campus_router_instance.bidirectional_dijkstra(payload.source, payload.destination, opt)
+        r_bfs = campus_router_instance.bfs(payload.source, payload.destination, opt)
 
         comparison = []
         for name, r, compl in [
             ("Dijkstra (Binary Heap)", r_dijk, "O((V + E) log V)"),
-            ("A* (Admissible Heuristic)", r_astar, "O(E) to O((V + E) log V)"),
+            ("A* (Admissible Euclidean)", r_astar, "O(E) to O((V + E) log V)"),
+            ("ALT (Landmarks + Triangle Ineq)", r_alt, "O((V + E) log V)"),
             ("Bidirectional Dijkstra", r_bidi, "2 x O((V + E) log V)"),
             ("Breadth-First Search (BFS)", r_bfs, "O(V + E)")
         ]:
             if r:
                 comparison.append({
                     "name": name,
-                    "cost": round(r.total_cost, 2),
-                    "nodesExpanded": r.nodes_expanded,
-                    "timeMs": round(r.time_ms, 3),
+                    "cost": round(r.total_s, 2),
+                    "total_s": round(r.total_s, 2),
+                    "total_m": round(r.total_m, 1),
+                    "nodesExpanded": r.expanded,
+                    "timeMs": round(r.ms, 3),
                     "complexity": compl,
                     "hops": len(r.path) - 1
                 })
@@ -715,7 +721,7 @@ async def compute_campus_route(payload: CampusRouteRequest):
         alts = []
         if payload.k_alternatives > 1:
             alts = campus_router_instance.k_shortest_paths(
-                payload.source, payload.destination, k=payload.k_alternatives, options=opt
+                payload.source, payload.destination, k=payload.k_alternatives, profile=opt
             )
 
         return primary, comparison, alts
@@ -728,20 +734,21 @@ async def compute_campus_route(payload: CampusRouteRequest):
             detail="No route exists between the selected locations under current constraints."
         )
 
-    directions = campus_router_instance.generate_directions(primary_res.edges)
-
-    # Estimated walk duration in seconds (1.2 m/s walk speed + 10s stair/lift transition)
-    seconds = primary_res.total_cost / 1.2
-    for e in primary_res.edges:
-        if e["type"] in ("s", "l"):
-            seconds += 10.0
+    # Use structured cross-level legs for directions
+    directions = [
+        {"action": leg.type, "text": leg.instructions, "distance": f"{leg.distance_m}m", "time": f"{round(leg.time_s)}s"}
+        for leg in primary_res.legs
+    ]
 
     return {
         "primary": primary_res.to_dict(),
+        "legs": [leg.to_dict() for leg in primary_res.legs],
         "directions": directions,
         "comparison": comparison_data,
         "alternatives": [a.to_dict() for a in alternatives_res],
-        "estimatedSeconds": round(seconds),
+        "total_s": round(primary_res.total_s, 1),
+        "total_m": round(primary_res.total_m, 1),
+        "estimatedSeconds": round(primary_res.total_s),
         "sourceLabel": campus_router_instance.nodes_map[payload.source].label,
         "destinationLabel": campus_router_instance.nodes_map[payload.destination].label
     }
@@ -772,28 +779,26 @@ async def get_campus_shortcuts(node_id: str):
         raise HTTPException(status_code=400, detail="Node not found.")
 
     def _find():
-        entrances = [n.id for n in campus_graph_instance.nodes if n.type == "e" and n.id != node_id]
-        stairs = [n.id for n in campus_graph_instance.nodes if n.type == "s" and n.id != node_id]
-        lifts = [n.id for n in campus_graph_instance.nodes if n.type == "l" and n.id != node_id]
+        res_e = campus_router_instance.nearest_x(node_id, "e")
+        res_s = campus_router_instance.nearest_x(node_id, "s")
+        res_l = campus_router_instance.nearest_x(node_id, "l")
 
-        def _nearest(candidates):
-            best = None
-            best_c = float("inf")
-            for c in candidates:
-                r = campus_router_instance.dijkstra(node_id, c)
-                if r and r.total_cost < best_c:
-                    best_c = r.total_cost
-                    best = {
-                        "id": c,
-                        "label": campus_router_instance.nodes_map[c].label,
-                        "cost": round(r.total_cost, 1)
-                    }
-            return best
+        def _fmt(r):
+            if not r or not r.path or len(r.path) < 2:
+                return None
+            target = r.path[-1]
+            return {
+                "id": target,
+                "label": campus_router_instance.nodes_map[target].label,
+                "cost": round(r.total_s, 1),
+                "distance_m": round(r.total_m, 1),
+                "time_s": round(r.total_s, 1)
+            }
 
         return {
-            "nearest_entrance": _nearest(entrances),
-            "nearest_stairs": _nearest(stairs),
-            "nearest_lift": _nearest(lifts)
+            "nearest_entrance": _fmt(res_e),
+            "nearest_stairs": _fmt(res_s),
+            "nearest_lift": _fmt(res_l)
         }
 
     return await run_in_threadpool(_find)

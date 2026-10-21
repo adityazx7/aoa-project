@@ -16,17 +16,23 @@ class CampusNode(BaseModel):
     id: str = Field(..., description="Unique node identifier")
     label: str = Field(..., description="Display label for location")
     level: str = Field(..., description="Level identifier ('c'=campus, 'f1'=floor 1, 'f0'=basement)")
-    x: float = Field(..., description="X coordinate in px")
-    y: float = Field(..., description="Y coordinate in px")
+    x: float = Field(..., description="X coordinate in px / metres")
+    y: float = Field(..., description="Y coordinate in px / metres")
+    z: float = Field(0.0, description="Z elevation in metres (c: 0, f1: 0, f0: -4.5)")
     type: str = Field("p", description="Node category: 'e'=entrance, 's'=stairs, 'l'=lift, 'j'=junction, 'p'=point of interest")
+    landmark: Optional[str] = Field(None, description="Associated architectural landmark")
+    kind: Optional[str] = Field(None, description="Semantic classification")
 
 class CampusEdge(BaseModel):
     a: str = Field(..., description="Source node ID")
     b: str = Field(..., description="Target node ID")
     type: str = Field("w", description="Edge type: 'w'=walk, 'b'=bridge, 's'=stairs, 'l'=lift, 'd'=door")
-    cost: float = Field(..., ge=0.0, description="Precomputed travel cost")
+    cost: float = Field(0.0, ge=0.0, description="Precomputed travel cost (seconds)")
+    distance_m: Optional[float] = Field(None, description="Physical distance in metres")
+    time_s: Optional[float] = Field(None, description="Traversal duration in seconds")
     accessible: bool = Field(True, description="Wheelchair / accessibility friendly (false for stairs)")
     outdoor: bool = Field(False, description="Whether this edge is situated outdoors")
+    path: Optional[List[List[float]]] = Field(None, description="Polyline corridor waypoints [[x, y], ...]")
 
 class CampusRoom(BaseModel):
     level: str = Field(..., description="Floor/level ('c', 'f0', 'f1')")
