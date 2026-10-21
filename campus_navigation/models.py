@@ -19,20 +19,25 @@ class CampusNode(BaseModel):
     x: float = Field(..., description="X coordinate in px / metres")
     y: float = Field(..., description="Y coordinate in px / metres")
     z: float = Field(0.0, description="Z elevation in metres (c: 0, f1: 0, f0: -4.5)")
+    xy: Optional[List[float]] = Field(None, description="Local metric ENU coordinates [x_m, y_m]")
     type: str = Field("p", description="Node category: 'e'=entrance, 's'=stairs, 'l'=lift, 'j'=junction, 'p'=point of interest")
     landmark: Optional[str] = Field(None, description="Associated architectural landmark")
     kind: Optional[str] = Field(None, description="Semantic classification")
+    todo: Optional[bool] = Field(None, description="Flag indicating guessed/uncalibrated value")
 
 class CampusEdge(BaseModel):
     a: str = Field(..., description="Source node ID")
     b: str = Field(..., description="Target node ID")
     type: str = Field("w", description="Edge type: 'w'=walk, 'b'=bridge, 's'=stairs, 'l'=lift, 'd'=door")
+    kind: Optional[str] = Field("walk", description="Semantic edge type ('walk', 'stairs', 'lift', 'door', 'bridge')")
     cost: float = Field(0.0, ge=0.0, description="Precomputed travel cost (seconds)")
     distance_m: Optional[float] = Field(None, description="Physical distance in metres")
     time_s: Optional[float] = Field(None, description="Traversal duration in seconds")
+    width_m: Optional[float] = Field(3.0, description="Passageway width in metres")
     accessible: bool = Field(True, description="Wheelchair / accessibility friendly (false for stairs)")
     outdoor: bool = Field(False, description="Whether this edge is situated outdoors")
     path: Optional[List[List[float]]] = Field(None, description="Polyline corridor waypoints [[x, y], ...]")
+    todo: Optional[bool] = Field(None, description="Flag indicating guessed/uncalibrated value")
 
 class CampusRoom(BaseModel):
     level: str = Field(..., description="Floor/level ('c', 'f0', 'f1')")
@@ -44,10 +49,14 @@ class CampusRoom(BaseModel):
     kind: str = Field("room", description="Kind: 'room', 'lab', 'bld', 'field', 'park', 'road', 'stair', 'bridge', 'floor'")
 
 class CampusGraphData(BaseModel):
-    costModel: CostModel
+    costModel: CostModel = Field(default_factory=CostModel)
     nodes: List[CampusNode]
     edges: List[CampusEdge]
     rooms: List[CampusRoom] = Field(default_factory=list)
+    portals: List[Dict[str, Any]] = Field(default_factory=list)
+    zones: List[Dict[str, Any]] = Field(default_factory=list)
+    levels: List[Dict[str, Any]] = Field(default_factory=list)
+    meta: Optional[Dict[str, Any]] = None
     metadata: Optional[Dict[str, Any]] = None
 
     @model_validator(mode="after")

@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 import time
+import os
 from starlette.concurrency import run_in_threadpool
 
 from engine import StoreEngine
@@ -633,7 +634,8 @@ def get_algorithms_info():
 # CAMPUS INDOOR / OUTDOOR NAVIGATION ENGINE (VIT BLUEPRINT)
 # =====================================================================
 
-campus_graph_instance = CampusGraphData.load_from_file("campus-graph.json")
+campus_data_path = "data/campus.v2.json" if os.path.exists("data/campus.v2.json") else "campus-graph.json"
+campus_graph_instance = CampusGraphData.load_from_file(campus_data_path)
 campus_router_instance = CampusRouter(campus_graph_instance)
 
 class CampusRouteRequest(BaseModel):
