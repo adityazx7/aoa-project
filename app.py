@@ -1,14 +1,19 @@
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 import time
+from starlette.concurrency import run_in_threadpool
+
 from engine import StoreEngine
+from campus_navigation.models import CampusGraphData, CampusNode, CampusEdge, CampusRoom, CostModel
+from campus_navigation.algorithms import CampusRouter, RoutingOptions, RouteResult
 
 app = FastAPI(
-    title="Store Navigator Pro - Spatial Routing & Graph Engine",
-    version="2.2.0",
+    title="Spatial Navigator - Spatial Routing & Graph Engine",
+    version="2.3.0",
     description="Analysis of Algorithms (AOA) Campus & Retail Pathfinding Engine (featuring Vidyalankar College System)"
 )
 
@@ -19,6 +24,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Global layout store
 current_preset_name = "vidyalankar"
@@ -621,6 +628,187 @@ def get_algorithms_info():
             "cons": ["Exponential time complexity"]
         }
     ]
+
+# =====================================================================
+# CAMPUS INDOOR / OUTDOOR NAVIGATION ENGINE (VIT BLUEPRINT)
+# =====================================================================
+
+campus_graph_instance = CampusGraphData.load_from_file("campus-graph.json")
+campus_router_instance = CampusRouter(campus_graph_instance)
+
+class CampusRouteRequest(BaseModel):
+    source: str = Field(..., description="Start node ID")
+    destination: str = Field(..., description="Target node ID")
+    algorithm: str = Field("dijkstra", description="'dijkstra', 'astar', 'bfs', or 'bidirectional'")
+    avoid_stairs: bool = Field(False)
+    stairs_penalty: float = Field(4.0, ge=1.0)
+    accessible_only: bool = Field(False)
+    prefer_indoor: bool = Field(False)
+    outdoor_penalty: float = Field(2.5, ge=1.0)
+    k_alternatives: int = Field(1, ge=1, le=5)
+
+class CampusMultiStopRequest(BaseModel):
+    origin: str = Field(..., description="Start node ID")
+    stops: List[str] = Field(..., min_length=1, description="List of stop node IDs")
+    avoid_stairs: bool = Field(False)
+    stairs_penalty: float = Field(4.0, ge=1.0)
+    accessible_only: bool = Field(False)
+    prefer_indoor: bool = Field(False)
+    outdoor_penalty: float = Field(2.5, ge=1.0)
+
+@app.get("/api/campus/graph", status_code=status.HTTP_200_OK)
+async def get_campus_graph():
+    """Returns validated nodes, edges with precomputed costs, rooms, and cost model."""
+    return campus_graph_instance.model_dump(by_alias=True)
+
+@app.post("/api/campus/route", status_code=status.HTTP_200_OK)
+async def compute_campus_route(payload: CampusRouteRequest):
+    """Computes optimal campus route in background thread with comparison benchmarks and alternatives."""
+    if payload.source not in campus_router_instance.nodes_map:
+        raise HTTPException(status_code=400, detail=f"Source node '{payload.source}' not found.")
+    if payload.destination not in campus_router_instance.nodes_map:
+        raise HTTPException(status_code=400, detail=f"Destination node '{payload.destination}' not found.")
+
+    opt = RoutingOptions(
+        avoid_stairs=payload.avoid_stairs,
+        stairs_penalty=payload.stairs_penalty,
+        accessible_only=payload.accessible_only,
+        prefer_indoor=payload.prefer_indoor,
+        outdoor_penalty=payload.outdoor_penalty
+    )
+
+    algo = payload.algorithm.lower().replace("-", "").replace("_", "")
+
+    def _run_search():
+        if algo in ("astar", "a*"):
+            primary = campus_router_instance.astar(payload.source, payload.destination, opt)
+        elif algo == "bfs":
+            primary = campus_router_instance.bfs(payload.source, payload.destination, opt)
+        elif algo in ("bidirectional", "bidi", "bidirectionaldijkstra"):
+            primary = campus_router_instance.bidirectional_dijkstra(payload.source, payload.destination, opt)
+        else:
+            primary = campus_router_instance.dijkstra(payload.source, payload.destination, opt)
+
+        # Comparative benchmark across algorithms
+        r_dijk = campus_router_instance.dijkstra(payload.source, payload.destination, opt)
+        r_astar = campus_router_instance.astar(payload.source, payload.destination, opt)
+        r_bfs = campus_router_instance.bfs(payload.source, payload.destination, opt)
+        r_bidi = campus_router_instance.bidirectional_dijkstra(payload.source, payload.destination, opt)
+
+        comparison = []
+        for name, r, compl in [
+            ("Dijkstra (Binary Heap)", r_dijk, "O((V + E) log V)"),
+            ("A* (Admissible Heuristic)", r_astar, "O(E) to O((V + E) log V)"),
+            ("Bidirectional Dijkstra", r_bidi, "2 x O((V + E) log V)"),
+            ("Breadth-First Search (BFS)", r_bfs, "O(V + E)")
+        ]:
+            if r:
+                comparison.append({
+                    "name": name,
+                    "cost": round(r.total_cost, 2),
+                    "nodesExpanded": r.nodes_expanded,
+                    "timeMs": round(r.time_ms, 3),
+                    "complexity": compl,
+                    "hops": len(r.path) - 1
+                })
+
+        alts = []
+        if payload.k_alternatives > 1:
+            alts = campus_router_instance.k_shortest_paths(
+                payload.source, payload.destination, k=payload.k_alternatives, options=opt
+            )
+
+        return primary, comparison, alts
+
+    primary_res, comparison_data, alternatives_res = await run_in_threadpool(_run_search)
+
+    if not primary_res:
+        raise HTTPException(
+            status_code=404,
+            detail="No route exists between the selected locations under current constraints."
+        )
+
+    directions = campus_router_instance.generate_directions(primary_res.edges)
+
+    # Estimated walk duration in seconds (1.2 m/s walk speed + 10s stair/lift transition)
+    seconds = primary_res.total_cost / 1.2
+    for e in primary_res.edges:
+        if e["type"] in ("s", "l"):
+            seconds += 10.0
+
+    return {
+        "primary": primary_res.to_dict(),
+        "directions": directions,
+        "comparison": comparison_data,
+        "alternatives": [a.to_dict() for a in alternatives_res],
+        "estimatedSeconds": round(seconds),
+        "sourceLabel": campus_router_instance.nodes_map[payload.source].label,
+        "destinationLabel": campus_router_instance.nodes_map[payload.destination].label
+    }
+
+@app.post("/api/campus/multi-stop", status_code=status.HTTP_200_OK)
+async def compute_campus_multi_stop(payload: CampusMultiStopRequest):
+    """Computes exact/2-opt multi-stop itinerary across campus."""
+    if payload.origin not in campus_router_instance.nodes_map:
+        raise HTTPException(status_code=400, detail=f"Origin node '{payload.origin}' not found.")
+
+    opt = RoutingOptions(
+        avoid_stairs=payload.avoid_stairs,
+        stairs_penalty=payload.stairs_penalty,
+        accessible_only=payload.accessible_only,
+        prefer_indoor=payload.prefer_indoor,
+        outdoor_penalty=payload.outdoor_penalty
+    )
+
+    result = await run_in_threadpool(
+        campus_router_instance.multi_stop_tsp, payload.origin, payload.stops, opt
+    )
+    return result
+
+@app.get("/api/campus/shortcuts", status_code=status.HTTP_200_OK)
+async def get_campus_shortcuts(node_id: str):
+    """Returns nearest entrance, stairs, and lift from selected node."""
+    if node_id not in campus_router_instance.nodes_map:
+        raise HTTPException(status_code=400, detail="Node not found.")
+
+    def _find():
+        entrances = [n.id for n in campus_graph_instance.nodes if n.type == "e" and n.id != node_id]
+        stairs = [n.id for n in campus_graph_instance.nodes if n.type == "s" and n.id != node_id]
+        lifts = [n.id for n in campus_graph_instance.nodes if n.type == "l" and n.id != node_id]
+
+        def _nearest(candidates):
+            best = None
+            best_c = float("inf")
+            for c in candidates:
+                r = campus_router_instance.dijkstra(node_id, c)
+                if r and r.total_cost < best_c:
+                    best_c = r.total_cost
+                    best = {
+                        "id": c,
+                        "label": campus_router_instance.nodes_map[c].label,
+                        "cost": round(r.total_cost, 1)
+                    }
+            return best
+
+        return {
+            "nearest_entrance": _nearest(entrances),
+            "nearest_stairs": _nearest(stairs),
+            "nearest_lift": _nearest(lifts)
+        }
+
+    return await run_in_threadpool(_find)
+
+@app.post("/api/campus/graph/save", status_code=status.HTTP_200_OK)
+async def save_campus_graph(payload: CampusGraphData):
+    """Saves updated campus graph and refreshes router (used by Dev Graph Editor)."""
+    global campus_graph_instance, campus_router_instance
+    try:
+        payload.save_to_file("campus-graph.json")
+        campus_graph_instance = payload
+        campus_router_instance = CampusRouter(campus_graph_instance)
+        return {"status": "success", "message": "Campus graph saved and re-indexed."}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/")
 async def serve_frontend():

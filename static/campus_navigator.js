@@ -1,0 +1,1119 @@
+/**
+ * =====================================================================
+ * CAMPUS INDOOR / OUTDOOR NAVIGATOR (VIT BLUEPRINT) - CLIENT ENGINE
+ * =====================================================================
+ * Integrates 2D SVG with D3-Zoom, Fuse.js fuzzy search, Minimap,
+ * Frontier Replay, Live Comparison Table, Directions, Three.js 3D View,
+ * and Dev Graph Editor.
+ */
+
+(function () {
+  const store = {
+    graph: null,
+    nodesMap: {},
+    fuse: null,
+    fromId: "",
+    toId: "",
+    selectionTarget: "auto",
+    autoApply: true,
+    viewMode: "c", // 'c', 'f1', 'f0', '3c', '3i', 'editor'
+    routeData: null,
+    activeAlgo: "dijkstra",
+    options: {
+      avoidStairs: false,
+      stairsPenalty: 4.0,
+      accessibleOnly: false,
+      preferIndoor: false,
+      kAlternatives: 1
+    },
+    replay: {
+      active: false,
+      step: 0,
+      timer: null,
+      speed: 1.0
+    },
+    threed: {
+      renderer: null,
+      scene: null,
+      camera: null,
+      controls: null,
+      raf: null,
+      explodeDist: 12.0,
+      raycaster: new THREE.Raycaster(),
+      mouse: new THREE.Vector2(),
+      clickableNodes: [],
+      walkerMesh: null,
+      walkerCurve: null,
+      walkerProgress: 0.0
+    },
+    editor: {
+      enabled: false,
+      draggedNode: null,
+      connectSource: null
+    }
+  };
+
+  const LEVEL_NAMES = {
+    c: "Campus Grounds",
+    f1: "VIT Floor 1 (Walkway)",
+    f0: "VIT Basement Labs"
+  };
+
+  const VIEWBOXES = {
+    c: [0, 0, 1650, 930],
+    f1: [0, 70, 1340, 570],
+    f0: [0, 140, 1340, 510]
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const $$ = (sel) => document.querySelectorAll(sel);
+
+  window.addEventListener("DOMContentLoaded", () => {
+    initTabs();
+    initComboboxes();
+    initDynamicSelectionControls();
+    initShortcuts();
+    initReplayControls();
+    fetchCampusGraph();
+  });
+
+  async function fetchCampusGraph() {
+    try {
+      const res = await fetch("/api/campus/graph");
+      if (!res.ok) throw new Error("Failed to load campus graph");
+      const data = await res.json();
+      store.graph = data;
+      store.nodesMap = {};
+      data.nodes.forEach((n) => (store.nodesMap[n.id] = n));
+
+      initFuse();
+      render2D();
+      renderMinimap();
+    } catch (err) {
+      console.error("[Campus Navigator]", err);
+    }
+  }
+
+  // --- FUSE.JS FUZZY SEARCH COMBOBOXES ---
+  function initFuse() {
+    if (!window.Fuse || !store.graph) return;
+    const items = store.graph.nodes
+      .filter((n) => n.type !== "j")
+      .map((n) => ({
+        id: n.id,
+        label: n.label,
+        level: n.level,
+        levelName: LEVEL_NAMES[n.level] || n.level,
+        type: n.type
+      }));
+
+    store.fuse = new Fuse(items, {
+      keys: ["label", "id", "levelName"],
+      threshold: 0.35,
+      minMatchCharLength: 1
+    });
+
+    populateDropdown("fromDropdown", "fromInput", (id) => setEndpoint("from", id));
+    populateDropdown("toDropdown", "toInput", (id) => setEndpoint("to", id));
+  }
+
+  function populateDropdown(dropdownId, inputId, onSelect) {
+    const dropdown = $(dropdownId);
+    const input = $(inputId);
+    if (!dropdown || !input) return;
+
+    function renderList(items) {
+      dropdown.innerHTML = "";
+      if (items.length === 0) {
+        dropdown.innerHTML = '<div style="padding: 10px; color: var(--c-mut); font-size: 0.8rem;">No matching locations</div>';
+        dropdown.style.display = "block";
+        return;
+      }
+
+      const groups = {};
+      items.forEach((item) => {
+        const lv = item.level;
+        if (!groups[lv]) groups[lv] = [];
+        groups[lv].push(item);
+      });
+
+      Object.keys(groups).forEach((lv) => {
+        const title = document.createElement("div");
+        title.className = "combobox-group-title";
+        title.innerText = LEVEL_NAMES[lv] || lv;
+        dropdown.appendChild(title);
+
+        groups[lv].forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "combobox-item";
+          row.innerHTML = `<span>${item.label}</span> <span class="combobox-item-badge">${item.id}</span>`;
+          row.onclick = () => {
+            input.value = item.label;
+            dropdown.style.display = "none";
+            onSelect(item.id);
+          };
+          dropdown.appendChild(row);
+        });
+      });
+
+      dropdown.style.display = "block";
+    }
+
+    input.addEventListener("focus", () => {
+      const val = input.value.trim();
+      if (!val) {
+        renderList(
+          store.graph.nodes
+            .filter((n) => n.type !== "j")
+            .map((n) => ({ id: n.id, label: n.label, level: n.level }))
+        );
+      } else if (store.fuse) {
+        const results = store.fuse.search(val).map((r) => r.item);
+        renderList(results);
+      }
+    });
+
+    input.addEventListener("input", () => {
+      const val = input.value.trim();
+      if (!val) {
+        renderList(
+          store.graph.nodes
+            .filter((n) => n.type !== "j")
+            .map((n) => ({ id: n.id, label: n.label, level: n.level }))
+        );
+      } else if (store.fuse) {
+        const results = store.fuse.search(val).map((r) => r.item);
+        renderList(results);
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!dropdown.contains(e.target) && e.target !== input) {
+        dropdown.style.display = "none";
+      }
+    });
+  }
+
+  function setEndpoint(role, id) {
+    if (role === "from") {
+      store.fromId = id;
+      if ($("fromInput")) $("fromInput").value = store.nodesMap[id]?.label || id;
+    } else {
+      store.toId = id;
+      if ($("toInput")) $("toInput").value = store.nodesMap[id]?.label || id;
+    }
+
+    if (store.fromId && store.toId) {
+      setDynamicStatus("solved", `Dynamic Route: <b>${store.nodesMap[store.fromId]?.label}</b> ➔ <b>${store.nodesMap[store.toId]?.label}</b> via ${store.activeAlgo.toUpperCase()}`);
+      calculateCampusRoute();
+    } else if (store.fromId) {
+      setDynamicStatus("picking-dest", `Start set: <b>${store.nodesMap[store.fromId]?.label}</b>. Click target destination node on map.`);
+      updateActiveHighlights();
+    } else if (store.toId) {
+      setDynamicStatus("picking-start", `Destination set: <b>${store.nodesMap[store.toId]?.label}</b>. Click origin node on map.`);
+      updateActiveHighlights();
+    }
+  }
+
+  function handleDynamicNodeSelection(id) {
+    if (!id || !store.nodesMap[id]) return;
+    const label = store.nodesMap[id]?.label || id;
+
+    // 1. Explicit Pick Start Mode
+    if (store.selectionTarget === "from") {
+      store.fromId = id;
+      if ($("fromInput")) $("fromInput").value = label;
+      store.selectionTarget = "auto";
+      updateSelectionButtons();
+      if (store.toId && store.fromId !== store.toId) {
+        setDynamicStatus("solved", `Dynamic Route: <b>${label}</b> ➔ <b>${store.nodesMap[store.toId]?.label}</b> (${store.activeAlgo.toUpperCase()})`);
+        if (store.autoApply) calculateCampusRoute();
+      } else {
+        setDynamicStatus("picking-dest", `Start set: <b>${label}</b>. Now click destination node on map.`);
+        updateActiveHighlights();
+        render2D();
+      }
+      return;
+    }
+
+    // 2. Explicit Pick Destination Mode
+    if (store.selectionTarget === "to") {
+      store.toId = id;
+      if ($("toInput")) $("toInput").value = label;
+      store.selectionTarget = "auto";
+      updateSelectionButtons();
+      if (store.fromId && store.fromId !== store.toId) {
+        setDynamicStatus("solved", `Dynamic Route: <b>${store.nodesMap[store.fromId]?.label}</b> ➔ <b>${label}</b> (${store.activeAlgo.toUpperCase()})`);
+        if (store.autoApply) calculateCampusRoute();
+      } else {
+        setDynamicStatus("picking-start", `Destination set: <b>${label}</b>. Now click start node on map.`);
+        updateActiveHighlights();
+        render2D();
+      }
+      return;
+    }
+
+    // 3. Default Seamless Point-to-Point Auto Cycle
+    if (!store.fromId || (store.fromId && store.toId)) {
+      // Starting new pair: set Start
+      store.fromId = id;
+      store.toId = "";
+      store.routeData = null;
+      if ($("fromInput")) $("fromInput").value = label;
+      if ($("toInput")) $("toInput").value = "";
+      if ($("directionsList")) {
+        $("directionsList").innerHTML =
+          `<div style="padding: 20px; text-align: center; color: var(--c-mut); font-size: 0.82rem;">Start selected: <b>${label}</b>. Now click destination node on blueprint to compute path.</div>`;
+      }
+      setDynamicStatus("picking-dest", `Start point: <b>${label}</b>. Click destination node to apply ${store.activeAlgo.toUpperCase()} algorithm.`);
+      updateActiveHighlights();
+      render2D();
+      if (store.viewMode === "3c" || store.viewMode === "3i") render3D(store.viewMode);
+    } else if (store.fromId && !store.toId) {
+      if (id === store.fromId) {
+        setDynamicStatus("picking-dest", `Start point is <b>${label}</b>. Click a <i>different</i> node for destination.`);
+        return;
+      }
+      // Set End and immediately apply algorithm
+      store.toId = id;
+      if ($("toInput")) $("toInput").value = label;
+      setDynamicStatus("solved", `Applying algorithm: <b>${store.nodesMap[store.fromId]?.label}</b> ➔ <b>${label}</b> (${store.activeAlgo.toUpperCase()})...`);
+      if (store.autoApply) {
+        calculateCampusRoute();
+      } else {
+        updateActiveHighlights();
+      }
+    }
+  }
+
+  function setDynamicStatus(statusClass, htmlText) {
+    const pill = $("dynamicStatusPill");
+    const text = $("dynamicStatusText");
+    if (pill) {
+      pill.className = `dynamic-status-pill ${statusClass}`;
+    }
+    if (text) {
+      text.innerHTML = htmlText;
+    }
+  }
+
+  function updateSelectionButtons() {
+    if ($("btnSetStartMode")) {
+      $("btnSetStartMode").classList.toggle("active", store.selectionTarget === "from");
+    }
+    if ($("btnSetDestMode")) {
+      $("btnSetDestMode").classList.toggle("active", store.selectionTarget === "to");
+    }
+  }
+
+  function initDynamicSelectionControls() {
+    if ($("btnSetStartMode")) {
+      $("btnSetStartMode").onclick = () => {
+        store.selectionTarget = store.selectionTarget === "from" ? "auto" : "from";
+        updateSelectionButtons();
+        if (store.selectionTarget === "from") {
+          setDynamicStatus("picking-start", "Click any node on the blueprint to set <b>Start Point</b>.");
+        } else {
+          setDynamicStatus("idle", "Interactive Mode: Click any node to choose Start point.");
+        }
+      };
+    }
+
+    if ($("btnSetDestMode")) {
+      $("btnSetDestMode").onclick = () => {
+        store.selectionTarget = store.selectionTarget === "to" ? "auto" : "to";
+        updateSelectionButtons();
+        if (store.selectionTarget === "to") {
+          setDynamicStatus("picking-dest", "Click any node on the blueprint to set <b>Destination Point</b>.");
+        } else {
+          setDynamicStatus("idle", "Interactive Mode: Click any node to choose Start point.");
+        }
+      };
+    }
+
+    if ($("btnAutoRouteMode")) {
+      $("btnAutoRouteMode").onclick = () => {
+        store.autoApply = !store.autoApply;
+        $("btnAutoRouteMode").classList.toggle("active-state", store.autoApply);
+        $("btnAutoRouteMode").innerText = store.autoApply ? "⚡ Auto-Apply Algorithm: ON" : "⏸ Auto-Apply Algorithm: OFF";
+      };
+    }
+  }
+
+  function initComboboxes() {
+    if ($("btnSwapEndpoints")) {
+      $("btnSwapEndpoints").onclick = () => {
+        const temp = store.fromId;
+        store.fromId = store.toId;
+        store.toId = temp;
+
+        if ($("fromInput")) $("fromInput").value = store.nodesMap[store.fromId]?.label || "";
+        if ($("toInput")) $("toInput").value = store.nodesMap[store.toId]?.label || "";
+
+        if (store.fromId && store.toId) {
+          setDynamicStatus("solved", `Dynamic Route: <b>${store.nodesMap[store.fromId]?.label}</b> ➔ <b>${store.nodesMap[store.toId]?.label}</b> (${store.activeAlgo.toUpperCase()})`);
+          calculateCampusRoute();
+        } else {
+          updateActiveHighlights();
+        }
+      };
+    }
+  }
+
+  // --- SHORTCUTS (NEAREST ENTRANCE, STAIRS, LIFT) ---
+  function initShortcuts() {
+    $$(".shortcut-chip").forEach((chip) => {
+      chip.onclick = async () => {
+        const type = chip.dataset.type;
+        const current = store.fromId || store.toId || "GATE";
+
+        try {
+          const res = await fetch(`/api/campus/shortcuts?node_id=${current}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          let target = null;
+          if (type === "entrance") target = data.nearest_entrance;
+          else if (type === "stairs") target = data.nearest_stairs;
+          else if (type === "lift") target = data.nearest_lift;
+
+          if (target) {
+            store.fromId = current;
+            store.toId = target.id;
+            if ($("fromInput")) $("fromInput").value = store.nodesMap[store.fromId]?.label || store.fromId;
+            if ($("toInput")) $("toInput").value = target.label;
+            calculateCampusRoute();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      };
+    });
+  }
+
+  // --- TABS & LEVEL SWITCHING ---
+  function initTabs() {
+    $$(".campus-tab-btn").forEach((btn) => {
+      btn.onclick = () => {
+        $$(".campus-tab-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        store.viewMode = btn.dataset.view;
+        handleViewModeChange();
+      };
+    });
+
+    if ($("campusAlgoSelect")) {
+      $("campusAlgoSelect").onchange = (e) => {
+        store.activeAlgo = e.target.value;
+        if (store.fromId && store.toId) calculateCampusRoute();
+      };
+    }
+
+    if ($("chkAvoidStairs")) {
+      $("chkAvoidStairs").onchange = (e) => {
+        store.options.avoidStairs = e.target.checked;
+        if (store.fromId && store.toId) calculateCampusRoute();
+      };
+    }
+    if ($("chkAccessibleOnly")) {
+      $("chkAccessibleOnly").onchange = (e) => {
+        store.options.accessibleOnly = e.target.checked;
+        if (store.fromId && store.toId) calculateCampusRoute();
+      };
+    }
+    if ($("chkPreferIndoor")) {
+      $("chkPreferIndoor").onchange = (e) => {
+        store.options.preferIndoor = e.target.checked;
+        if (store.fromId && store.toId) calculateCampusRoute();
+      };
+    }
+    if ($("chkAlternatives")) {
+      $("chkAlternatives").onchange = (e) => {
+        store.options.kAlternatives = e.target.checked ? 3 : 1;
+        if (store.fromId && store.toId) calculateCampusRoute();
+      };
+    }
+
+    if ($("btnCampusClear")) $("btnCampusClear").onclick = clearSelection;
+    if ($("btnCampusRun")) $("btnCampusRun").onclick = calculateCampusRoute;
+  }
+
+  function handleViewModeChange() {
+    const is3D = store.viewMode === "3c" || store.viewMode === "3i";
+    const isEditor = store.viewMode === "editor";
+
+    if ($("campusSvgContainer")) $("campusSvgContainer").style.display = is3D ? "none" : "block";
+    if ($("campus3DContainer")) $("campus3DContainer").style.display = is3D ? "block" : "none";
+    if ($("campusMinimapBox")) $("campusMinimapBox").style.display = is3D ? "none" : "block";
+    if ($("editorDrawer")) $("editorDrawer").style.display = isEditor ? "block" : "none";
+
+    store.editor.enabled = isEditor;
+
+    if (is3D) {
+      init3D();
+      render3D(store.viewMode);
+    } else {
+      if (store.threed.raf) cancelAnimationFrame(store.threed.raf);
+      render2D();
+      renderMinimap();
+    }
+  }
+
+  function clearSelection() {
+    store.fromId = "";
+    store.toId = "";
+    store.routeData = null;
+    store.selectionTarget = "auto";
+    updateSelectionButtons();
+    setDynamicStatus("idle", "Interactive Point-to-Point Mode: Click any node on the blueprint to set <b>Start Point</b>.");
+    if ($("fromInput")) $("fromInput").value = "";
+    if ($("toInput")) $("toInput").value = "";
+    if ($("directionsList")) {
+      $("directionsList").innerHTML =
+        '<div style="text-align: center; color: var(--c-mut); padding: 20px; font-size: 0.84rem;">Select origin and destination to generate step-by-step turn guidance.</div>';
+    }
+    if ($("frontierStepperBar")) $("frontierStepperBar").style.display = "none";
+    if ($("comparisonTableBody")) {
+      $("comparisonTableBody").innerHTML =
+        '<tr><td colspan="6" style="text-align:center; padding: 18px; color: var(--c-mut);">No active query comparison.</td></tr>';
+    }
+    updateActiveHighlights();
+    render2D();
+    if (store.viewMode === "3c" || store.viewMode === "3i") render3D(store.viewMode);
+  }
+
+  // --- ROUTE CALCULATION (API) ---
+  async function calculateCampusRoute() {
+    if (!store.fromId || !store.toId) {
+      alert("Please select both Origin and Destination locations.");
+      return;
+    }
+    if (store.fromId === store.toId) {
+      alert("Origin and Destination cannot be the same location.");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/campus/route", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source: store.fromId,
+          destination: store.toId,
+          algorithm: store.activeAlgo,
+          avoid_stairs: store.options.avoidStairs,
+          stairs_penalty: store.options.stairsPenalty,
+          accessible_only: store.options.accessibleOnly,
+          prefer_indoor: store.options.preferIndoor,
+          k_alternatives: store.options.kAlternatives
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.detail || "Route could not be calculated.");
+        return;
+      }
+
+      const data = await res.json();
+      store.routeData = data;
+
+      const fromNode = store.nodesMap[store.fromId];
+      const toNode = store.nodesMap[store.toId];
+      if (
+        fromNode &&
+        toNode &&
+        fromNode.level === toNode.level &&
+        store.viewMode[0] !== "3" &&
+        store.viewMode !== "editor"
+      ) {
+        store.viewMode = fromNode.level;
+        $$(".campus-tab-btn").forEach((b) =>
+          b.classList.toggle("active", b.dataset.view === store.viewMode)
+        );
+      }
+
+      render2D();
+      renderMinimap();
+      updateDirections(data);
+      updateComparisonTable(data.comparison);
+      setupReplay(data.primary.visitedOrder);
+
+      if (store.viewMode === "3c" || store.viewMode === "3i") {
+        render3D(store.viewMode);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // --- 2D RENDERING (SVG + D3-ZOOM + DRAG IN EDITOR) ---
+  function render2D() {
+    if (!store.graph) return;
+    const svgEl = $("campusSvg");
+    if (!svgEl) return;
+
+    const level = store.viewMode === "editor" ? "c" : store.viewMode;
+    if (level[0] === "3") return;
+
+    const vb = VIEWBOXES[level] || VIEWBOXES.c;
+    svgEl.setAttribute("viewBox", vb.join(" "));
+
+    const activeEdgesSet = new Set();
+    if (store.routeData && store.routeData.primary) {
+      store.routeData.primary.edges.forEach((e) => {
+        activeEdgesSet.add(`${e.a}-${e.b}`);
+        activeEdgesSet.add(`${e.b}-${e.a}`);
+      });
+    }
+
+    let html = '<g id="zoomGroup">';
+
+    // 1. Rooms
+    store.graph.rooms
+      .filter((r) => r.level === level)
+      .forEach((r) => {
+        const rx = r.kind === "bridge" || r.kind === "stair" ? 12 : 8;
+        html += `<rect class="r k_${r.kind}" x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" rx="${rx}"/>`;
+        if (r.label) {
+          const fs = r.width < 110 ? (level === "c" ? 18 : 14) : level === "c" ? 28 : 20;
+          html += `<text class="r-label" x="${r.x + r.width / 2}" y="${r.y + r.height / 2 + 7}" font-size="${fs}">${r.label}</text>`;
+        }
+      });
+
+    // 2. Edges
+    store.graph.edges.forEach((e) => {
+      const na = store.nodesMap[e.a];
+      const nb = store.nodesMap[e.b];
+      if (!na || !nb) return;
+      if (na.level !== level || nb.level !== level) return;
+
+      const isPath = activeEdgesSet.has(`${e.a}-${e.b}`);
+      html += `<line class="e ${e.type}" data-a="${e.a}" data-b="${e.b}" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}">
+        <title>Cost: ${e.cost.toFixed(1)}m | Type: ${e.type} | Accessible: ${e.accessible}</title>
+      </line>`;
+
+      if (isPath) {
+        html += `<line class="path-line path-animated" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}"/>`;
+      }
+    });
+
+    // 3. Nodes
+    store.graph.nodes
+      .filter((n) => n.level === level)
+      .forEach((n) => {
+        let cls = `n ${n.type}`;
+        if (n.id === store.fromId) cls += " fr";
+        else if (n.id === store.toId) cls += " to";
+        else if (store.routeData && store.routeData.primary.path.includes(n.id) && n.type !== "j") {
+          cls += " on";
+        }
+
+        const r = n.type === "j" ? 5 : 10;
+        html += `<circle class="${cls}" data-id="${n.id}" cx="${n.x}" cy="${n.y}" r="${r}">
+          <title>${n.label} (${n.id})</title>
+        </circle>`;
+      });
+
+    html += "</g>";
+    svgEl.innerHTML = html;
+
+    // Node click handler
+    svgEl.querySelectorAll("circle.n").forEach((c) => {
+      c.onclick = (e) => {
+        e.stopPropagation();
+        const id = c.dataset.id;
+        if (store.editor.enabled) {
+          handleEditorNodeClick(id);
+        } else {
+          handleDynamicNodeSelection(id);
+        }
+      };
+    });
+
+    // D3 Zoom & Drag
+    if (window.d3) {
+      const svgSel = d3.select(svgEl);
+      const zoom = d3
+        .zoom()
+        .scaleExtent([0.3, 4.5])
+        .filter((event) => !store.editor.enabled || event.type !== "mousedown")
+        .on("zoom", (event) => {
+          d3.select("#zoomGroup").attr("transform", event.transform);
+          updateMinimap(event.transform, vb);
+        });
+      svgSel.call(zoom);
+
+      if ($("btnZoomReset")) {
+        $("btnZoomReset").onclick = () => svgSel.transition().duration(400).call(zoom.transform, d3.zoomIdentity);
+      }
+
+      // Drag in editor mode
+      d3.selectAll("circle.n").call(
+        d3.drag().on("drag", function (event) {
+          if (!store.editor.enabled) return;
+          const id = this.dataset.id;
+          const n = store.nodesMap[id];
+          if (n) {
+            n.x = Math.round(event.x);
+            n.y = Math.round(event.y);
+            d3.select(this).attr("cx", n.x).attr("cy", n.y);
+            d3.selectAll(`line.e[data-a="${id}"]`).attr("x1", n.x).attr("y1", n.y);
+            d3.selectAll(`line.e[data-b="${id}"]`).attr("x2", n.x).attr("y2", n.y);
+          }
+        })
+      );
+    }
+  }
+
+  function handleEditorNodeClick(id) {
+    if (!store.editor.connectSource) {
+      store.editor.connectSource = id;
+      alert(`Selected node '${id}'. Now click a second node to toggle an edge between them.`);
+    } else {
+      const a = store.editor.connectSource;
+      const b = id;
+      store.editor.connectSource = null;
+      if (a === b) return;
+
+      const idx = store.graph.edges.findIndex(
+        (e) => (e.a === a && e.b === b) || (e.a === b && e.b === a)
+      );
+
+      if (idx >= 0) {
+        store.graph.edges.splice(idx, 1);
+        alert(`Removed edge ${a} - ${b}`);
+      } else {
+        const na = store.nodesMap[a];
+        const nb = store.nodesMap[b];
+        const dist = Math.hypot(na.x - nb.x, na.y - nb.y);
+        const cost = Math.round(dist * (na.level === "c" ? 0.25 : 0.1) * 10) / 10;
+        store.graph.edges.push({
+          a,
+          b,
+          type: "w",
+          cost: cost || 1.0,
+          accessible: true,
+          outdoor: na.level === "c"
+        });
+        alert(`Added edge ${a} - ${b} (cost ${cost}m)`);
+      }
+      render2D();
+    }
+  }
+
+  function updateActiveHighlights() {
+    $$("circle.n").forEach((c) => {
+      const id = c.dataset.id;
+      c.classList.remove("fr", "to", "on");
+      if (id === store.fromId) c.classList.add("fr");
+      if (id === store.toId) c.classList.add("to");
+    });
+  }
+
+  // --- MINIMAP ---
+  function renderMinimap() {
+    const mini = $("campusMinimap");
+    if (!mini || !store.graph) return;
+    const level = store.viewMode === "editor" ? "c" : store.viewMode;
+    if (level[0] === "3") return;
+
+    const vb = VIEWBOXES[level] || VIEWBOXES.c;
+    mini.setAttribute("viewBox", vb.join(" "));
+
+    let h = "";
+    store.graph.rooms
+      .filter((r) => r.level === level)
+      .forEach((r) => {
+        h += `<rect fill="rgba(148, 163, 184, 0.4)" x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}"/>`;
+      });
+    h += `<rect id="minimapViewport" class="minimap-viewport-rect" x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}"/>`;
+    mini.innerHTML = h;
+  }
+
+  function updateMinimap(transform, vb) {
+    const rect = $("minimapViewport");
+    if (!rect) return;
+    const k = transform.k;
+    const w = vb[2] / k;
+    const h = vb[3] / k;
+    const x = vb[0] - transform.x / k;
+    const y = vb[1] - transform.y / k;
+
+    rect.setAttribute("x", x);
+    rect.setAttribute("y", y);
+    rect.setAttribute("width", w);
+    rect.setAttribute("height", h);
+  }
+
+  // --- REPLAY CONTROLS ---
+  function initReplayControls() {
+    if ($("btnPlayPause")) $("btnPlayPause").onclick = togglePlay;
+    if ($("btnStepForward")) $("btnStepForward").onclick = () => stepReplay(1);
+    if ($("btnStepBack")) $("btnStepBack").onclick = () => stepReplay(-1);
+    if ($("replaySpeedSelect")) {
+      $("replaySpeedSelect").onchange = (e) => {
+        store.replay.speed = parseFloat(e.target.value);
+        if (store.replay.active) {
+          clearInterval(store.replay.timer);
+          startPlayTimer();
+        }
+      };
+    }
+    if ($("replaySlider")) {
+      $("replaySlider").oninput = (e) => {
+        pausePlay();
+        store.replay.step = parseInt(e.target.value);
+        renderReplayStep();
+      };
+    }
+  }
+
+  function setupReplay(visitedOrder) {
+    if (!visitedOrder || visitedOrder.length === 0) return;
+    $("frontierStepperBar").style.display = "flex";
+    store.replay.step = 0;
+    store.replay.active = false;
+    $("replaySlider").max = visitedOrder.length - 1;
+    $("replaySlider").value = 0;
+    $("btnPlayPause").innerText = "▶";
+    renderReplayStep();
+  }
+
+  function togglePlay() {
+    if (store.replay.active) pausePlay();
+    else startPlay();
+  }
+
+  function startPlay() {
+    store.replay.active = true;
+    $("btnPlayPause").innerText = "⏸";
+    startPlayTimer();
+  }
+
+  function pausePlay() {
+    store.replay.active = false;
+    $("btnPlayPause").innerText = "▶";
+    clearInterval(store.replay.timer);
+  }
+
+  function startPlayTimer() {
+    const order = store.routeData?.primary?.visitedOrder || [];
+    const intervalMs = 250 / store.replay.speed;
+    store.replay.timer = setInterval(() => {
+      if (store.replay.step < order.length - 1) {
+        store.replay.step++;
+        renderReplayStep();
+      } else {
+        pausePlay();
+      }
+    }, intervalMs);
+  }
+
+  function stepReplay(delta) {
+    pausePlay();
+    const order = store.routeData?.primary?.visitedOrder || [];
+    const target = Math.max(0, Math.min(order.length - 1, store.replay.step + delta));
+    store.replay.step = target;
+    renderReplayStep();
+  }
+
+  function renderReplayStep() {
+    const order = store.routeData?.primary?.visitedOrder || [];
+    if (order.length === 0) return;
+
+    $("replaySlider").value = store.replay.step;
+    const currId = order[store.replay.step];
+    const node = store.nodesMap[currId];
+    $("replayDesc").innerText = `Step ${store.replay.step + 1}/${order.length}: Settle '${node?.label || currId}'`;
+
+    $$("circle.n").forEach((c) => {
+      const id = c.dataset.id;
+      c.classList.remove("frontier");
+      if (id === currId) c.classList.add("frontier");
+    });
+  }
+
+  // --- DIRECTIONS & COMPARISON TABLE ---
+  function updateDirections(data) {
+    const list = $("directionsList");
+    if (!list) return;
+
+    $("totalDistanceBadge").innerText = `${data.primary.totalCost.toFixed(1)} m`;
+    const mins = Math.ceil(data.estimatedSeconds / 60);
+    $("estimatedTimeBadge").innerText = `~${mins} min walk`;
+
+    let html = "";
+    data.directions.forEach((d) => {
+      html += `
+        <div class="dir-step-item ${d.edge_type}">
+          <div style="font-weight: 700; color: var(--c-acc);">${d.step}</div>
+          <div style="flex: 1;">
+            <div>${d.instruction}</div>
+            <div style="font-size: 0.74rem; color: var(--c-mut); font-family: 'JetBrains Mono', monospace;">Leg cost: ${d.cost.toFixed(1)}m</div>
+          </div>
+        </div>
+      `;
+    });
+    list.innerHTML = html;
+  }
+
+  function updateComparisonTable(comparison) {
+    const tbody = $("comparisonTableBody");
+    if (!tbody || !comparison) return;
+
+    let h = "";
+    comparison.forEach((row) => {
+      h += `
+        <tr>
+          <td style="font-weight: 600;">${row.name}</td>
+          <td style="font-family: 'JetBrains Mono'; color: var(--c-path); font-weight: 600;">${row.cost.toFixed(1)}m</td>
+          <td style="font-family: 'JetBrains Mono';">${row.nodesExpanded}</td>
+          <td style="font-family: 'JetBrains Mono';">${row.hops} hops</td>
+          <td style="font-family: 'JetBrains Mono';">${row.timeMs} ms</td>
+          <td><code style="font-size: 0.74rem;">${row.complexity}</code></td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = h;
+  }
+
+  // --- THREE.JS 3D ENGINE ---
+  function init3D() {
+    const container = $("campus3DContainer");
+    if (!container || store.threed.renderer) return;
+
+    const w = container.clientWidth || 800;
+    const h = 580;
+
+    const ren = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    ren.setSize(w, h);
+    ren.setPixelRatio(window.devicePixelRatio || 1);
+    container.appendChild(ren.domElement);
+
+    const scene = new THREE.Scene();
+    const isDark = document.documentElement.dataset.theme === "dark" || matchMedia("(prefers-color-scheme: dark)").matches;
+    scene.background = new THREE.Color(isDark ? 0x0f172a : 0xf8fafc);
+
+    const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
+    camera.position.set(40, 65, 75);
+
+    const controls = new THREE.OrbitControls(camera, ren.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    const amb = new THREE.AmbientLight(0xffffff, 0.75);
+    scene.add(amb);
+    const dir = new THREE.DirectionalLight(0xffffff, 0.65);
+    dir.position.set(50, 100, 30);
+    scene.add(dir);
+
+    store.threed.renderer = ren;
+    store.threed.scene = scene;
+    store.threed.camera = camera;
+    store.threed.controls = controls;
+
+    ren.domElement.addEventListener("click", (e) => {
+      const rect = ren.domElement.getBoundingClientRect();
+      store.threed.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      store.threed.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      store.threed.raycaster.setFromCamera(store.threed.mouse, camera);
+      const hits = store.threed.raycaster.intersectObjects(store.threed.clickableNodes);
+      if (hits.length > 0) {
+        const id = hits[0].object.userData.nodeId;
+        handleDynamicNodeSelection(id);
+      }
+    });
+
+    if ($("threedExplodeSlider")) {
+      $("threedExplodeSlider").oninput = (e) => {
+        store.threed.explodeDist = parseFloat(e.target.value);
+        if ($("explodeValBadge")) $("explodeValBadge").innerText = `${store.threed.explodeDist.toFixed(0)}m`;
+        render3D(store.viewMode);
+      };
+    }
+  }
+
+  function render3D(mode) {
+    const sc = store.threed.scene;
+    if (!sc) return;
+
+    while (sc.children.length > 2) {
+      const obj = sc.children[sc.children.length - 1];
+      if (obj.geometry) obj.geometry.dispose();
+      if (obj.material) {
+        if (Array.isArray(obj.material)) obj.material.forEach((m) => m.dispose());
+        else obj.material.dispose();
+      }
+      sc.remove(obj);
+    }
+    store.threed.clickableNodes = [];
+
+    const isCampus = mode === "3c";
+    const levels = isCampus ? ["c"] : ["f0", "f1"];
+    const S = isCampus ? 1 / 20 : 1 / 25;
+    const baseElevation = { c: 0, f0: 0, f1: store.threed.explodeDist };
+
+    const colors = {
+      bld: 0x93c5fd,
+      room: 0xbfdbfe,
+      lab: 0x6ee7b7,
+      stair: 0xf59e0b,
+      bridge: 0xc4b5fd,
+      field: 0x86efac,
+      park: 0xcbd5e1,
+      floor: 0xe2e8f0,
+      road: 0xe2e8f0
+    };
+
+    // 1. Rooms & building slabs
+    store.graph.rooms
+      .filter((r) => levels.includes(r.level))
+      .forEach((r) => {
+        const b = baseElevation[r.level] || 0;
+        let h = 0.4;
+        if (isCampus) {
+          if (r.kind === "bld") h = r.label === "VIT" ? 14 : r.label === "M block" ? 12 : r.label === "VP" ? 11 : 8;
+        } else {
+          h = { room: 4.5, bld: 4.5, lab: 4.5, stair: 1.5, bridge: 0.8, floor: 0.3 }[r.kind] || 0.4;
+        }
+
+        const geo = new THREE.BoxGeometry(r.width * S, h, r.height * S);
+        const mat = new THREE.MeshLambertMaterial({
+          color: colors[r.kind] || 0xcccccc,
+          transparent: !isCampus && r.kind !== "floor",
+          opacity: !isCampus && r.kind !== "floor" ? 0.45 : 1.0,
+          depthWrite: isCampus || r.kind === "floor"
+        });
+
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set((r.x + r.width / 2) * S, b + h / 2, (r.y + r.height / 2) * S);
+        sc.add(mesh);
+      });
+
+    // 2. Nodes
+    const pos = (n) => new THREE.Vector3(n.x * S, (baseElevation[n.level] || 0) + (isCampus ? 0.9 : 0.7), n.y * S);
+
+    store.graph.nodes
+      .filter((n) => levels.includes(n.level) && n.type !== "j")
+      .forEach((n) => {
+        let col = 0xffffff;
+        if (n.id === store.fromId) col = 0x059669;
+        else if (n.id === store.toId) col = 0xdc2626;
+        else if (n.type === "e") col = 0x10b981;
+        else if (n.type === "s") col = 0xf59e0b;
+        else if (n.type === "l") col = 0x8b5cf6;
+
+        const sphere = new THREE.Mesh(
+          new THREE.SphereGeometry(n.id === store.fromId || n.id === store.toId ? 0.9 : 0.5, 12, 10),
+          new THREE.MeshBasicMaterial({ color: col })
+        );
+        sphere.position.copy(pos(n));
+        sphere.userData = { nodeId: n.id };
+        sc.add(sphere);
+        store.threed.clickableNodes.push(sphere);
+      });
+
+    // 3. 3D Route Tube & Walking Marker
+    if (store.routeData && store.routeData.primary) {
+      const pts = [];
+      store.routeData.primary.path.forEach((id) => {
+        const n = store.nodesMap[id];
+        if (n && levels.includes(n.level)) pts.push(pos(n));
+      });
+
+      if (pts.length >= 2) {
+        const curve = new THREE.CatmullRomCurve3(pts);
+        store.threed.walkerCurve = curve;
+        const tube = new THREE.Mesh(
+          new THREE.TubeGeometry(curve, pts.length * 6, 0.35, 8, false),
+          new THREE.MeshBasicMaterial({ color: 0xea580c })
+        );
+        sc.add(tube);
+
+        const walker = new THREE.Mesh(
+          new THREE.SphereGeometry(0.7, 16, 12),
+          new THREE.MeshBasicMaterial({ color: 0xfacc15 })
+        );
+        sc.add(walker);
+        store.threed.walkerMesh = walker;
+
+        const box = new THREE.Box3().setFromPoints(pts);
+        const center = box.getCenter(new THREE.Vector3());
+        store.threed.controls.target.copy(center);
+      }
+    }
+
+    cancelAnimationFrame(store.threed.raf);
+    function animate() {
+      store.threed.controls.update();
+
+      if (store.threed.walkerMesh && store.threed.walkerCurve) {
+        store.threed.walkerProgress = (store.threed.walkerProgress + 0.003) % 1.0;
+        const p = store.threed.walkerCurve.getPointAt(store.threed.walkerProgress);
+        store.threed.walkerMesh.position.copy(p);
+      }
+
+      store.threed.renderer.render(store.threed.scene, store.threed.camera);
+      store.threed.raf = requestAnimationFrame(animate);
+    }
+    animate();
+  }
+
+  // --- DEV GRAPH EDITOR ACTIONS ---
+  function exportGraphJson() {
+    const blob = new Blob([JSON.stringify(store.graph, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "campus-graph.json";
+    a.click();
+  }
+
+  async function saveGraphToServer() {
+    try {
+      const res = await fetch("/api/campus/graph/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(store.graph)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Save failed");
+      alert("Campus graph successfully validated by Pydantic and saved to server!");
+    } catch (e) {
+      alert("Error saving graph: " + e.message);
+    }
+  }
+
+  function addEditorNode() {
+    const id = prompt("Enter unique Node ID (e.g. N_NEW):");
+    if (!id || store.nodesMap[id]) {
+      alert("Node ID must be unique and non-empty.");
+      return;
+    }
+    const label = prompt("Enter Node Display Label:", id) || id;
+    const level = store.viewMode === "editor" ? "c" : store.viewMode;
+    const newNode = {
+      id,
+      label,
+      level,
+      x: 800,
+      y: 400,
+      type: "p"
+    };
+    store.graph.nodes.push(newNode);
+    store.nodesMap[id] = newNode;
+    render2D();
+    alert(`Created node '${id}'. Drag it in editor mode to place it.`);
+  }
+
+  // Expose to window
+  window.CampusNavigator = {
+    store,
+    calculateRoute: calculateCampusRoute,
+    clearSelection,
+    setEndpoint,
+    exportGraphJson,
+    saveGraphToServer,
+    addEditorNode
+  };
+})();

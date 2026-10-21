@@ -1,0 +1,1917 @@
+{
+  "costModel": {
+    "campus": 0.25,
+    "int": 0.1,
+    "stair": 12.0,
+    "lift": 8.0,
+    "door": 4.0
+  },
+  "nodes": [
+    {
+      "id": "GATE",
+      "label": "Main gate",
+      "level": "c",
+      "x": 1585,
+      "y": 430,
+      "type": "e"
+    },
+    {
+      "id": "R1",
+      "label": "road",
+      "level": "c",
+      "x": 1440,
+      "y": 430,
+      "type": "j"
+    },
+    {
+      "id": "R2",
+      "label": "road",
+      "level": "c",
+      "x": 1250,
+      "y": 430,
+      "type": "j"
+    },
+    {
+      "id": "R3",
+      "label": "road",
+      "level": "c",
+      "x": 1100,
+      "y": 430,
+      "type": "j"
+    },
+    {
+      "id": "R4",
+      "label": "road",
+      "level": "c",
+      "x": 840,
+      "y": 430,
+      "type": "j"
+    },
+    {
+      "id": "R5",
+      "label": "road",
+      "level": "c",
+      "x": 745,
+      "y": 430,
+      "type": "j"
+    },
+    {
+      "id": "R6",
+      "label": "road",
+      "level": "c",
+      "x": 450,
+      "y": 430,
+      "type": "j"
+    },
+    {
+      "id": "R7",
+      "label": "road",
+      "level": "c",
+      "x": 380,
+      "y": 430,
+      "type": "j"
+    },
+    {
+      "id": "PARK",
+      "label": "Parking",
+      "level": "c",
+      "x": 1420,
+      "y": 330,
+      "type": "p"
+    },
+    {
+      "id": "BBALL",
+      "label": "Basketball court",
+      "level": "c",
+      "x": 1410,
+      "y": 190,
+      "type": "p"
+    },
+    {
+      "id": "LIB",
+      "label": "Library (campus)",
+      "level": "c",
+      "x": 1105,
+      "y": 330,
+      "type": "p"
+    },
+    {
+      "id": "GRD",
+      "label": "Ground",
+      "level": "c",
+      "x": 1115,
+      "y": 175,
+      "type": "p"
+    },
+    {
+      "id": "YB",
+      "label": "Y block",
+      "level": "c",
+      "x": 745,
+      "y": 328,
+      "type": "p"
+    },
+    {
+      "id": "CLDn",
+      "label": "CLD",
+      "level": "c",
+      "x": 857,
+      "y": 328,
+      "type": "p"
+    },
+    {
+      "id": "DEN",
+      "label": "DEN",
+      "level": "c",
+      "x": 845,
+      "y": 165,
+      "type": "p"
+    },
+    {
+      "id": "GNDn",
+      "label": "GND",
+      "level": "c",
+      "x": 842,
+      "y": 75,
+      "type": "p"
+    },
+    {
+      "id": "FB",
+      "label": "Football ground",
+      "level": "c",
+      "x": 450,
+      "y": 355,
+      "type": "p"
+    },
+    {
+      "id": "VPD",
+      "label": "VP door",
+      "level": "c",
+      "x": 1250,
+      "y": 545,
+      "type": "p"
+    },
+    {
+      "id": "MBD",
+      "label": "M block door",
+      "level": "c",
+      "x": 380,
+      "y": 610,
+      "type": "p"
+    },
+    {
+      "id": "VDA",
+      "label": "VIT door (A-block side)",
+      "level": "c",
+      "x": 1000,
+      "y": 548,
+      "type": "e"
+    },
+    {
+      "id": "VDN",
+      "label": "VIT door (Nescafe side)",
+      "level": "c",
+      "x": 745,
+      "y": 548,
+      "type": "e"
+    },
+    {
+      "id": "IL",
+      "label": "Innovation lab",
+      "level": "f0",
+      "x": 200,
+      "y": 285,
+      "type": "p"
+    },
+    {
+      "id": "AUD",
+      "label": "Auditorium",
+      "level": "f0",
+      "x": 325,
+      "y": 285,
+      "type": "p"
+    },
+    {
+      "id": "LIFT0",
+      "label": "Lift (basement)",
+      "level": "f0",
+      "x": 42,
+      "y": 285,
+      "type": "l"
+    },
+    {
+      "id": "MC0",
+      "label": "M-block lower hall",
+      "level": "f0",
+      "x": 190,
+      "y": 490,
+      "type": "p"
+    },
+    {
+      "id": "SA0",
+      "label": "Stairs A (basement)",
+      "level": "f0",
+      "x": 405,
+      "y": 376,
+      "type": "s"
+    },
+    {
+      "id": "SB0",
+      "label": "Stairs B (basement)",
+      "level": "f0",
+      "x": 405,
+      "y": 448,
+      "type": "s"
+    },
+    {
+      "id": "SR0",
+      "label": "Stairs R (basement)",
+      "level": "f0",
+      "x": 1202,
+      "y": 418,
+      "type": "s"
+    },
+    {
+      "id": "T1",
+      "label": "Lab T1",
+      "level": "f0",
+      "x": 479,
+      "y": 300,
+      "type": "p"
+    },
+    {
+      "id": "B1",
+      "label": "Lab B1",
+      "level": "f0",
+      "x": 479,
+      "y": 560,
+      "type": "p"
+    },
+    {
+      "id": "c0",
+      "label": "corridor",
+      "level": "f0",
+      "x": 479,
+      "y": 420,
+      "type": "j"
+    },
+    {
+      "id": "T2",
+      "label": "Lab T2",
+      "level": "f0",
+      "x": 609,
+      "y": 300,
+      "type": "p"
+    },
+    {
+      "id": "B2",
+      "label": "Lab B2",
+      "level": "f0",
+      "x": 609,
+      "y": 560,
+      "type": "p"
+    },
+    {
+      "id": "c1",
+      "label": "corridor",
+      "level": "f0",
+      "x": 609,
+      "y": 420,
+      "type": "j"
+    },
+    {
+      "id": "T3",
+      "label": "Lab T3",
+      "level": "f0",
+      "x": 737,
+      "y": 300,
+      "type": "p"
+    },
+    {
+      "id": "B3",
+      "label": "Lab B3",
+      "level": "f0",
+      "x": 737,
+      "y": 560,
+      "type": "p"
+    },
+    {
+      "id": "c2",
+      "label": "corridor",
+      "level": "f0",
+      "x": 737,
+      "y": 420,
+      "type": "j"
+    },
+    {
+      "id": "T4",
+      "label": "Lab T4",
+      "level": "f0",
+      "x": 867,
+      "y": 300,
+      "type": "p"
+    },
+    {
+      "id": "B4",
+      "label": "Lab B4",
+      "level": "f0",
+      "x": 867,
+      "y": 560,
+      "type": "p"
+    },
+    {
+      "id": "c3",
+      "label": "corridor",
+      "level": "f0",
+      "x": 867,
+      "y": 420,
+      "type": "j"
+    },
+    {
+      "id": "T5",
+      "label": "Lab T5",
+      "level": "f0",
+      "x": 997,
+      "y": 300,
+      "type": "p"
+    },
+    {
+      "id": "B5",
+      "label": "Lab B5",
+      "level": "f0",
+      "x": 997,
+      "y": 560,
+      "type": "p"
+    },
+    {
+      "id": "c4",
+      "label": "corridor",
+      "level": "f0",
+      "x": 997,
+      "y": 420,
+      "type": "j"
+    },
+    {
+      "id": "T6",
+      "label": "Lab T6",
+      "level": "f0",
+      "x": 1127,
+      "y": 300,
+      "type": "p"
+    },
+    {
+      "id": "B6",
+      "label": "Lab B6",
+      "level": "f0",
+      "x": 1127,
+      "y": 560,
+      "type": "p"
+    },
+    {
+      "id": "c5",
+      "label": "corridor",
+      "level": "f0",
+      "x": 1127,
+      "y": 420,
+      "type": "j"
+    },
+    {
+      "id": "T7",
+      "label": "Lab T7",
+      "level": "f0",
+      "x": 1257,
+      "y": 300,
+      "type": "p"
+    },
+    {
+      "id": "B7",
+      "label": "Lab B7",
+      "level": "f0",
+      "x": 1257,
+      "y": 560,
+      "type": "p"
+    },
+    {
+      "id": "c6",
+      "label": "corridor",
+      "level": "f0",
+      "x": 1257,
+      "y": 420,
+      "type": "j"
+    },
+    {
+      "id": "MC1",
+      "label": "M-block canteen",
+      "level": "f1",
+      "x": 180,
+      "y": 380,
+      "type": "p"
+    },
+    {
+      "id": "LIFT1",
+      "label": "Lift (1F)",
+      "level": "f1",
+      "x": 42,
+      "y": 285,
+      "type": "l"
+    },
+    {
+      "id": "S1A",
+      "label": "Stairs A (1F)",
+      "level": "f1",
+      "x": 380,
+      "y": 285,
+      "type": "s"
+    },
+    {
+      "id": "S1B",
+      "label": "Stairs B (1F)",
+      "level": "f1",
+      "x": 377,
+      "y": 475,
+      "type": "s"
+    },
+    {
+      "id": "S1R",
+      "label": "Stairs R (1F)",
+      "level": "f1",
+      "x": 1137,
+      "y": 343,
+      "type": "s"
+    },
+    {
+      "id": "ST_e",
+      "label": "Stairs up (E, TODO)",
+      "level": "f1",
+      "x": 577,
+      "y": 290,
+      "type": "s"
+    },
+    {
+      "id": "ST_f",
+      "label": "Stairs up (F, TODO)",
+      "level": "f1",
+      "x": 848,
+      "y": 343,
+      "type": "s"
+    },
+    {
+      "id": "ST_b",
+      "label": "Stairs up (B, TODO)",
+      "level": "f1",
+      "x": 1000,
+      "y": 415,
+      "type": "s"
+    },
+    {
+      "id": "U0",
+      "label": "walkway",
+      "level": "f1",
+      "x": 440,
+      "y": 385,
+      "type": "j"
+    },
+    {
+      "id": "U1",
+      "label": "walkway",
+      "level": "f1",
+      "x": 577,
+      "y": 385,
+      "type": "j"
+    },
+    {
+      "id": "U2",
+      "label": "walkway",
+      "level": "f1",
+      "x": 848,
+      "y": 385,
+      "type": "j"
+    },
+    {
+      "id": "U3",
+      "label": "walkway",
+      "level": "f1",
+      "x": 1000,
+      "y": 385,
+      "type": "j"
+    },
+    {
+      "id": "U4",
+      "label": "walkway",
+      "level": "f1",
+      "x": 1137,
+      "y": 385,
+      "type": "j"
+    },
+    {
+      "id": "L0",
+      "label": "walkway",
+      "level": "f1",
+      "x": 440,
+      "y": 450,
+      "type": "j"
+    },
+    {
+      "id": "W1",
+      "label": "walkway",
+      "level": "f1",
+      "x": 597,
+      "y": 450,
+      "type": "j"
+    },
+    {
+      "id": "W2",
+      "label": "walkway",
+      "level": "f1",
+      "x": 738,
+      "y": 450,
+      "type": "j"
+    },
+    {
+      "id": "W3",
+      "label": "walkway",
+      "level": "f1",
+      "x": 860,
+      "y": 450,
+      "type": "j"
+    },
+    {
+      "id": "W4",
+      "label": "walkway",
+      "level": "f1",
+      "x": 985,
+      "y": 450,
+      "type": "j"
+    },
+    {
+      "id": "W5",
+      "label": "walkway",
+      "level": "f1",
+      "x": 1170,
+      "y": 450,
+      "type": "j"
+    },
+    {
+      "id": "EB",
+      "label": "E block",
+      "level": "f1",
+      "x": 570,
+      "y": 215,
+      "type": "p"
+    },
+    {
+      "id": "FB1",
+      "label": "F block",
+      "level": "f1",
+      "x": 830,
+      "y": 215,
+      "type": "p"
+    },
+    {
+      "id": "LB",
+      "label": "Library (VIT)",
+      "level": "f1",
+      "x": 1030,
+      "y": 215,
+      "type": "p"
+    },
+    {
+      "id": "DB",
+      "label": "D block",
+      "level": "f1",
+      "x": 597,
+      "y": 500,
+      "type": "p"
+    },
+    {
+      "id": "NES",
+      "label": "Nescafe",
+      "level": "f1",
+      "x": 738,
+      "y": 565,
+      "type": "p"
+    },
+    {
+      "id": "CAN",
+      "label": "Canteen (VIT)",
+      "level": "f1",
+      "x": 860,
+      "y": 520,
+      "type": "p"
+    },
+    {
+      "id": "BB",
+      "label": "B block",
+      "level": "f1",
+      "x": 983,
+      "y": 500,
+      "type": "p"
+    },
+    {
+      "id": "AB",
+      "label": "A block",
+      "level": "f1",
+      "x": 1170,
+      "y": 500,
+      "type": "p"
+    },
+    {
+      "id": "BEF",
+      "label": "bridge E\u2013F",
+      "level": "f1",
+      "x": 692,
+      "y": 120,
+      "type": "j"
+    },
+    {
+      "id": "BDC",
+      "label": "bridge D\u2013Canteen",
+      "level": "f1",
+      "x": 738,
+      "y": 517,
+      "type": "j"
+    },
+    {
+      "id": "BBA",
+      "label": "bridge B\u2013A",
+      "level": "f1",
+      "x": 1080,
+      "y": 565,
+      "type": "j"
+    },
+    {
+      "id": "EA",
+      "label": "Entrance (opp. A block)",
+      "level": "f1",
+      "x": 1170,
+      "y": 610,
+      "type": "e"
+    },
+    {
+      "id": "EN",
+      "label": "Entrance (opp. Nescafe)",
+      "level": "f1",
+      "x": 738,
+      "y": 610,
+      "type": "e"
+    }
+  ],
+  "edges": [
+    {
+      "a": "GATE",
+      "b": "R1",
+      "type": "w",
+      "cost": 36.25,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "R1",
+      "b": "R2",
+      "type": "w",
+      "cost": 47.5,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "R2",
+      "b": "R3",
+      "type": "w",
+      "cost": 37.5,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "R3",
+      "b": "R4",
+      "type": "w",
+      "cost": 65.0,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "R4",
+      "b": "R5",
+      "type": "w",
+      "cost": 23.75,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "R5",
+      "b": "R6",
+      "type": "w",
+      "cost": 73.75,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "R6",
+      "b": "R7",
+      "type": "w",
+      "cost": 17.5,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "PARK",
+      "b": "R1",
+      "type": "w",
+      "cost": 25.5,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "BBALL",
+      "b": "PARK",
+      "type": "w",
+      "cost": 35.09,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "LIB",
+      "b": "R3",
+      "type": "w",
+      "cost": 25.03,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "GRD",
+      "b": "LIB",
+      "type": "w",
+      "cost": 38.83,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "YB",
+      "b": "R5",
+      "type": "w",
+      "cost": 25.5,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "CLDn",
+      "b": "R4",
+      "type": "w",
+      "cost": 25.85,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "DEN",
+      "b": "CLDn",
+      "type": "w",
+      "cost": 40.86,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "GNDn",
+      "b": "DEN",
+      "type": "w",
+      "cost": 22.51,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "FB",
+      "b": "R6",
+      "type": "w",
+      "cost": 18.75,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "VPD",
+      "b": "R2",
+      "type": "w",
+      "cost": 28.75,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "MBD",
+      "b": "R7",
+      "type": "w",
+      "cost": 45.0,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "VDA",
+      "b": "R3",
+      "type": "w",
+      "cost": 38.67,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "VDN",
+      "b": "R5",
+      "type": "w",
+      "cost": 29.5,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "T1",
+      "b": "c0",
+      "type": "w",
+      "cost": 12.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "B1",
+      "b": "c0",
+      "type": "w",
+      "cost": 14.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "T2",
+      "b": "c1",
+      "type": "w",
+      "cost": 12.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "B2",
+      "b": "c1",
+      "type": "w",
+      "cost": 14.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "c0",
+      "b": "c1",
+      "type": "w",
+      "cost": 13.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "T3",
+      "b": "c2",
+      "type": "w",
+      "cost": 12.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "B3",
+      "b": "c2",
+      "type": "w",
+      "cost": 14.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "c1",
+      "b": "c2",
+      "type": "w",
+      "cost": 12.8,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "T4",
+      "b": "c3",
+      "type": "w",
+      "cost": 12.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "B4",
+      "b": "c3",
+      "type": "w",
+      "cost": 14.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "c2",
+      "b": "c3",
+      "type": "w",
+      "cost": 13.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "T5",
+      "b": "c4",
+      "type": "w",
+      "cost": 12.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "B5",
+      "b": "c4",
+      "type": "w",
+      "cost": 14.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "c3",
+      "b": "c4",
+      "type": "w",
+      "cost": 13.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "T6",
+      "b": "c5",
+      "type": "w",
+      "cost": 12.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "B6",
+      "b": "c5",
+      "type": "w",
+      "cost": 14.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "c4",
+      "b": "c5",
+      "type": "w",
+      "cost": 13.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "T7",
+      "b": "c6",
+      "type": "w",
+      "cost": 12.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "B7",
+      "b": "c6",
+      "type": "w",
+      "cost": 14.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "c5",
+      "b": "c6",
+      "type": "w",
+      "cost": 13.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "SA0",
+      "b": "c0",
+      "type": "w",
+      "cost": 8.61,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "SB0",
+      "b": "c0",
+      "type": "w",
+      "cost": 7.91,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "SR0",
+      "b": "c6",
+      "type": "w",
+      "cost": 5.5,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "MC0",
+      "b": "SB0",
+      "type": "w",
+      "cost": 21.91,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "IL",
+      "b": "SA0",
+      "type": "w",
+      "cost": 22.43,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "AUD",
+      "b": "IL",
+      "type": "w",
+      "cost": 12.5,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "LIFT0",
+      "b": "IL",
+      "type": "w",
+      "cost": 15.8,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "U0",
+      "b": "U1",
+      "type": "w",
+      "cost": 13.7,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "U1",
+      "b": "U2",
+      "type": "w",
+      "cost": 27.1,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "U2",
+      "b": "U3",
+      "type": "w",
+      "cost": 15.2,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "U3",
+      "b": "U4",
+      "type": "w",
+      "cost": 13.7,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "L0",
+      "b": "W1",
+      "type": "w",
+      "cost": 15.7,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "W1",
+      "b": "W2",
+      "type": "w",
+      "cost": 14.1,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "W2",
+      "b": "W3",
+      "type": "w",
+      "cost": 12.2,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "W3",
+      "b": "W4",
+      "type": "w",
+      "cost": 12.5,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "W4",
+      "b": "W5",
+      "type": "w",
+      "cost": 18.5,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "U0",
+      "b": "L0",
+      "type": "w",
+      "cost": 6.5,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "U1",
+      "b": "W1",
+      "type": "w",
+      "cost": 6.8,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "U2",
+      "b": "W3",
+      "type": "w",
+      "cost": 6.61,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "U3",
+      "b": "W4",
+      "type": "w",
+      "cost": 6.67,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "U4",
+      "b": "W5",
+      "type": "w",
+      "cost": 7.29,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "S1A",
+      "b": "U0",
+      "type": "w",
+      "cost": 11.66,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "S1B",
+      "b": "L0",
+      "type": "w",
+      "cost": 6.78,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "MC1",
+      "b": "S1A",
+      "type": "w",
+      "cost": 22.14,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "MC1",
+      "b": "S1B",
+      "type": "w",
+      "cost": 21.87,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "LIFT1",
+      "b": "MC1",
+      "type": "w",
+      "cost": 16.75,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "S1R",
+      "b": "U4",
+      "type": "w",
+      "cost": 4.2,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "ST_e",
+      "b": "U1",
+      "type": "w",
+      "cost": 9.5,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "ST_f",
+      "b": "U2",
+      "type": "w",
+      "cost": 4.2,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "ST_b",
+      "b": "U3",
+      "type": "w",
+      "cost": 3.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "EB",
+      "b": "U1",
+      "type": "w",
+      "cost": 17.01,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "FB1",
+      "b": "U2",
+      "type": "w",
+      "cost": 17.1,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "LB",
+      "b": "U3",
+      "type": "w",
+      "cost": 17.26,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "DB",
+      "b": "W1",
+      "type": "w",
+      "cost": 5.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "CAN",
+      "b": "W3",
+      "type": "w",
+      "cost": 7.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "BB",
+      "b": "W4",
+      "type": "w",
+      "cost": 5.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "AB",
+      "b": "W5",
+      "type": "w",
+      "cost": 5.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "EA",
+      "b": "AB",
+      "type": "w",
+      "cost": 11.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "EN",
+      "b": "NES",
+      "type": "w",
+      "cost": 4.5,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "BEF",
+      "b": "EB",
+      "type": "b",
+      "cost": 15.46,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "BEF",
+      "b": "FB1",
+      "type": "b",
+      "cost": 16.75,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "BDC",
+      "b": "W2",
+      "type": "b",
+      "cost": 6.7,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "BDC",
+      "b": "DB",
+      "type": "b",
+      "cost": 14.2,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "BDC",
+      "b": "CAN",
+      "type": "b",
+      "cost": 12.2,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "BBA",
+      "b": "BB",
+      "type": "b",
+      "cost": 11.68,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "BBA",
+      "b": "AB",
+      "type": "b",
+      "cost": 11.1,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "EA",
+      "b": "BBA",
+      "type": "b",
+      "cost": 10.06,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "EN",
+      "b": "BDC",
+      "type": "b",
+      "cost": 9.3,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "SA0",
+      "b": "S1A",
+      "type": "s",
+      "cost": 12.0,
+      "accessible": false,
+      "outdoor": false
+    },
+    {
+      "a": "SB0",
+      "b": "S1B",
+      "type": "s",
+      "cost": 12.0,
+      "accessible": false,
+      "outdoor": false
+    },
+    {
+      "a": "SR0",
+      "b": "S1R",
+      "type": "s",
+      "cost": 12.0,
+      "accessible": false,
+      "outdoor": false
+    },
+    {
+      "a": "LIFT0",
+      "b": "LIFT1",
+      "type": "l",
+      "cost": 8.0,
+      "accessible": true,
+      "outdoor": false
+    },
+    {
+      "a": "VDA",
+      "b": "EA",
+      "type": "d",
+      "cost": 4.0,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "VDN",
+      "b": "EN",
+      "type": "d",
+      "cost": 4.0,
+      "accessible": true,
+      "outdoor": true
+    },
+    {
+      "a": "MBD",
+      "b": "MC1",
+      "type": "d",
+      "cost": 4.0,
+      "accessible": true,
+      "outdoor": true
+    }
+  ],
+  "rooms": [
+    {
+      "level": "c",
+      "label": "",
+      "x": 240,
+      "y": 360,
+      "width": 1345,
+      "height": 140,
+      "kind": "road"
+    },
+    {
+      "level": "c",
+      "label": "Football ground",
+      "x": 240,
+      "y": 130,
+      "width": 410,
+      "height": 225,
+      "kind": "field"
+    },
+    {
+      "level": "c",
+      "label": "Y block",
+      "x": 702,
+      "y": 190,
+      "width": 82,
+      "height": 135,
+      "kind": "bld"
+    },
+    {
+      "level": "c",
+      "label": "GND",
+      "x": 808,
+      "y": 12,
+      "width": 68,
+      "height": 62,
+      "kind": "bld"
+    },
+    {
+      "level": "c",
+      "label": "DEN",
+      "x": 810,
+      "y": 90,
+      "width": 70,
+      "height": 75,
+      "kind": "bld"
+    },
+    {
+      "level": "c",
+      "label": "CLD",
+      "x": 820,
+      "y": 190,
+      "width": 75,
+      "height": 135,
+      "kind": "bld"
+    },
+    {
+      "level": "c",
+      "label": "Ground",
+      "x": 937,
+      "y": 30,
+      "width": 357,
+      "height": 145,
+      "kind": "field"
+    },
+    {
+      "level": "c",
+      "label": "Library",
+      "x": 937,
+      "y": 200,
+      "width": 342,
+      "height": 128,
+      "kind": "bld"
+    },
+    {
+      "level": "c",
+      "label": "Basketball court",
+      "x": 1345,
+      "y": 12,
+      "width": 132,
+      "height": 175,
+      "kind": "field"
+    },
+    {
+      "level": "c",
+      "label": "Parking",
+      "x": 1318,
+      "y": 200,
+      "width": 205,
+      "height": 135,
+      "kind": "park"
+    },
+    {
+      "level": "c",
+      "label": "M block",
+      "x": 215,
+      "y": 610,
+      "width": 320,
+      "height": 285,
+      "kind": "bld"
+    },
+    {
+      "level": "c",
+      "label": "VIT",
+      "x": 567,
+      "y": 548,
+      "width": 550,
+      "height": 350,
+      "kind": "bld"
+    },
+    {
+      "level": "c",
+      "label": "VP",
+      "x": 1120,
+      "y": 545,
+      "width": 265,
+      "height": 330,
+      "kind": "bld"
+    },
+    {
+      "level": "f0",
+      "label": "",
+      "x": 415,
+      "y": 350,
+      "width": 905,
+      "height": 142,
+      "kind": "floor"
+    },
+    {
+      "level": "f0",
+      "label": "Innovation lab",
+      "x": 70,
+      "y": 222,
+      "width": 310,
+      "height": 123,
+      "kind": "room"
+    },
+    {
+      "level": "f0",
+      "label": "Auditorium",
+      "x": 262,
+      "y": 155,
+      "width": 126,
+      "height": 135,
+      "kind": "room"
+    },
+    {
+      "level": "f0",
+      "label": "M-block lower hall",
+      "x": 0,
+      "y": 350,
+      "width": 380,
+      "height": 275,
+      "kind": "room"
+    },
+    {
+      "level": "f0",
+      "label": "Lift",
+      "x": 15,
+      "y": 222,
+      "width": 55,
+      "height": 128,
+      "kind": "stair"
+    },
+    {
+      "level": "f0",
+      "label": "Stairs \u2191",
+      "x": 335,
+      "y": 347,
+      "width": 140,
+      "height": 58,
+      "kind": "stair"
+    },
+    {
+      "level": "f0",
+      "label": "Stairs",
+      "x": 335,
+      "y": 418,
+      "width": 140,
+      "height": 60,
+      "kind": "stair"
+    },
+    {
+      "level": "f0",
+      "label": "Stairs",
+      "x": 1132,
+      "y": 357,
+      "width": 140,
+      "height": 123,
+      "kind": "stair"
+    },
+    {
+      "level": "f0",
+      "label": "Lab T1",
+      "x": 418,
+      "y": 218,
+      "width": 122,
+      "height": 132,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab B1",
+      "x": 418,
+      "y": 492,
+      "width": 122,
+      "height": 136,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab T2",
+      "x": 548,
+      "y": 218,
+      "width": 122,
+      "height": 132,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab B2",
+      "x": 548,
+      "y": 492,
+      "width": 122,
+      "height": 136,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab T3",
+      "x": 676,
+      "y": 218,
+      "width": 122,
+      "height": 132,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab B3",
+      "x": 676,
+      "y": 492,
+      "width": 122,
+      "height": 136,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab T4",
+      "x": 806,
+      "y": 218,
+      "width": 122,
+      "height": 132,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab B4",
+      "x": 806,
+      "y": 492,
+      "width": 122,
+      "height": 136,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab T5",
+      "x": 936,
+      "y": 218,
+      "width": 122,
+      "height": 132,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab B5",
+      "x": 936,
+      "y": 492,
+      "width": 122,
+      "height": 136,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab T6",
+      "x": 1066,
+      "y": 218,
+      "width": 122,
+      "height": 132,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab B6",
+      "x": 1066,
+      "y": 492,
+      "width": 122,
+      "height": 136,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab T7",
+      "x": 1196,
+      "y": 218,
+      "width": 122,
+      "height": 132,
+      "kind": "lab"
+    },
+    {
+      "level": "f0",
+      "label": "Lab B7",
+      "x": 1196,
+      "y": 492,
+      "width": 122,
+      "height": 136,
+      "kind": "lab"
+    },
+    {
+      "level": "f1",
+      "label": "",
+      "x": 393,
+      "y": 95,
+      "width": 922,
+      "height": 497,
+      "kind": "floor"
+    },
+    {
+      "level": "f1",
+      "label": "M-block canteen",
+      "x": 0,
+      "y": 80,
+      "width": 370,
+      "height": 485,
+      "kind": "room"
+    },
+    {
+      "level": "f1",
+      "label": "E block",
+      "x": 503,
+      "y": 97,
+      "width": 132,
+      "height": 133,
+      "kind": "bld"
+    },
+    {
+      "level": "f1",
+      "label": "F block",
+      "x": 760,
+      "y": 97,
+      "width": 143,
+      "height": 133,
+      "kind": "bld"
+    },
+    {
+      "level": "f1",
+      "label": "Library",
+      "x": 970,
+      "y": 97,
+      "width": 123,
+      "height": 133,
+      "kind": "bld"
+    },
+    {
+      "level": "f1",
+      "label": "D block",
+      "x": 517,
+      "y": 457,
+      "width": 160,
+      "height": 133,
+      "kind": "bld"
+    },
+    {
+      "level": "f1",
+      "label": "Nescafe",
+      "x": 685,
+      "y": 540,
+      "width": 108,
+      "height": 50,
+      "kind": "bld"
+    },
+    {
+      "level": "f1",
+      "label": "Canteen",
+      "x": 805,
+      "y": 470,
+      "width": 110,
+      "height": 120,
+      "kind": "bld"
+    },
+    {
+      "level": "f1",
+      "label": "B block",
+      "x": 922,
+      "y": 455,
+      "width": 123,
+      "height": 135,
+      "kind": "bld"
+    },
+    {
+      "level": "f1",
+      "label": "A block",
+      "x": 1108,
+      "y": 455,
+      "width": 124,
+      "height": 135,
+      "kind": "bld"
+    },
+    {
+      "level": "f1",
+      "label": "",
+      "x": 547,
+      "y": 225,
+      "width": 60,
+      "height": 130,
+      "kind": "stair"
+    },
+    {
+      "level": "f1",
+      "label": "",
+      "x": 780,
+      "y": 315,
+      "width": 138,
+      "height": 55,
+      "kind": "stair"
+    },
+    {
+      "level": "f1",
+      "label": "",
+      "x": 1085,
+      "y": 315,
+      "width": 105,
+      "height": 55,
+      "kind": "stair"
+    },
+    {
+      "level": "f1",
+      "label": "",
+      "x": 970,
+      "y": 370,
+      "width": 60,
+      "height": 95,
+      "kind": "stair"
+    },
+    {
+      "level": "f1",
+      "label": "",
+      "x": 310,
+      "y": 257,
+      "width": 140,
+      "height": 58,
+      "kind": "stair"
+    },
+    {
+      "level": "f1",
+      "label": "",
+      "x": 308,
+      "y": 447,
+      "width": 140,
+      "height": 60,
+      "kind": "stair"
+    },
+    {
+      "level": "f1",
+      "label": "",
+      "x": 622,
+      "y": 92,
+      "width": 140,
+      "height": 55,
+      "kind": "bridge"
+    },
+    {
+      "level": "f1",
+      "label": "",
+      "x": 668,
+      "y": 505,
+      "width": 140,
+      "height": 24,
+      "kind": "bridge"
+    },
+    {
+      "level": "f1",
+      "label": "",
+      "x": 1040,
+      "y": 538,
+      "width": 78,
+      "height": 55,
+      "kind": "bridge"
+    }
+  ],
+  "metadata": {
+    "name": "VIT Campus & Academic Blocks",
+    "levels": {
+      "c": "Campus Outdoor Grounds",
+      "f1": "VIT Floor 1 (Elevated Walkway)",
+      "f0": "VIT Basement Labs"
+    }
+  }
+}

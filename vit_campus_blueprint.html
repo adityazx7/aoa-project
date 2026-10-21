@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VIT Campus Blueprint</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#1c2030;--mut:#6b7185;--line:#9aa1b8;--acc:#2f5bea;--path:#e8590c;--room:#eef1f9;--lab:#dff0e8;--stair:#ffe9b8;--road:#dfe3ee;--field:#e2f2dc}
+@media(prefers-color-scheme:dark){:root{--bg:#12141c;--card:#1b1e29;--ink:#e8eaf2;--mut:#99a0b8;--line:#5a6180;--acc:#7a9bff;--path:#ff9f5a;--room:#242838;--lab:#1f3a33;--stair:#4a3b1c;--road:#2a2e3d;--field:#1f3321}}
+*{box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:12px}
+h1{font-size:18px;margin:0 0 8px}.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+button,select{font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer}
+button.on,button.go{background:var(--acc);color:#fff;border-color:var(--acc)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px;overflow:auto}
+svg{width:100%;height:auto;display:block;max-height:70vh}#gl{height:520px;display:none;border-radius:12px;overflow:hidden;cursor:grab}
+.k_bld{fill:var(--room)}.k_room{fill:var(--room)}.k_lab{fill:var(--lab)}.k_stair{fill:var(--stair)}.k_bridge{fill:var(--card)}.k_field{fill:var(--field)}.k_park{fill:var(--road)}.k_floor{fill:var(--card);stroke-dasharray:6 4}.k_road{fill:var(--road);stroke:none}
+.r{stroke:var(--line);stroke-width:2.5}.t{fill:var(--ink);text-anchor:middle;pointer-events:none}
+.e{stroke:var(--line);stroke-width:2;opacity:.55}.e.s{stroke-dasharray:5 4}.e.b{stroke:var(--acc)}
+.p{stroke:var(--path);stroke-width:7;stroke-linecap:round;opacity:1}
+.n{fill:var(--card);stroke:var(--ink);stroke-width:2;cursor:pointer}.n.j{fill:var(--line);stroke:none}.n.s{fill:#f5b942}.n.e{fill:#38b36b}.n.l{fill:#a06be0}
+.n.on{fill:var(--path);stroke:var(--path)}.n.fr{fill:#2f9e44}.n.to{fill:#e03131}
+#out{margin-top:8px;font-size:13px}#out li{margin:2px 0}.mut{color:var(--mut)}
+.leg span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 10px;vertical-align:middle}
+</style></head><body>
+<h1>VIT Campus Blueprint — weighted graph, 2D + 3D</h1>
+<div class="bar" id="tabs"></div>
+<div class="bar">From <select id="from"></select> To <select id="to"></select>
+<label><input type="checkbox" id="avoid"> avoid stairs (stair cost ×4)</label>
+<button class="go" id="run">Find shortest path</button><button id="clr">Clear</button><button id="exp">Export graph JSON</button></div>
+<div class="card"><svg id="svg"></svg><div id="gl"></div></div>
+<div class="mut leg" style="margin-top:6px">Click nodes to pick From, then To.<span style="background:#38b36b"></span>entrance<span style="background:#f5b942"></span>stairs<span style="background:#a06be0"></span>lift<span style="background:#9aa1b8"></span>junction</div>
+<div id="out"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ===== DATA (edit freely; coordinates are px from your sketches) =====
+// Cost model (metres-equivalent). Walk cost = pixel distance * scale.
+const W={campus:0.25,int:0.1,stair:12,lift:8,door:4};
+const nd={},E=[],R=[];
+const N=(id,l,lv,x,y,t='p')=>nd[id]={id,l,lv,x,y,t};
+const L=(s,t='w')=>s.split(' ').forEach(p=>{const[a,b]=p.split('-');E.push([a,b,t])});
+// --- Campus rooms (lvl 'c')
+R.push(['c','',240,360,1345,140,'road']);
+[['Football ground',240,130,410,225,'field'],['Y block',702,190,82,135,'bld'],['GND',808,12,68,62,'bld'],['DEN',810,90,70,75,'bld'],['CLD',820,190,75,135,'bld'],['Ground',937,30,357,145,'field'],['Library',937,200,342,128,'bld'],['Basketball court',1345,12,132,175,'field'],['Parking',1318,200,205,135,'park'],['M block',215,610,320,285,'bld'],['VIT',567,548,550,350,'bld'],['VP',1120,545,265,330,'bld']].forEach(r=>R.push(['c',...r]));
+// --- Campus nodes
+[['GATE','Main gate',1585,430,'e'],['R1','road',1440,430,'j'],['R2','road',1250,430,'j'],['R3','road',1100,430,'j'],['R4','road',840,430,'j'],['R5','road',745,430,'j'],['R6','road',450,430,'j'],['R7','road',380,430,'j'],
+['PARK','Parking',1420,330],['BBALL','Basketball court',1410,190],['LIB','Library (campus)',1105,330],['GRD','Ground',1115,175],['YB','Y block',745,328],['CLDn','CLD',857,328],['DEN','DEN',845,165],['GNDn','GND',842,75],['FB','Football ground',450,355],['VPD','VP door',1250,545],['MBD','M block door',380,610],['VDA','VIT door (A-block side)',1000,548,'e'],['VDN','VIT door (Nescafe side)',745,548,'e']].forEach(n=>N(n[0],n[1],'c',n[2],n[3],n[4]));
+L('GATE-R1 R1-R2 R2-R3 R3-R4 R4-R5 R5-R6 R6-R7 PARK-R1 BBALL-PARK LIB-R3 GRD-LIB YB-R5 CLDn-R4 DEN-CLDn GNDn-DEN FB-R6 VPD-R2 MBD-R7 VDA-R3 VDN-R5');
+// --- Basement f0 (labs)
+R.push(['f0','',415,350,905,142,'floor']);
+[['Innovation lab',70,222,310,123,'room'],['Auditorium',262,155,126,135,'room'],['M-block lower hall',0,350,380,275,'room'],['Lift',15,222,55,128,'stair'],['Stairs ↑',335,347,140,58,'stair'],['Stairs',335,418,140,60,'stair'],['Stairs',1132,357,140,123,'stair']].forEach(r=>R.push(['f0',...r]));
+[['IL','Innovation lab',200,285],['AUD','Auditorium',325,285],['LIFT0','Lift (basement)',42,285,'l'],['MC0','M-block lower hall',190,490],['SA0','Stairs A (basement)',405,376,'s'],['SB0','Stairs B (basement)',405,448,'s'],['SR0','Stairs R (basement)',1202,418,'s']].forEach(n=>N(n[0],n[1],'f0',n[2],n[3],n[4]));
+[418,548,676,806,936,1066,1196].forEach((x,i)=>{const k=i+1;
+R.push(['f0','Lab T'+k,x,218,122,132,'lab'],['f0','Lab B'+k,x,492,122,136,'lab']);
+N('T'+k,'Lab T'+k,'f0',x+61,300);N('B'+k,'Lab B'+k,'f0',x+61,560);N('c'+i,'corridor','f0',x+61,420,'j');
+L('T'+k+'-c'+i+' B'+k+'-c'+i);if(i)L('c'+(i-1)+'-c'+i)});
+L('SA0-c0 SB0-c0 SR0-c6 MC0-SB0 IL-SA0 AUD-IL LIFT0-IL');
+// --- First floor f1 (walkway level)
+R.push(['f1','',393,95,922,497,'floor']);
+[['M-block canteen',0,80,370,485,'room'],['E block',503,97,132,133,'bld'],['F block',760,97,143,133,'bld'],['Library',970,97,123,133,'bld'],['D block',517,457,160,133,'bld'],['Nescafe',685,540,108,50,'bld'],['Canteen',805,470,110,120,'bld'],['B block',922,455,123,135,'bld'],['A block',1108,455,124,135,'bld'],
+['',547,225,60,130,'stair'],['',780,315,138,55,'stair'],['',1085,315,105,55,'stair'],['',970,370,60,95,'stair'],['',310,257,140,58,'stair'],['',308,447,140,60,'stair'],
+['',622,92,140,55,'bridge'],['',668,505,140,24,'bridge'],['',1040,538,78,55,'bridge']].forEach(r=>R.push(['f1',...r]));
+[['MC1','M-block canteen',180,380],['LIFT1','Lift (1F)',42,285,'l'],['S1A','Stairs A (1F)',380,285,'s'],['S1B','Stairs B (1F)',377,475,'s'],['S1R','Stairs R (1F)',1137,343,'s'],
+['ST_e','Stairs up (E, TODO)',577,290,'s'],['ST_f','Stairs up (F, TODO)',848,343,'s'],['ST_b','Stairs up (B, TODO)',1000,415,'s'],
+['U0','walkway','',440,385,'j'],['U1','walkway','',577,385,'j'],['U2','walkway','',848,385,'j'],['U3','walkway','',1000,385,'j'],['U4','walkway','',1137,385,'j'],
+['L0','walkway','',440,450,'j'],['W1','walkway','',597,450,'j'],['W2','walkway','',738,450,'j'],['W3','walkway','',860,450,'j'],['W4','walkway','',985,450,'j'],['W5','walkway','',1170,450,'j']].forEach(n=>{
+ const j=n[2]==='';N(n[0],n[1],'f1',j?n[3]:n[2],j?n[4]:n[3],j?n[5]:n[4])});
+[['EB','E block',570,215],['FB1','F block',830,215],['LB','Library (VIT)',1030,215],['DB','D block',597,500],['NES','Nescafe',738,565],['CAN','Canteen (VIT)',860,520],['BB','B block',983,500],['AB','A block',1170,500],
+['BEF','bridge E–F',692,120,'j'],['BDC','bridge D–Canteen',738,517,'j'],['BBA','bridge B–A',1080,565,'j'],['EA','Entrance (opp. A block)',1170,610,'e'],['EN','Entrance (opp. Nescafe)',738,610,'e']].forEach(n=>N(n[0],n[1],'f1',n[2],n[3],n[4]));
+L('U0-U1 U1-U2 U2-U3 U3-U4 L0-W1 W1-W2 W2-W3 W3-W4 W4-W5 U0-L0 U1-W1 U2-W3 U3-W4 U4-W5 S1A-U0 S1B-L0 MC1-S1A MC1-S1B LIFT1-MC1 S1R-U4 ST_e-U1 ST_f-U2 ST_b-U3 EB-U1 FB1-U2 LB-U3 DB-W1 CAN-W3 BB-W4 AB-W5 EA-AB EN-NES');
+L('BEF-EB BEF-FB1 BDC-W2 BDC-DB BDC-CAN BBA-BB BBA-AB EA-BBA EN-BDC','b');
+// --- cross-level links
+L('SA0-S1A SB0-S1B SR0-S1R','s');L('LIFT0-LIFT1','l');L('VDA-EA VDN-EN MBD-MC1','d');
+// ===== GRAPH =====
+const LV={c:'Campus',f1:'VIT floor 1',f0:'VIT basement'};
+let avoid=false;
+function cost(e){const a=nd[e[0]],b=nd[e[1]],t=e[2];
+ if(t=='s')return W.stair*(avoid?4:1);if(t=='l')return W.lift;if(t=='d')return W.door;
+ return Math.hypot(a.x-b.x,a.y-b.y)*(a.lv=='c'?W.campus:W.int)}
+const adj={};Object.keys(nd).forEach(k=>adj[k]=[]);E.forEach((e,i)=>{adj[e[0]].push([e[1],i]);adj[e[1]].push([e[0],i])});
+function dijkstra(s,t){const d={},p={},pe={},q=new Set(Object.keys(nd));Object.keys(nd).forEach(k=>d[k]=Infinity);d[s]=0;
+ while(q.size){let u=null;q.forEach(k=>{if(u===null||d[k]<d[u])u=k});if(d[u]===Infinity||u===t)break;q.delete(u);
+  adj[u].forEach(([v,i])=>{const c=d[u]+cost(E[i]);if(c<d[v]){d[v]=c;p[v]=u;pe[v]=i}})}
+ if(d[t]===Infinity)return null;const path=[t],eds=[];let c=t;while(c!==s){eds.push(pe[c]);c=p[c];path.push(c)}return{path:path.reverse(),eds:eds.reverse(),cost:d[t]}}
+// ===== UI STATE =====
+let view='c',from='',to='',res=null;
+const $=id=>document.getElementById(id);
+const TABS=[['c','Campus 2D'],['f1','VIT floor 1 (2D)'],['f0','VIT basement (2D)'],['3c','Campus 3D'],['3i','VIT interior 3D']];
+$('tabs').innerHTML=TABS.map(t=>`<button data-v="${t[0]}">${t[1]}</button>`).join('');
+$('tabs').onclick=e=>{if(e.target.dataset.v){view=e.target.dataset.v;draw()}};
+['from','to'].forEach(id=>{$(id).innerHTML='<option value="">— select —</option>'+Object.keys(LV).map(l=>`<optgroup label="${LV[l]}">`+Object.values(nd).filter(n=>n.lv==l&&n.t!='j').map(n=>`<option value="${n.id}">${n.l}</option>`).join('')+'</optgroup>').join('');
+ $(id).onchange=()=>{from=$('from').value;to=$('to').value;res=null;draw()}});
+$('run').onclick=()=>{avoid=$('avoid').checked;from=$('from').value;to=$('to').value;res=from&&to?dijkstra(from,to):null;
+ if(res&&nd[from].lv!=nd[to].lv&&view[0]!='3'){}draw()};
+$('clr').onclick=()=>{from=to='';$('from').value=$('to').value='';res=null;draw()};
+$('exp').onclick=()=>{const o={costModel:W,nodes:Object.values(nd),edges:E.map((e,i)=>({a:e[0],b:e[1],type:e[2],cost:+cost(e).toFixed(2)})),rooms:R};
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,1)],{type:'application/json'}));a.download='vit_graph.json';a.click()};
+function pick(id){if(!from||to){from=id;to='';res=null}else{to=id;avoid=$('avoid').checked;res=dijkstra(from,to)}$('from').value=from;$('to').value=to;draw()}
+// ===== 2D =====
+function svgEl(v){const VB={c:[0,0,1650,930],f1:[0,70,1340,570],f0:[0,140,1340,510]}[v];
+ let h='';const inP=new Set(res?res.eds:[]);
+ R.filter(r=>r[0]==v).forEach(r=>{const[,l,x,y,w,hh,k]=r;h+=`<rect class="r k_${k}" x="${x}" y="${y}" width="${w}" height="${hh}" rx="${k=='bridge'||k=='stair'?14:10}"/>`;
+  if(l)h+=`<text class="t" x="${x+w/2}" y="${y+hh/2+6}" font-size="${w<110?(v=='c'?18:15):v=='c'?30:22}">${l}</text>`});
+ E.forEach((e,i)=>{const a=nd[e[0]],b=nd[e[1]];if(a.lv!=v||b.lv!=v)return;h+=`<line class="e ${e[2]}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"><title>cost ${cost(e).toFixed(1)}</title></line>`;
+  if(inP.has(i))h+=`<line class="p" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`});
+ Object.values(nd).filter(n=>n.lv==v).forEach(n=>{const c=n.id==from?'fr':n.id==to?'to':res&&res.path.includes(n.id)&&n.t!='j'?'on':'';
+  h+=`<circle class="n ${n.t} ${c}" data-id="${n.id}" cx="${n.x}" cy="${n.y}" r="${n.t=='j'?5:11}"><title>${n.l}</title></circle>`});
+ return[VB.join(' '),h]}
+function summary(){if(from&&to&&!res){$('out').innerHTML='<b>No path.</b>';return}
+ if(!res){$('out').innerHTML='<span class="mut">Pick two points.</span>';return}
+ const steps=res.path.filter(k=>nd[k].t!='j').map(k=>`<li>${nd[k].l} <span class="mut">(${LV[nd[k].lv]})</span></li>`).join('');
+ $('out').innerHTML=`<b>Total cost: ${res.cost.toFixed(1)}</b> · ${res.path.length} nodes · ${res.eds.length} edges<ol>${steps}</ol>`}
+// ===== 3D =====
+let ren,sc3,cam={a:0.6,e:0.9,d:90,t:null},raf,dragging=false;
+function dark(){return matchMedia('(prefers-color-scheme:dark)').matches}
+function build3(mode){const lv=mode=='3c'?['c']:['f0','f1'],S=mode=='3c'?1/20:1/25,base={c:0,f0:0,f1:11};
+ if(!ren){ren=new THREE.WebGLRenderer({antialias:true});$('gl').appendChild(ren.domElement);const g=$('gl');
+  g.onpointerdown=e=>{dragging=[e.clientX,e.clientY];g.style.cursor='grabbing'};addEventListener('pointerup',()=>{dragging=false;g.style.cursor='grab'});
+  g.onpointermove=e=>{if(!dragging)return;cam.a-=(e.clientX-dragging[0])*.008;cam.e=Math.min(1.5,Math.max(.1,cam.e+(e.clientY-dragging[1])*.008));dragging=[e.clientX,e.clientY]};
+  g.onwheel=e=>{e.preventDefault();cam.d=Math.max(15,Math.min(250,cam.d*(1+e.deltaY*.001)))}}
+ const w=$('gl').clientWidth;ren.setSize(w,520);sc3=new THREE.Scene();sc3.background=new THREE.Color(dark()?0x12141c:0xf6f7fb);
+ sc3.add(new THREE.AmbientLight(0xffffff,.75));const dl=new THREE.DirectionalLight(0xffffff,.6);dl.position.set(30,80,20);sc3.add(dl);
+ const col={bld:0x8fa4e8,room:0xb8c4ee,lab:0x7fcfa8,stair:0xf5b942,bridge:0xffffff,field:0x77c26a,park:0x8a90a8,floor:dark()?0x2a2e3d:0xdfe3ee,road:dark()?0x2a2e3d:0xcfd4e4};
+ const H=r=>{const k=r[6];if(mode=='3c')return k=='bld'?(r[1]=='VIT'?14:r[1]=='M block'?12:r[1]=='VP'?11:8):.3;return{room:5,bld:5,lab:5,stair:1.5,bridge:1,floor:.3}[k]||.3};
+ const label=(t,x,y,z,s)=>{const c=document.createElement('canvas');c.width=256;c.height=64;const g=c.getContext('2d');g.font='600 30px sans-serif';g.textAlign='center';g.fillStyle=dark()?'#fff':'#1c2030';g.fillText(t,128,42);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthTest:false}));sp.position.set(x,y,z);sp.scale.set(s*4,s,1);sp.renderOrder=3;sc3.add(sp)};
+ R.filter(r=>lv.includes(r[0])).forEach(r=>{const h=H(r),b=base[r[0]]||0,k=r[6];
+  const m=new THREE.Mesh(new THREE.BoxGeometry(r[4]*S,h,r[5]*S),new THREE.MeshLambertMaterial({color:col[k],transparent:mode=='3i'&&k!='floor',opacity:mode=='3i'&&k!='floor'?.4:1,depthWrite:!(mode=='3i'&&k!='floor')}));
+  m.position.set((r[2]+r[4]/2)*S,b+h/2,(r[3]+r[5]/2)*S);sc3.add(m);
+  if(k!='floor'&&k!='road'){const ln=new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry),new THREE.LineBasicMaterial({color:dark()?0xaab:0x556}));ln.position.copy(m.position);sc3.add(ln)}
+  if(r[1]&&k!='lab'&&k!='stair'&&k!='bridge')label(r[1],m.position.x,b+h+1.2,m.position.z,mode=='3c'?3:1.6)});
+ const P=n=>new THREE.Vector3(n.x*S,(base[n.lv]||0)+(mode=='3c'?.8:.6),n.y*S);
+ const lines=[];E.forEach(e=>{const a=nd[e[0]],b=nd[e[1]];if(lv.includes(a.lv)&&lv.includes(b.lv))lines.push(P(a),P(b))});
+ const lg=new THREE.BufferGeometry().setFromPoints(lines);const ls=new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:0x8890aa,transparent:true,opacity:.6,depthTest:false}));ls.renderOrder=1;sc3.add(ls);
+ Object.values(nd).filter(n=>lv.includes(n.lv)&&n.t!='j').forEach(n=>{const c=n.id==from?0x2f9e44:n.id==to?0xe03131:n.t=='e'?0x38b36b:n.t=='s'?0xf5b942:n.t=='l'?0xa06be0:0xffffff;
+  const s=new THREE.Mesh(new THREE.SphereGeometry(n.id==from||n.id==to?.9:.4,12,8),new THREE.MeshBasicMaterial({color:c,depthTest:false}));s.position.copy(P(n));s.renderOrder=2;sc3.add(s)});
+ if(res)res.eds.forEach(i=>{const a=nd[E[i][0]],b=nd[E[i][1]];if(!lv.includes(a.lv)||!lv.includes(b.lv))return;
+  const t=new THREE.Mesh(new THREE.TubeGeometry(new THREE.LineCurve3(P(a),P(b)),1,.28,6),new THREE.MeshBasicMaterial({color:0xe8590c,depthTest:false}));t.renderOrder=2;sc3.add(t)});
+ cam.t=mode=='3c'?new THREE.Vector3(41,0,23):new THREE.Vector3(27,6,15);cam.d=mode=='3c'?80:55;
+ const camObj=new THREE.PerspectiveCamera(50,w/520,.1,600);cam.o=camObj;cancelAnimationFrame(raf);
+ (function loop(){const c=cam;c.o.position.set(c.t.x+c.d*Math.sin(c.a)*Math.cos(c.e),c.t.y+c.d*Math.sin(c.e),c.t.z+c.d*Math.cos(c.a)*Math.cos(c.e));c.o.lookAt(c.t);ren.render(sc3,c.o);raf=requestAnimationFrame(loop)})()}
+// ===== DRAW =====
+function draw(){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v==view));
+ const is3=view[0]=='3';$('gl').style.display=is3?'block':'none';$('svg').style.display=is3?'none':'block';
+ if(is3)build3(view);else{cancelAnimationFrame(raf);const[vb,h]=svgEl(view);$('svg').setAttribute('viewBox',vb);$('svg').innerHTML=h;
+  $('svg').querySelectorAll('circle.n').forEach(c=>c.onclick=()=>pick(c.dataset.id))}
+ summary()}
+draw();
+</script></body></html>
