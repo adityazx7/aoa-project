@@ -23,9 +23,9 @@ def nx_verifier(campus_graph):
 # ==========================================
 
 def test_graph_integrity_valid(campus_graph):
-    assert len(campus_graph.nodes) == 81
-    assert len(campus_graph.edges) == 95
-    assert len(campus_graph.rooms) == 54
+    assert len(campus_graph.nodes) == 82
+    assert len(campus_graph.edges) == 87
+    assert len(campus_graph.rooms) == 51
     assert campus_graph.costModel.campus == 0.25
     assert campus_graph.costModel.int_ == 0.1
 
@@ -81,8 +81,8 @@ def test_hand_checked_main_gate_to_lab_t3(router):
     assert res.path[0] == "GATE"
     assert res.path[-1] == "T3"
     assert res.total_cost > 0
-    # Must enter VIT building through either VDA or VDN door
-    assert ("VDA" in res.path) or ("VDN" in res.path) or ("MBD" in res.path)
+    # Must enter VIT building through either door, stairs, or library portal
+    assert any(portal in res.path for portal in ["VDA", "VDN", "MBD", "LIB", "LB"])
 
 def test_dijkstra_astar_optimality_match(router):
     # Tested on diverse intra-level and cross-level pairs
@@ -217,3 +217,44 @@ def test_performance_budget_sub_5ms(router):
 
     print(f"\nAverage Dijkstra query time: {elapsed_ms:.3f} ms")
     assert elapsed_ms < 5.0, f"Query took {elapsed_ms:.2f} ms, exceeding 5 ms budget"
+
+# ==========================================
+# 6. Floor 1 Blueprint Specific Navigation Tests
+# ==========================================
+
+def test_f1_room_a_to_room_b_walkway(router):
+    res = router.dijkstra("AB", "BB")
+    assert res is not None
+    assert res.path[0] == "AB"
+    assert res.path[-1] == "BB"
+    # Route traverses walkway nodes N1_L -> N2_1 -> N3
+    assert "N1_L" in res.path
+    assert "N2_1" in res.path
+    assert "N3" in res.path
+    assert res.total_cost > 0
+
+def test_f1_lab_to_mblock_stairs(router):
+    res = router.dijkstra("LAB_COMP", "MC1")
+    assert res is not None
+    assert res.path[0] == "LAB_COMP"
+    assert res.path[-1] == "MC1"
+    assert "N2_1" in res.path
+    assert "N_R_BEND" in res.path
+
+def test_f1_library_stairs_cross_level_to_campus(router):
+    # From Floor 1 Library stairs (LB) to Campus ground Library (LIB)
+    res = router.dijkstra("LB", "LIB")
+    assert res is not None
+    assert res.path == ["LB", "LIB"]
+    assert res.total_cost == pytest.approx(12.0)
+
+def test_f1_accessible_route_from_lab_to_basement(router):
+    # Wheelchair query from LAB_COMP to basement lab T1 must use LIFT1 -> LIFT0, never stairs
+    opt_acc = RoutingOptions(accessible_only=True)
+    res = router.dijkstra("LAB_COMP", "T1", opt_acc)
+    assert res is not None
+    assert "LIFT1" in res.path
+    assert "LIFT0" in res.path
+    for edge in res.edges:
+        assert edge["accessible"] is True
+        assert edge["type"] != "s"

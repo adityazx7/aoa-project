@@ -1,4 +1,14 @@
 {
+  "meta": {
+    "origin": [
+      19.0216,
+      72.8708
+    ],
+    "rotation_deg": 0.0,
+    "units": "m",
+    "crs": "local_enu",
+    "todo": true
+  },
   "costModel": {
     "campus": 0.25,
     "int": 0.1,
@@ -6,654 +16,1494 @@
     "lift": 8.0,
     "door": 4.0
   },
+  "levels": [
+    {
+      "id": "c",
+      "name": "Campus Grounds",
+      "z": 0.0
+    },
+    {
+      "id": "f0",
+      "name": "Basement Labs",
+      "z": -4.5
+    },
+    {
+      "id": "f1",
+      "name": "Floor 1 Walkway / Atrium",
+      "z": 0.0
+    }
+  ],
+  "zones": [
+    {
+      "id": "atrium_plaza",
+      "name": "Central Covered Atrium Plaza",
+      "level": "f1",
+      "polygon": [
+        [
+          40.0,
+          20.0
+        ],
+        [
+          105.0,
+          20.0
+        ],
+        [
+          105.0,
+          60.0
+        ],
+        [
+          40.0,
+          60.0
+        ]
+      ],
+      "walkable": true,
+      "todo": true
+    },
+    {
+      "id": "sunken_atrium_void",
+      "name": "Sunken Stair Void to Lab Level",
+      "level": "f1",
+      "polygon": [
+        [
+          65.0,
+          28.0
+        ],
+        [
+          75.0,
+          28.0
+        ],
+        [
+          75.0,
+          38.0
+        ],
+        [
+          65.0,
+          38.0
+        ]
+      ],
+      "walkable": false,
+      "todo": true
+    },
+    {
+      "id": "campus_parking",
+      "name": "Vehicle Parking Area",
+      "level": "c",
+      "polygon": [
+        [
+          135.0,
+          25.0
+        ],
+        [
+          155.0,
+          25.0
+        ],
+        [
+          155.0,
+          40.0
+        ],
+        [
+          135.0,
+          40.0
+        ]
+      ],
+      "walkable": true,
+      "todo": true
+    },
+    {
+      "id": "sports_ground",
+      "name": "College Sports & Activity Field",
+      "level": "c",
+      "polygon": [
+        [
+          10.0,
+          10.0
+        ],
+        [
+          70.0,
+          10.0
+        ],
+        [
+          70.0,
+          35.0
+        ],
+        [
+          10.0,
+          35.0
+        ]
+      ],
+      "walkable": true,
+      "todo": true
+    }
+  ],
+  "portals": [
+    {
+      "id": "stairs_sa",
+      "kind": "stairs",
+      "between": [
+        "SA0",
+        "S1A"
+      ],
+      "flights": 1,
+      "accessible": false,
+      "todo": false
+    },
+    {
+      "id": "stairs_lib",
+      "kind": "stairs",
+      "between": [
+        "LB",
+        "LIB"
+      ],
+      "flights": 1,
+      "accessible": false,
+      "todo": false
+    },
+    {
+      "id": "stairs_mblock",
+      "kind": "stairs",
+      "between": [
+        "MC1",
+        "MBD"
+      ],
+      "flights": 1,
+      "accessible": false,
+      "todo": false
+    },
+    {
+      "id": "stairs_canteen",
+      "kind": "stairs",
+      "between": [
+        "STAIRS_CANTEEN",
+        "MC0"
+      ],
+      "flights": 1,
+      "accessible": false,
+      "todo": false
+    },
+    {
+      "id": "lift_atrium",
+      "kind": "lift",
+      "between": [
+        "LIFT0",
+        "LIFT1"
+      ],
+      "flights": 1,
+      "accessible": true,
+      "todo": false
+    }
+  ],
   "nodes": [
     {
       "id": "GATE",
       "label": "Main gate",
       "level": "c",
-      "x": 1585,
-      "y": 430,
-      "type": "e"
+      "x": 1585.0,
+      "y": 430.0,
+      "z": 0.0,
+      "xy": [
+        285.3,
+        77.4
+      ],
+      "type": "e",
+      "kind": "entrance",
+      "landmark": "Main Campus Security Gate",
+      "todo": true
     },
     {
       "id": "R1",
       "label": "road",
       "level": "c",
-      "x": 1440,
-      "y": 430,
-      "type": "j"
+      "x": 1440.0,
+      "y": 430.0,
+      "z": 0.0,
+      "xy": [
+        259.2,
+        77.4
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "R2",
       "label": "road",
       "level": "c",
-      "x": 1250,
-      "y": 430,
-      "type": "j"
+      "x": 1250.0,
+      "y": 430.0,
+      "z": 0.0,
+      "xy": [
+        225.0,
+        77.4
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "R3",
       "label": "road",
       "level": "c",
-      "x": 1100,
-      "y": 430,
-      "type": "j"
+      "x": 1100.0,
+      "y": 430.0,
+      "z": 0.0,
+      "xy": [
+        198.0,
+        77.4
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "R4",
       "label": "road",
       "level": "c",
-      "x": 840,
-      "y": 430,
-      "type": "j"
+      "x": 840.0,
+      "y": 430.0,
+      "z": 0.0,
+      "xy": [
+        151.2,
+        77.4
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "R5",
       "label": "road",
       "level": "c",
-      "x": 745,
-      "y": 430,
-      "type": "j"
+      "x": 745.0,
+      "y": 430.0,
+      "z": 0.0,
+      "xy": [
+        134.1,
+        77.4
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "R6",
       "label": "road",
       "level": "c",
-      "x": 450,
-      "y": 430,
-      "type": "j"
+      "x": 450.0,
+      "y": 430.0,
+      "z": 0.0,
+      "xy": [
+        81.0,
+        77.4
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "R7",
       "label": "road",
       "level": "c",
-      "x": 380,
-      "y": 430,
-      "type": "j"
+      "x": 380.0,
+      "y": 430.0,
+      "z": 0.0,
+      "xy": [
+        68.4,
+        77.4
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "PARK",
       "label": "Parking",
       "level": "c",
-      "x": 1420,
-      "y": 330,
-      "type": "p"
+      "x": 1420.0,
+      "y": 330.0,
+      "z": 0.0,
+      "xy": [
+        255.6,
+        59.4
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Student & Staff Parking Zone",
+      "todo": true
     },
     {
       "id": "BBALL",
       "label": "Basketball court",
       "level": "c",
-      "x": 1410,
-      "y": 190,
-      "type": "p"
+      "x": 1410.0,
+      "y": 190.0,
+      "z": 0.0,
+      "xy": [
+        253.8,
+        34.2
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Outdoor Basketball Court",
+      "todo": true
     },
     {
       "id": "LIB",
       "label": "Library (campus)",
       "level": "c",
-      "x": 1105,
-      "y": 330,
-      "type": "p"
+      "x": 1105.0,
+      "y": 330.0,
+      "z": 0.0,
+      "xy": [
+        198.9,
+        59.4
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Central Campus Library",
+      "todo": true
     },
     {
       "id": "GRD",
       "label": "Ground",
       "level": "c",
-      "x": 1115,
-      "y": 175,
-      "type": "p"
+      "x": 1115.0,
+      "y": 175.0,
+      "z": 0.0,
+      "xy": [
+        200.7,
+        31.5
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "YB",
       "label": "Y block",
       "level": "c",
-      "x": 745,
-      "y": 328,
-      "type": "p"
+      "x": 745.0,
+      "y": 328.0,
+      "z": 0.0,
+      "xy": [
+        134.1,
+        59.04
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "CLDn",
       "label": "CLD",
       "level": "c",
-      "x": 857,
-      "y": 328,
-      "type": "p"
+      "x": 857.0,
+      "y": 328.0,
+      "z": 0.0,
+      "xy": [
+        154.26,
+        59.04
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "DEN",
       "label": "DEN",
       "level": "c",
-      "x": 845,
-      "y": 165,
-      "type": "p"
+      "x": 845.0,
+      "y": 165.0,
+      "z": 0.0,
+      "xy": [
+        152.1,
+        29.7
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "GNDn",
       "label": "GND",
       "level": "c",
-      "x": 842,
-      "y": 75,
-      "type": "p"
+      "x": 842.0,
+      "y": 75.0,
+      "z": 0.0,
+      "xy": [
+        151.56,
+        13.5
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "FB",
       "label": "Football ground",
       "level": "c",
-      "x": 450,
-      "y": 355,
-      "type": "p"
+      "x": 450.0,
+      "y": 355.0,
+      "z": 0.0,
+      "xy": [
+        81.0,
+        63.9
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Football & Sports Ground",
+      "todo": true
     },
     {
       "id": "VPD",
       "label": "VP door",
       "level": "c",
-      "x": 1250,
-      "y": 545,
-      "type": "p"
+      "x": 1250.0,
+      "y": 545.0,
+      "z": 0.0,
+      "xy": [
+        225.0,
+        98.1
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "VP College Connecting Door",
+      "todo": true
     },
     {
       "id": "MBD",
       "label": "M block door",
       "level": "c",
-      "x": 380,
-      "y": 610,
-      "type": "p"
+      "x": 380.0,
+      "y": 610.0,
+      "z": 0.0,
+      "xy": [
+        68.4,
+        109.8
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "M-Block Building Connection",
+      "todo": true
     },
     {
       "id": "VDA",
       "label": "VIT door (A-block side)",
       "level": "c",
-      "x": 1000,
-      "y": 548,
-      "type": "e"
+      "x": 1000.0,
+      "y": 548.0,
+      "z": 0.0,
+      "xy": [
+        180.0,
+        98.64
+      ],
+      "type": "e",
+      "kind": "entrance",
+      "landmark": "VIT Main Building Entrance (A-Block Wing)",
+      "todo": true
     },
     {
       "id": "VDN",
       "label": "VIT door (Nescafe side)",
       "level": "c",
-      "x": 745,
-      "y": 548,
-      "type": "e"
+      "x": 745.0,
+      "y": 548.0,
+      "z": 0.0,
+      "xy": [
+        134.1,
+        98.64
+      ],
+      "type": "e",
+      "kind": "entrance",
+      "landmark": "VIT Building Secondary Entrance (Nescafe Wing)",
+      "todo": true
     },
     {
       "id": "IL",
       "label": "Innovation lab",
       "level": "f0",
-      "x": 200,
-      "y": 285,
-      "type": "p"
+      "x": 200.0,
+      "y": 285.0,
+      "z": -4.5,
+      "xy": [
+        20.0,
+        28.5
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Innovation & Incubation Lab",
+      "todo": true
     },
     {
       "id": "AUD",
       "label": "Auditorium",
       "level": "f0",
-      "x": 325,
-      "y": 285,
-      "type": "p"
+      "x": 325.0,
+      "y": 285.0,
+      "z": -4.5,
+      "xy": [
+        32.5,
+        28.5
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Main Auditorium Foyer",
+      "todo": true
     },
     {
       "id": "LIFT0",
       "label": "Lift (basement)",
       "level": "f0",
-      "x": 42,
-      "y": 285,
-      "type": "l"
+      "x": 42.0,
+      "y": 285.0,
+      "z": -4.5,
+      "xy": [
+        4.2,
+        28.5
+      ],
+      "type": "l",
+      "kind": "lift",
+      "landmark": "Basement Lab Level Elevator",
+      "todo": true
     },
     {
       "id": "MC0",
       "label": "M-block lower hall",
       "level": "f0",
-      "x": 190,
-      "y": 490,
-      "type": "p"
+      "x": 190.0,
+      "y": 490.0,
+      "z": -4.5,
+      "xy": [
+        19.0,
+        49.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Basement Central Hallway",
+      "todo": true
     },
     {
       "id": "SA0",
       "label": "Stairs A (basement)",
       "level": "f0",
-      "x": 405,
-      "y": 376,
-      "type": "s"
+      "x": 405.0,
+      "y": 376.0,
+      "z": -4.5,
+      "xy": [
+        40.5,
+        37.6
+      ],
+      "type": "s",
+      "kind": "stairs",
+      "landmark": "Sunken Stairway to Computer Labs (West)",
+      "todo": true
     },
     {
       "id": "SB0",
       "label": "Stairs B (basement)",
       "level": "f0",
-      "x": 405,
-      "y": 448,
-      "type": "s"
+      "x": 405.0,
+      "y": 448.0,
+      "z": -4.5,
+      "xy": [
+        40.5,
+        44.8
+      ],
+      "type": "s",
+      "kind": "stairs",
+      "landmark": "Sunken Stairway to Basement Labs (Center)",
+      "todo": true
     },
     {
       "id": "SR0",
       "label": "Stairs R (basement)",
       "level": "f0",
-      "x": 1202,
-      "y": 418,
-      "type": "s"
+      "x": 1202.0,
+      "y": 418.0,
+      "z": -4.5,
+      "xy": [
+        120.2,
+        41.8
+      ],
+      "type": "s",
+      "kind": "stairs",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "T1",
       "label": "Lab T1",
       "level": "f0",
-      "x": 479,
-      "y": 300,
-      "type": "p"
+      "x": 479.0,
+      "y": 300.0,
+      "z": -4.5,
+      "xy": [
+        47.9,
+        30.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "T-Block Classroom 101",
+      "todo": true
     },
     {
       "id": "B1",
       "label": "Lab B1",
       "level": "f0",
-      "x": 479,
-      "y": 560,
-      "type": "p"
+      "x": 479.0,
+      "y": 560.0,
+      "z": -4.5,
+      "xy": [
+        47.9,
+        56.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Bio-Tech Lab 1",
+      "todo": true
     },
     {
       "id": "c0",
       "label": "corridor",
       "level": "f0",
-      "x": 479,
-      "y": 420,
-      "type": "j"
+      "x": 479.0,
+      "y": 420.0,
+      "z": -4.5,
+      "xy": [
+        47.9,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "T2",
       "label": "Lab T2",
       "level": "f0",
-      "x": 609,
-      "y": 300,
-      "type": "p"
+      "x": 609.0,
+      "y": 300.0,
+      "z": -4.5,
+      "xy": [
+        60.9,
+        30.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "B2",
       "label": "Lab B2",
       "level": "f0",
-      "x": 609,
-      "y": 560,
-      "type": "p"
+      "x": 609.0,
+      "y": 560.0,
+      "z": -4.5,
+      "xy": [
+        60.9,
+        56.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "c1",
       "label": "corridor",
       "level": "f0",
-      "x": 609,
-      "y": 420,
-      "type": "j"
+      "x": 609.0,
+      "y": 420.0,
+      "z": -4.5,
+      "xy": [
+        60.9,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "T3",
       "label": "Lab T3",
       "level": "f0",
-      "x": 737,
-      "y": 300,
-      "type": "p"
+      "x": 737.0,
+      "y": 300.0,
+      "z": -4.5,
+      "xy": [
+        73.7,
+        30.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "T-Block Seminar Hall",
+      "todo": true
     },
     {
       "id": "B3",
       "label": "Lab B3",
       "level": "f0",
-      "x": 737,
-      "y": 560,
-      "type": "p"
+      "x": 737.0,
+      "y": 560.0,
+      "z": -4.5,
+      "xy": [
+        73.7,
+        56.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "c2",
       "label": "corridor",
       "level": "f0",
-      "x": 737,
-      "y": 420,
-      "type": "j"
+      "x": 737.0,
+      "y": 420.0,
+      "z": -4.5,
+      "xy": [
+        73.7,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "T4",
       "label": "Lab T4",
       "level": "f0",
-      "x": 867,
-      "y": 300,
-      "type": "p"
+      "x": 867.0,
+      "y": 300.0,
+      "z": -4.5,
+      "xy": [
+        86.7,
+        30.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "B4",
       "label": "Lab B4",
       "level": "f0",
-      "x": 867,
-      "y": 560,
-      "type": "p"
+      "x": 867.0,
+      "y": 560.0,
+      "z": -4.5,
+      "xy": [
+        86.7,
+        56.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "c3",
       "label": "corridor",
       "level": "f0",
-      "x": 867,
-      "y": 420,
-      "type": "j"
+      "x": 867.0,
+      "y": 420.0,
+      "z": -4.5,
+      "xy": [
+        86.7,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "T5",
       "label": "Lab T5",
       "level": "f0",
-      "x": 997,
-      "y": 300,
-      "type": "p"
+      "x": 997.0,
+      "y": 300.0,
+      "z": -4.5,
+      "xy": [
+        99.7,
+        30.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "B5",
       "label": "Lab B5",
       "level": "f0",
-      "x": 997,
-      "y": 560,
-      "type": "p"
+      "x": 997.0,
+      "y": 560.0,
+      "z": -4.5,
+      "xy": [
+        99.7,
+        56.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "c4",
       "label": "corridor",
       "level": "f0",
-      "x": 997,
-      "y": 420,
-      "type": "j"
+      "x": 997.0,
+      "y": 420.0,
+      "z": -4.5,
+      "xy": [
+        99.7,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "T6",
       "label": "Lab T6",
       "level": "f0",
-      "x": 1127,
-      "y": 300,
-      "type": "p"
+      "x": 1127.0,
+      "y": 300.0,
+      "z": -4.5,
+      "xy": [
+        112.7,
+        30.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "B6",
       "label": "Lab B6",
       "level": "f0",
-      "x": 1127,
-      "y": 560,
-      "type": "p"
+      "x": 1127.0,
+      "y": 560.0,
+      "z": -4.5,
+      "xy": [
+        112.7,
+        56.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "c5",
       "label": "corridor",
       "level": "f0",
-      "x": 1127,
-      "y": 420,
-      "type": "j"
+      "x": 1127.0,
+      "y": 420.0,
+      "z": -4.5,
+      "xy": [
+        112.7,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "T7",
       "label": "Lab T7",
       "level": "f0",
-      "x": 1257,
-      "y": 300,
-      "type": "p"
+      "x": 1257.0,
+      "y": 300.0,
+      "z": -4.5,
+      "xy": [
+        125.7,
+        30.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "B7",
       "label": "Lab B7",
       "level": "f0",
-      "x": 1257,
-      "y": 560,
-      "type": "p"
+      "x": 1257.0,
+      "y": 560.0,
+      "z": -4.5,
+      "xy": [
+        125.7,
+        56.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Advanced Robotics & AI Lab",
+      "todo": true
     },
     {
       "id": "c6",
       "label": "corridor",
       "level": "f0",
-      "x": 1257,
-      "y": 420,
-      "type": "j"
-    },
-    {
-      "id": "MC1",
-      "label": "M-block canteen",
-      "level": "f1",
-      "x": 180,
-      "y": 380,
-      "type": "p"
-    },
-    {
-      "id": "LIFT1",
-      "label": "Lift (1F)",
-      "level": "f1",
-      "x": 42,
-      "y": 285,
-      "type": "l"
-    },
-    {
-      "id": "S1A",
-      "label": "Stairs A (1F)",
-      "level": "f1",
-      "x": 380,
-      "y": 285,
-      "type": "s"
-    },
-    {
-      "id": "S1B",
-      "label": "Stairs B (1F)",
-      "level": "f1",
-      "x": 377,
-      "y": 475,
-      "type": "s"
-    },
-    {
-      "id": "S1R",
-      "label": "Stairs R (1F)",
-      "level": "f1",
-      "x": 1137,
-      "y": 343,
-      "type": "s"
-    },
-    {
-      "id": "ST_e",
-      "label": "Stairs up (E, TODO)",
-      "level": "f1",
-      "x": 577,
-      "y": 290,
-      "type": "s"
-    },
-    {
-      "id": "ST_f",
-      "label": "Stairs up (F, TODO)",
-      "level": "f1",
-      "x": 848,
-      "y": 343,
-      "type": "s"
-    },
-    {
-      "id": "ST_b",
-      "label": "Stairs up (B, TODO)",
-      "level": "f1",
-      "x": 1000,
-      "y": 415,
-      "type": "s"
-    },
-    {
-      "id": "U0",
-      "label": "walkway",
-      "level": "f1",
-      "x": 440,
-      "y": 385,
-      "type": "j"
-    },
-    {
-      "id": "U1",
-      "label": "walkway",
-      "level": "f1",
-      "x": 577,
-      "y": 385,
-      "type": "j"
-    },
-    {
-      "id": "U2",
-      "label": "walkway",
-      "level": "f1",
-      "x": 848,
-      "y": 385,
-      "type": "j"
-    },
-    {
-      "id": "U3",
-      "label": "walkway",
-      "level": "f1",
-      "x": 1000,
-      "y": 385,
-      "type": "j"
-    },
-    {
-      "id": "U4",
-      "label": "walkway",
-      "level": "f1",
-      "x": 1137,
-      "y": 385,
-      "type": "j"
-    },
-    {
-      "id": "L0",
-      "label": "walkway",
-      "level": "f1",
-      "x": 440,
-      "y": 450,
-      "type": "j"
-    },
-    {
-      "id": "W1",
-      "label": "walkway",
-      "level": "f1",
-      "x": 597,
-      "y": 450,
-      "type": "j"
-    },
-    {
-      "id": "W2",
-      "label": "walkway",
-      "level": "f1",
-      "x": 738,
-      "y": 450,
-      "type": "j"
-    },
-    {
-      "id": "W3",
-      "label": "walkway",
-      "level": "f1",
-      "x": 860,
-      "y": 450,
-      "type": "j"
-    },
-    {
-      "id": "W4",
-      "label": "walkway",
-      "level": "f1",
-      "x": 985,
-      "y": 450,
-      "type": "j"
-    },
-    {
-      "id": "W5",
-      "label": "walkway",
-      "level": "f1",
-      "x": 1170,
-      "y": 450,
-      "type": "j"
-    },
-    {
-      "id": "EB",
-      "label": "E block",
-      "level": "f1",
-      "x": 570,
-      "y": 215,
-      "type": "p"
-    },
-    {
-      "id": "FB1",
-      "label": "F block",
-      "level": "f1",
-      "x": 830,
-      "y": 215,
-      "type": "p"
-    },
-    {
-      "id": "LB",
-      "label": "Library (VIT)",
-      "level": "f1",
-      "x": 1030,
-      "y": 215,
-      "type": "p"
-    },
-    {
-      "id": "DB",
-      "label": "D block",
-      "level": "f1",
-      "x": 597,
-      "y": 500,
-      "type": "p"
-    },
-    {
-      "id": "NES",
-      "label": "Nescafe",
-      "level": "f1",
-      "x": 738,
-      "y": 565,
-      "type": "p"
-    },
-    {
-      "id": "CAN",
-      "label": "Canteen (VIT)",
-      "level": "f1",
-      "x": 860,
-      "y": 520,
-      "type": "p"
-    },
-    {
-      "id": "BB",
-      "label": "B block",
-      "level": "f1",
-      "x": 983,
-      "y": 500,
-      "type": "p"
+      "x": 1257.0,
+      "y": 420.0,
+      "z": -4.5,
+      "xy": [
+        125.7,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": null,
+      "todo": true
     },
     {
       "id": "AB",
-      "label": "A block",
+      "label": "Room A",
       "level": "f1",
-      "x": 1170,
-      "y": 500,
-      "type": "p"
-    },
-    {
-      "id": "BEF",
-      "label": "bridge E\u2013F",
-      "level": "f1",
-      "x": 692,
-      "y": 120,
-      "type": "j"
-    },
-    {
-      "id": "BDC",
-      "label": "bridge D\u2013Canteen",
-      "level": "f1",
-      "x": 738,
-      "y": 517,
-      "type": "j"
-    },
-    {
-      "id": "BBA",
-      "label": "bridge B\u2013A",
-      "level": "f1",
-      "x": 1080,
-      "y": 565,
-      "type": "j"
+      "x": 140.0,
+      "y": 320.0,
+      "z": 0.0,
+      "xy": [
+        14.0,
+        32.0
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "Classroom A Wing",
+      "todo": false
     },
     {
       "id": "EA",
-      "label": "Entrance (opp. A block)",
+      "label": "West Entry (Opp. A Block)",
       "level": "f1",
-      "x": 1170,
-      "y": 610,
-      "type": "e"
+      "x": 140.0,
+      "y": 700.0,
+      "z": 0.0,
+      "xy": [
+        14.0,
+        70.0
+      ],
+      "type": "e",
+      "kind": "entrance",
+      "landmark": "West Campus Entry Door",
+      "todo": false
+    },
+    {
+      "id": "ENTRY_L",
+      "label": "West Entry Portal",
+      "level": "f1",
+      "x": 140.0,
+      "y": 710.0,
+      "z": 0.0,
+      "xy": [
+        14.0,
+        71.0
+      ],
+      "type": "e",
+      "kind": "entrance",
+      "landmark": "West Campus Entry Doorway",
+      "todo": false
+    },
+    {
+      "id": "LAB_COMP",
+      "label": "LaB computer",
+      "level": "f1",
+      "x": 300.0,
+      "y": 520.0,
+      "z": 0.0,
+      "xy": [
+        30.0,
+        52.0
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "Computer Department Labs",
+      "todo": false
+    },
+    {
+      "id": "S1A",
+      "label": "Faculty (Stairs to Labs)",
+      "level": "f1",
+      "x": 420.0,
+      "y": 320.0,
+      "z": 0.0,
+      "xy": [
+        42.0,
+        32.0
+      ],
+      "type": "s",
+      "kind": "stairs",
+      "landmark": "Faculty West Stairwell (Down to SA0)",
+      "todo": false
+    },
+    {
+      "id": "FAC_W",
+      "label": "Faculty (West)",
+      "level": "f1",
+      "x": 420.0,
+      "y": 240.0,
+      "z": 0.0,
+      "xy": [
+        42.0,
+        24.0
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "West Faculty Workstations",
+      "todo": false
+    },
+    {
+      "id": "BB",
+      "label": "Room B",
+      "level": "f1",
+      "x": 540.0,
+      "y": 320.0,
+      "z": 0.0,
+      "xy": [
+        54.0,
+        32.0
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "Classroom B Wing",
+      "todo": false
+    },
+    {
+      "id": "LB",
+      "label": "library stairs",
+      "level": "f1",
+      "x": 470.0,
+      "y": 520.0,
+      "z": 0.0,
+      "xy": [
+        47.0,
+        52.0
+      ],
+      "type": "s",
+      "kind": "stairs",
+      "landmark": "Library Staircase (Down to Campus Library)",
+      "todo": false
+    },
+    {
+      "id": "FAC_MID",
+      "label": "Faculty Staff Room (Center)",
+      "level": "f1",
+      "x": 640.0,
+      "y": 520.0,
+      "z": 0.0,
+      "xy": [
+        64.0,
+        52.0
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "Central Faculty Workstations",
+      "todo": false
+    },
+    {
+      "id": "CAN",
+      "label": "Canteen (1st Floor)",
+      "level": "f1",
+      "x": 745.0,
+      "y": 320.0,
+      "z": 0.0,
+      "xy": [
+        74.5,
+        32.0
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "1F Walkway Canteen Threshold",
+      "todo": false
+    },
+    {
+      "id": "CANT",
+      "label": "Canteen Counter",
+      "level": "f1",
+      "x": 750.0,
+      "y": 280.0,
+      "z": 0.0,
+      "xy": [
+        75.0,
+        28.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Canteen Food Order Counter",
+      "todo": false
+    },
+    {
+      "id": "EB",
+      "label": "Classroom (Center-South)",
+      "level": "f1",
+      "x": 815.0,
+      "y": 520.0,
+      "z": 0.0,
+      "xy": [
+        81.5,
+        52.0
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "Center South Classroom Wing (E Block)",
+      "todo": false
+    },
+    {
+      "id": "FAC_TOP_R",
+      "label": "Faculty (North-East)",
+      "level": "f1",
+      "x": 920.0,
+      "y": 320.0,
+      "z": 0.0,
+      "xy": [
+        92.0,
+        32.0
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "North-East Faculty Cabins",
+      "todo": false
     },
     {
       "id": "EN",
-      "label": "Entrance (opp. Nescafe)",
+      "label": "East Entry (Opp. Canteen/Nescafe)",
       "level": "f1",
-      "x": 738,
-      "y": 610,
-      "type": "e"
+      "x": 910.0,
+      "y": 700.0,
+      "z": 0.0,
+      "xy": [
+        91.0,
+        70.0
+      ],
+      "type": "e",
+      "kind": "entrance",
+      "landmark": "East Campus Entry Door",
+      "todo": false
+    },
+    {
+      "id": "ENTRY_R",
+      "label": "East Entry Portal",
+      "level": "f1",
+      "x": 910.0,
+      "y": 710.0,
+      "z": 0.0,
+      "xy": [
+        91.0,
+        71.0
+      ],
+      "type": "e",
+      "kind": "entrance",
+      "landmark": "East Campus Entry Doorway",
+      "todo": false
+    },
+    {
+      "id": "WASHROOM",
+      "label": "Washroom",
+      "level": "f1",
+      "x": 1030.0,
+      "y": 180.0,
+      "z": 0.0,
+      "xy": [
+        103.0,
+        18.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "1F Restrooms",
+      "todo": false
+    },
+    {
+      "id": "CLASS_TR",
+      "label": "Classroom (Top-Right)",
+      "level": "f1",
+      "x": 1100.0,
+      "y": 200.0,
+      "z": 0.0,
+      "xy": [
+        110.0,
+        20.0
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "Top Right Classroom",
+      "todo": false
+    },
+    {
+      "id": "MC1",
+      "label": "into m block (Stairs)",
+      "level": "f1",
+      "x": 1100.0,
+      "y": 330.0,
+      "z": 0.0,
+      "xy": [
+        110.0,
+        33.0
+      ],
+      "type": "s",
+      "kind": "stairs",
+      "landmark": "Covered Bridge Stairway to M Block",
+      "todo": false
+    },
+    {
+      "id": "STAIRS_CANTEEN",
+      "label": "down to canteen (Stairs)",
+      "level": "f1",
+      "x": 1100.0,
+      "y": 450.0,
+      "z": 0.0,
+      "xy": [
+        110.0,
+        45.0
+      ],
+      "type": "s",
+      "kind": "stairs",
+      "landmark": "Stairs Down to Ground Canteen",
+      "todo": false
+    },
+    {
+      "id": "STATIONS",
+      "label": "Stations",
+      "level": "f1",
+      "x": 1030.0,
+      "y": 490.0,
+      "z": 0.0,
+      "xy": [
+        103.0,
+        49.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Student Workstation Counter",
+      "todo": false
+    },
+    {
+      "id": "NES",
+      "label": "Nescafe / Stations Kiosk",
+      "level": "f1",
+      "x": 1030.0,
+      "y": 520.0,
+      "z": 0.0,
+      "xy": [
+        103.0,
+        52.0
+      ],
+      "type": "p",
+      "kind": "poi",
+      "landmark": "Refreshments & Snacks Kiosk",
+      "todo": false
+    },
+    {
+      "id": "FAC_BOT_R",
+      "label": "Faculty (South-East)",
+      "level": "f1",
+      "x": 980.0,
+      "y": 580.0,
+      "z": 0.0,
+      "xy": [
+        98.0,
+        58.0
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "South-East Faculty Staff Room",
+      "todo": false
+    },
+    {
+      "id": "CLASS_BR1",
+      "label": "Classroom (East Wing 1)",
+      "level": "f1",
+      "x": 1150.0,
+      "y": 580.0,
+      "z": 0.0,
+      "xy": [
+        115.0,
+        58.0
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "East Wing Classroom 1",
+      "todo": false
+    },
+    {
+      "id": "CLASS_BR2",
+      "label": "Classroom (East Wing 2)",
+      "level": "f1",
+      "x": 1150.0,
+      "y": 665.0,
+      "z": 0.0,
+      "xy": [
+        115.0,
+        66.5
+      ],
+      "type": "p",
+      "kind": "entrance",
+      "landmark": "East Wing Classroom 2",
+      "todo": false
+    },
+    {
+      "id": "LIFT1",
+      "label": "Central Elevator (1F)",
+      "level": "f1",
+      "x": 380.0,
+      "y": 420.0,
+      "z": 0.0,
+      "xy": [
+        38.0,
+        42.0
+      ],
+      "type": "l",
+      "kind": "lift",
+      "landmark": "Atrium Central Glass Elevator",
+      "todo": false
+    },
+    {
+      "id": "N1_L",
+      "label": "Walkway N1 (West)",
+      "level": "f1",
+      "x": 140.0,
+      "y": 420.0,
+      "z": 0.0,
+      "xy": [
+        14.0,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": "West Corridor Junction N1",
+      "todo": false
+    },
+    {
+      "id": "N2_1",
+      "label": "Walkway N2 (Lab)",
+      "level": "f1",
+      "x": 300.0,
+      "y": 420.0,
+      "z": 0.0,
+      "xy": [
+        30.0,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": "Computer Lab Junction N2",
+      "todo": false
+    },
+    {
+      "id": "N3",
+      "label": "Walkway N3 (Central Hub)",
+      "level": "f1",
+      "x": 470.0,
+      "y": 420.0,
+      "z": 0.0,
+      "xy": [
+        47.0,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": "Central Atrium 5-Way Hub N3",
+      "todo": false
+    },
+    {
+      "id": "N2_2",
+      "label": "Walkway N2 (Center)",
+      "level": "f1",
+      "x": 640.0,
+      "y": 420.0,
+      "z": 0.0,
+      "xy": [
+        64.0,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": "Faculty Walkway Junction N2",
+      "todo": false
+    },
+    {
+      "id": "N4",
+      "label": "Walkway N4 (Class)",
+      "level": "f1",
+      "x": 815.0,
+      "y": 420.0,
+      "z": 0.0,
+      "xy": [
+        81.5,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": "Classroom Walkway Junction N4",
+      "todo": false
+    },
+    {
+      "id": "N2_3",
+      "label": "Walkway N2 (East)",
+      "level": "f1",
+      "x": 920.0,
+      "y": 420.0,
+      "z": 0.0,
+      "xy": [
+        92.0,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": "East Walkway Junction N2",
+      "todo": false
+    },
+    {
+      "id": "N_R_BEND",
+      "label": "Right Walkway Junction",
+      "level": "f1",
+      "x": 1030.0,
+      "y": 420.0,
+      "z": 0.0,
+      "xy": [
+        103.0,
+        42.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": "East Corridor Transition Area",
+      "todo": false
+    },
+    {
+      "id": "N_R_NORTH",
+      "label": "North-East Corridor Bend",
+      "level": "f1",
+      "x": 1030.0,
+      "y": 200.0,
+      "z": 0.0,
+      "xy": [
+        103.0,
+        20.0
+      ],
+      "type": "j",
+      "kind": "corridor",
+      "landmark": "Restroom & Classroom Corridor",
+      "todo": false
     }
   ],
   "edges": [
@@ -661,1257 +1511,2463 @@
       "a": "GATE",
       "b": "R1",
       "type": "w",
-      "cost": 36.25,
+      "kind": "walk",
+      "cost": 20.08,
+      "distance_m": 26.1,
+      "time_s": 20.08,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          285.3,
+          77.4
+        ],
+        [
+          259.2,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "R1",
       "b": "R2",
       "type": "w",
-      "cost": 47.5,
+      "kind": "walk",
+      "cost": 26.31,
+      "distance_m": 34.2,
+      "time_s": 26.31,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          259.2,
+          77.4
+        ],
+        [
+          225.0,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "R2",
       "b": "R3",
       "type": "w",
-      "cost": 37.5,
+      "kind": "walk",
+      "cost": 20.77,
+      "distance_m": 27.0,
+      "time_s": 20.77,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          225.0,
+          77.4
+        ],
+        [
+          198.0,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "R3",
       "b": "R4",
       "type": "w",
-      "cost": 65.0,
+      "kind": "walk",
+      "cost": 36.0,
+      "distance_m": 46.8,
+      "time_s": 36.0,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          198.0,
+          77.4
+        ],
+        [
+          151.2,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "R4",
       "b": "R5",
       "type": "w",
-      "cost": 23.75,
+      "kind": "walk",
+      "cost": 13.15,
+      "distance_m": 17.1,
+      "time_s": 13.15,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          151.2,
+          77.4
+        ],
+        [
+          134.1,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "R5",
       "b": "R6",
       "type": "w",
-      "cost": 73.75,
+      "kind": "walk",
+      "cost": 40.85,
+      "distance_m": 53.1,
+      "time_s": 40.85,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          134.1,
+          77.4
+        ],
+        [
+          81.0,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "R6",
       "b": "R7",
       "type": "w",
-      "cost": 17.5,
+      "kind": "walk",
+      "cost": 9.69,
+      "distance_m": 12.6,
+      "time_s": 9.69,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          81.0,
+          77.4
+        ],
+        [
+          68.4,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "PARK",
       "b": "R1",
       "type": "w",
-      "cost": 25.5,
+      "kind": "walk",
+      "cost": 14.12,
+      "distance_m": 18.36,
+      "time_s": 14.12,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          255.6,
+          59.4
+        ],
+        [
+          259.2,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "BBALL",
       "b": "PARK",
       "type": "w",
-      "cost": 35.09,
+      "kind": "walk",
+      "cost": 19.43,
+      "distance_m": 25.26,
+      "time_s": 19.43,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          253.8,
+          34.2
+        ],
+        [
+          255.6,
+          59.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "LIB",
       "b": "R3",
       "type": "w",
-      "cost": 25.03,
+      "kind": "walk",
+      "cost": 13.86,
+      "distance_m": 18.02,
+      "time_s": 13.86,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          198.9,
+          59.4
+        ],
+        [
+          198.0,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "GRD",
       "b": "LIB",
       "type": "w",
-      "cost": 38.83,
+      "kind": "walk",
+      "cost": 21.51,
+      "distance_m": 27.96,
+      "time_s": 21.51,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          200.7,
+          31.5
+        ],
+        [
+          198.9,
+          59.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "YB",
       "b": "R5",
       "type": "w",
-      "cost": 25.5,
+      "kind": "walk",
+      "cost": 14.12,
+      "distance_m": 18.36,
+      "time_s": 14.12,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          134.1,
+          59.04
+        ],
+        [
+          134.1,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "CLDn",
       "b": "R4",
       "type": "w",
-      "cost": 25.85,
+      "kind": "walk",
+      "cost": 14.32,
+      "distance_m": 18.61,
+      "time_s": 14.32,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          154.26,
+          59.04
+        ],
+        [
+          151.2,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "DEN",
       "b": "CLDn",
       "type": "w",
-      "cost": 40.86,
+      "kind": "walk",
+      "cost": 22.63,
+      "distance_m": 29.42,
+      "time_s": 22.63,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          152.1,
+          29.7
+        ],
+        [
+          154.26,
+          59.04
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "GNDn",
       "b": "DEN",
       "type": "w",
-      "cost": 22.51,
+      "kind": "walk",
+      "cost": 12.47,
+      "distance_m": 16.21,
+      "time_s": 12.47,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          151.56,
+          13.5
+        ],
+        [
+          152.1,
+          29.7
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "FB",
       "b": "R6",
       "type": "w",
-      "cost": 18.75,
+      "kind": "walk",
+      "cost": 10.38,
+      "distance_m": 13.5,
+      "time_s": 10.38,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          81.0,
+          63.9
+        ],
+        [
+          81.0,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "VPD",
       "b": "R2",
       "type": "w",
-      "cost": 28.75,
+      "kind": "walk",
+      "cost": 15.92,
+      "distance_m": 20.7,
+      "time_s": 15.92,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          225.0,
+          98.1
+        ],
+        [
+          225.0,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "MBD",
       "b": "R7",
       "type": "w",
-      "cost": 45.0,
+      "kind": "walk",
+      "cost": 24.92,
+      "distance_m": 32.4,
+      "time_s": 24.92,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          68.4,
+          109.8
+        ],
+        [
+          68.4,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "VDA",
       "b": "R3",
       "type": "w",
-      "cost": 38.67,
+      "kind": "walk",
+      "cost": 21.42,
+      "distance_m": 27.84,
+      "time_s": 21.42,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          180.0,
+          98.64
+        ],
+        [
+          198.0,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "VDN",
       "b": "R5",
       "type": "w",
-      "cost": 29.5,
+      "kind": "walk",
+      "cost": 16.34,
+      "distance_m": 21.24,
+      "time_s": 16.34,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": true
+      "outdoor": true,
+      "path": [
+        [
+          134.1,
+          98.64
+        ],
+        [
+          134.1,
+          77.4
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "T1",
       "b": "c0",
       "type": "w",
-      "cost": 12.0,
+      "kind": "walk",
+      "cost": 9.23,
+      "distance_m": 12.0,
+      "time_s": 9.23,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          47.9,
+          30.0
+        ],
+        [
+          47.9,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "B1",
       "b": "c0",
       "type": "w",
-      "cost": 14.0,
+      "kind": "walk",
+      "cost": 10.77,
+      "distance_m": 14.0,
+      "time_s": 10.77,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          47.9,
+          56.0
+        ],
+        [
+          47.9,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "T2",
       "b": "c1",
       "type": "w",
-      "cost": 12.0,
+      "kind": "walk",
+      "cost": 9.23,
+      "distance_m": 12.0,
+      "time_s": 9.23,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          60.9,
+          30.0
+        ],
+        [
+          60.9,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "B2",
       "b": "c1",
       "type": "w",
-      "cost": 14.0,
+      "kind": "walk",
+      "cost": 10.77,
+      "distance_m": 14.0,
+      "time_s": 10.77,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          60.9,
+          56.0
+        ],
+        [
+          60.9,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "c0",
       "b": "c1",
       "type": "w",
-      "cost": 13.0,
+      "kind": "walk",
+      "cost": 10.0,
+      "distance_m": 13.0,
+      "time_s": 10.0,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          47.9,
+          42.0
+        ],
+        [
+          60.9,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "T3",
       "b": "c2",
       "type": "w",
-      "cost": 12.0,
+      "kind": "walk",
+      "cost": 9.23,
+      "distance_m": 12.0,
+      "time_s": 9.23,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          73.7,
+          30.0
+        ],
+        [
+          73.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "B3",
       "b": "c2",
       "type": "w",
-      "cost": 14.0,
+      "kind": "walk",
+      "cost": 10.77,
+      "distance_m": 14.0,
+      "time_s": 10.77,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          73.7,
+          56.0
+        ],
+        [
+          73.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "c1",
       "b": "c2",
       "type": "w",
-      "cost": 12.8,
+      "kind": "walk",
+      "cost": 9.85,
+      "distance_m": 12.8,
+      "time_s": 9.85,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          60.9,
+          42.0
+        ],
+        [
+          73.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "T4",
       "b": "c3",
       "type": "w",
-      "cost": 12.0,
+      "kind": "walk",
+      "cost": 9.23,
+      "distance_m": 12.0,
+      "time_s": 9.23,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          86.7,
+          30.0
+        ],
+        [
+          86.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "B4",
       "b": "c3",
       "type": "w",
-      "cost": 14.0,
+      "kind": "walk",
+      "cost": 10.77,
+      "distance_m": 14.0,
+      "time_s": 10.77,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          86.7,
+          56.0
+        ],
+        [
+          86.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "c2",
       "b": "c3",
       "type": "w",
-      "cost": 13.0,
+      "kind": "walk",
+      "cost": 10.0,
+      "distance_m": 13.0,
+      "time_s": 10.0,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          73.7,
+          42.0
+        ],
+        [
+          86.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "T5",
       "b": "c4",
       "type": "w",
-      "cost": 12.0,
+      "kind": "walk",
+      "cost": 9.23,
+      "distance_m": 12.0,
+      "time_s": 9.23,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          99.7,
+          30.0
+        ],
+        [
+          99.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "B5",
       "b": "c4",
       "type": "w",
-      "cost": 14.0,
+      "kind": "walk",
+      "cost": 10.77,
+      "distance_m": 14.0,
+      "time_s": 10.77,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          99.7,
+          56.0
+        ],
+        [
+          99.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "c3",
       "b": "c4",
       "type": "w",
-      "cost": 13.0,
+      "kind": "walk",
+      "cost": 10.0,
+      "distance_m": 13.0,
+      "time_s": 10.0,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          86.7,
+          42.0
+        ],
+        [
+          99.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "T6",
       "b": "c5",
       "type": "w",
-      "cost": 12.0,
+      "kind": "walk",
+      "cost": 9.23,
+      "distance_m": 12.0,
+      "time_s": 9.23,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          112.7,
+          30.0
+        ],
+        [
+          112.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "B6",
       "b": "c5",
       "type": "w",
-      "cost": 14.0,
+      "kind": "walk",
+      "cost": 10.77,
+      "distance_m": 14.0,
+      "time_s": 10.77,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          112.7,
+          56.0
+        ],
+        [
+          112.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "c4",
       "b": "c5",
       "type": "w",
-      "cost": 13.0,
+      "kind": "walk",
+      "cost": 10.0,
+      "distance_m": 13.0,
+      "time_s": 10.0,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          99.7,
+          42.0
+        ],
+        [
+          112.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "T7",
       "b": "c6",
       "type": "w",
-      "cost": 12.0,
+      "kind": "walk",
+      "cost": 9.23,
+      "distance_m": 12.0,
+      "time_s": 9.23,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          125.7,
+          30.0
+        ],
+        [
+          125.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "B7",
       "b": "c6",
       "type": "w",
-      "cost": 14.0,
+      "kind": "walk",
+      "cost": 10.77,
+      "distance_m": 14.0,
+      "time_s": 10.77,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          125.7,
+          56.0
+        ],
+        [
+          125.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "c5",
       "b": "c6",
       "type": "w",
-      "cost": 13.0,
+      "kind": "walk",
+      "cost": 10.0,
+      "distance_m": 13.0,
+      "time_s": 10.0,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          112.7,
+          42.0
+        ],
+        [
+          125.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "SA0",
       "b": "c0",
       "type": "w",
-      "cost": 8.61,
+      "kind": "walk",
+      "cost": 6.62,
+      "distance_m": 8.61,
+      "time_s": 6.62,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          40.5,
+          37.6
+        ],
+        [
+          47.9,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "SB0",
       "b": "c0",
       "type": "w",
-      "cost": 7.91,
+      "kind": "walk",
+      "cost": 6.08,
+      "distance_m": 7.91,
+      "time_s": 6.08,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          40.5,
+          44.8
+        ],
+        [
+          47.9,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "SR0",
       "b": "c6",
       "type": "w",
-      "cost": 5.5,
+      "kind": "walk",
+      "cost": 4.23,
+      "distance_m": 5.5,
+      "time_s": 4.23,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          120.2,
+          41.8
+        ],
+        [
+          125.7,
+          42.0
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "MC0",
       "b": "SB0",
       "type": "w",
-      "cost": 21.91,
+      "kind": "walk",
+      "cost": 16.85,
+      "distance_m": 21.91,
+      "time_s": 16.85,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          19.0,
+          49.0
+        ],
+        [
+          40.5,
+          44.8
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "IL",
       "b": "SA0",
       "type": "w",
-      "cost": 22.43,
+      "kind": "walk",
+      "cost": 17.25,
+      "distance_m": 22.43,
+      "time_s": 17.25,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          20.0,
+          28.5
+        ],
+        [
+          40.5,
+          37.6
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "AUD",
       "b": "IL",
       "type": "w",
-      "cost": 12.5,
+      "kind": "walk",
+      "cost": 9.62,
+      "distance_m": 12.5,
+      "time_s": 9.62,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          32.5,
+          28.5
+        ],
+        [
+          20.0,
+          28.5
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "LIFT0",
       "b": "IL",
       "type": "w",
-      "cost": 15.8,
+      "kind": "walk",
+      "cost": 12.15,
+      "distance_m": 15.8,
+      "time_s": 12.15,
+      "width_m": 3.0,
       "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "U0",
-      "b": "U1",
-      "type": "w",
-      "cost": 13.7,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "U1",
-      "b": "U2",
-      "type": "w",
-      "cost": 27.1,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "U2",
-      "b": "U3",
-      "type": "w",
-      "cost": 15.2,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "U3",
-      "b": "U4",
-      "type": "w",
-      "cost": 13.7,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "L0",
-      "b": "W1",
-      "type": "w",
-      "cost": 15.7,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "W1",
-      "b": "W2",
-      "type": "w",
-      "cost": 14.1,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "W2",
-      "b": "W3",
-      "type": "w",
-      "cost": 12.2,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "W3",
-      "b": "W4",
-      "type": "w",
-      "cost": 12.5,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "W4",
-      "b": "W5",
-      "type": "w",
-      "cost": 18.5,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "U0",
-      "b": "L0",
-      "type": "w",
-      "cost": 6.5,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "U1",
-      "b": "W1",
-      "type": "w",
-      "cost": 6.8,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "U2",
-      "b": "W3",
-      "type": "w",
-      "cost": 6.61,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "U3",
-      "b": "W4",
-      "type": "w",
-      "cost": 6.67,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "U4",
-      "b": "W5",
-      "type": "w",
-      "cost": 7.29,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "S1A",
-      "b": "U0",
-      "type": "w",
-      "cost": 11.66,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "S1B",
-      "b": "L0",
-      "type": "w",
-      "cost": 6.78,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "MC1",
-      "b": "S1A",
-      "type": "w",
-      "cost": 22.14,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "MC1",
-      "b": "S1B",
-      "type": "w",
-      "cost": 21.87,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "LIFT1",
-      "b": "MC1",
-      "type": "w",
-      "cost": 16.75,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "S1R",
-      "b": "U4",
-      "type": "w",
-      "cost": 4.2,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "ST_e",
-      "b": "U1",
-      "type": "w",
-      "cost": 9.5,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "ST_f",
-      "b": "U2",
-      "type": "w",
-      "cost": 4.2,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "ST_b",
-      "b": "U3",
-      "type": "w",
-      "cost": 3.0,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "EB",
-      "b": "U1",
-      "type": "w",
-      "cost": 17.01,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "FB1",
-      "b": "U2",
-      "type": "w",
-      "cost": 17.1,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "LB",
-      "b": "U3",
-      "type": "w",
-      "cost": 17.26,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "DB",
-      "b": "W1",
-      "type": "w",
-      "cost": 5.0,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "CAN",
-      "b": "W3",
-      "type": "w",
-      "cost": 7.0,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "BB",
-      "b": "W4",
-      "type": "w",
-      "cost": 5.0,
-      "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "path": [
+        [
+          4.2,
+          28.5
+        ],
+        [
+          20.0,
+          28.5
+        ]
+      ],
+      "todo": true
     },
     {
       "a": "AB",
-      "b": "W5",
+      "b": "N1_L",
       "type": "w",
-      "cost": 5.0,
+      "kind": "walk",
+      "distance_m": 15.0,
+      "time_s": 11.5,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "cost": 11.5,
+      "width_m": 3.0,
+      "path": [
+        [
+          14.0,
+          32.0
+        ],
+        [
+          14.0,
+          42.0
+        ]
+      ],
+      "todo": false
     },
     {
       "a": "EA",
-      "b": "AB",
+      "b": "N1_L",
       "type": "w",
-      "cost": 11.0,
+      "kind": "walk",
+      "distance_m": 15.0,
+      "time_s": 11.5,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "cost": 11.5,
+      "width_m": 3.0,
+      "path": [
+        [
+          14.0,
+          70.0
+        ],
+        [
+          14.0,
+          42.0
+        ]
+      ],
+      "todo": false
     },
     {
-      "a": "EN",
+      "a": "ENTRY_L",
+      "b": "EA",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 1.0,
+      "time_s": 0.8,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 0.8,
+      "width_m": 3.0,
+      "path": [
+        [
+          14.0,
+          71.0
+        ],
+        [
+          14.0,
+          70.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "FAC_W",
+      "b": "S1A",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 10.0,
+      "time_s": 7.7,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 7.7,
+      "width_m": 3.0,
+      "path": [
+        [
+          42.0,
+          24.0
+        ],
+        [
+          42.0,
+          32.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N1_L",
+      "b": "N2_1",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 30.0,
+      "time_s": 23.1,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 23.1,
+      "width_m": 3.0,
+      "path": [
+        [
+          14.0,
+          42.0
+        ],
+        [
+          30.0,
+          42.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N2_1",
+      "b": "LAB_COMP",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 35.0,
+      "time_s": 26.9,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 26.9,
+      "width_m": 3.0,
+      "path": [
+        [
+          30.0,
+          42.0
+        ],
+        [
+          30.0,
+          52.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N2_1",
+      "b": "LIFT1",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 8.0,
+      "time_s": 6.2,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 6.2,
+      "width_m": 3.0,
+      "path": [
+        [
+          30.0,
+          42.0
+        ],
+        [
+          38.0,
+          42.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "LIFT1",
+      "b": "N3",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 9.0,
+      "time_s": 6.9,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 6.9,
+      "width_m": 3.0,
+      "path": [
+        [
+          38.0,
+          42.0
+        ],
+        [
+          47.0,
+          42.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N3",
+      "b": "S1A",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 20.0,
+      "time_s": 15.4,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 15.4,
+      "width_m": 3.0,
+      "path": [
+        [
+          47.0,
+          42.0
+        ],
+        [
+          42.0,
+          32.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N3",
+      "b": "BB",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 15.0,
+      "time_s": 11.5,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 11.5,
+      "width_m": 3.0,
+      "path": [
+        [
+          47.0,
+          42.0
+        ],
+        [
+          54.0,
+          32.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N3",
+      "b": "LB",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 15.0,
+      "time_s": 11.5,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 11.5,
+      "width_m": 3.0,
+      "path": [
+        [
+          47.0,
+          42.0
+        ],
+        [
+          47.0,
+          52.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N3",
+      "b": "N2_2",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 25.0,
+      "time_s": 19.2,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 19.2,
+      "width_m": 3.0,
+      "path": [
+        [
+          47.0,
+          42.0
+        ],
+        [
+          64.0,
+          42.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N2_2",
+      "b": "FAC_MID",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 35.0,
+      "time_s": 26.9,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 26.9,
+      "width_m": 3.0,
+      "path": [
+        [
+          64.0,
+          42.0
+        ],
+        [
+          64.0,
+          52.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N2_2",
+      "b": "CAN",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 15.0,
+      "time_s": 11.5,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 11.5,
+      "width_m": 3.0,
+      "path": [
+        [
+          64.0,
+          42.0
+        ],
+        [
+          74.5,
+          32.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "CAN",
+      "b": "CANT",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 4.0,
+      "time_s": 3.0,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 3.0,
+      "width_m": 3.0,
+      "path": [
+        [
+          74.5,
+          32.0
+        ],
+        [
+          75.0,
+          28.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N2_2",
+      "b": "N4",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 35.0,
+      "time_s": 26.9,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 26.9,
+      "width_m": 3.0,
+      "path": [
+        [
+          64.0,
+          42.0
+        ],
+        [
+          81.5,
+          42.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N4",
+      "b": "EB",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 15.0,
+      "time_s": 11.5,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 11.5,
+      "width_m": 3.0,
+      "path": [
+        [
+          81.5,
+          42.0
+        ],
+        [
+          81.5,
+          52.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N4",
+      "b": "N2_3",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 18.0,
+      "time_s": 13.8,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 13.8,
+      "width_m": 3.0,
+      "path": [
+        [
+          81.5,
+          42.0
+        ],
+        [
+          92.0,
+          42.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N2_3",
+      "b": "FAC_TOP_R",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 15.0,
+      "time_s": 11.5,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 11.5,
+      "width_m": 3.0,
+      "path": [
+        [
+          92.0,
+          42.0
+        ],
+        [
+          92.0,
+          32.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N2_3",
+      "b": "FAC_BOT_R",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 18.0,
+      "time_s": 13.8,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 13.8,
+      "width_m": 3.0,
+      "path": [
+        [
+          92.0,
+          42.0
+        ],
+        [
+          98.0,
+          58.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N2_3",
+      "b": "EN",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 25.0,
+      "time_s": 19.2,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 19.2,
+      "width_m": 3.0,
+      "path": [
+        [
+          92.0,
+          42.0
+        ],
+        [
+          91.0,
+          70.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "ENTRY_R",
+      "b": "EN",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 1.0,
+      "time_s": 0.8,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 0.8,
+      "width_m": 3.0,
+      "path": [
+        [
+          91.0,
+          71.0
+        ],
+        [
+          91.0,
+          70.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N2_3",
+      "b": "N_R_BEND",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 20.0,
+      "time_s": 15.4,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 15.4,
+      "width_m": 3.0,
+      "path": [
+        [
+          92.0,
+          42.0
+        ],
+        [
+          103.0,
+          42.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N_R_BEND",
+      "b": "N_R_NORTH",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 18.0,
+      "time_s": 13.8,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 13.8,
+      "width_m": 3.0,
+      "path": [
+        [
+          103.0,
+          42.0
+        ],
+        [
+          103.0,
+          20.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N_R_NORTH",
+      "b": "WASHROOM",
+      "type": "d",
+      "kind": "door",
+      "distance_m": 8.0,
+      "time_s": 6.2,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 6.2,
+      "width_m": 1.2,
+      "path": [
+        [
+          103.0,
+          20.0
+        ],
+        [
+          103.0,
+          18.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N_R_NORTH",
+      "b": "CLASS_TR",
+      "type": "d",
+      "kind": "door",
+      "distance_m": 10.0,
+      "time_s": 7.7,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 7.7,
+      "width_m": 1.2,
+      "path": [
+        [
+          103.0,
+          20.0
+        ],
+        [
+          110.0,
+          20.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N_R_BEND",
+      "b": "MC1",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 12.0,
+      "time_s": 9.2,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 9.2,
+      "width_m": 3.0,
+      "path": [
+        [
+          103.0,
+          42.0
+        ],
+        [
+          110.0,
+          33.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N_R_BEND",
+      "b": "STAIRS_CANTEEN",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 12.0,
+      "time_s": 9.2,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 9.2,
+      "width_m": 3.0,
+      "path": [
+        [
+          103.0,
+          42.0
+        ],
+        [
+          110.0,
+          45.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "N_R_BEND",
+      "b": "STATIONS",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 10.0,
+      "time_s": 7.7,
+      "accessible": true,
+      "outdoor": false,
+      "cost": 7.7,
+      "width_m": 3.0,
+      "path": [
+        [
+          103.0,
+          42.0
+        ],
+        [
+          103.0,
+          49.0
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "STATIONS",
       "b": "NES",
       "type": "w",
-      "cost": 4.5,
+      "kind": "walk",
+      "distance_m": 3.0,
+      "time_s": 2.3,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "cost": 2.3,
+      "width_m": 3.0,
+      "path": [
+        [
+          103.0,
+          49.0
+        ],
+        [
+          103.0,
+          52.0
+        ]
+      ],
+      "todo": false
     },
     {
-      "a": "BEF",
-      "b": "EB",
-      "type": "b",
-      "cost": 15.46,
+      "a": "N_R_BEND",
+      "b": "FAC_BOT_R",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 12.0,
+      "time_s": 9.2,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "cost": 9.2,
+      "width_m": 3.0,
+      "path": [
+        [
+          103.0,
+          42.0
+        ],
+        [
+          98.0,
+          58.0
+        ]
+      ],
+      "todo": false
     },
     {
-      "a": "BEF",
-      "b": "FB1",
-      "type": "b",
-      "cost": 16.75,
+      "a": "N_R_BEND",
+      "b": "CLASS_BR1",
+      "type": "d",
+      "kind": "door",
+      "distance_m": 16.0,
+      "time_s": 12.3,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "cost": 12.3,
+      "width_m": 1.2,
+      "path": [
+        [
+          103.0,
+          42.0
+        ],
+        [
+          115.0,
+          58.0
+        ]
+      ],
+      "todo": false
     },
     {
-      "a": "BDC",
-      "b": "W2",
-      "type": "b",
-      "cost": 6.7,
+      "a": "CLASS_BR1",
+      "b": "CLASS_BR2",
+      "type": "w",
+      "kind": "walk",
+      "distance_m": 10.0,
+      "time_s": 7.7,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "cost": 7.7,
+      "width_m": 3.0,
+      "path": [
+        [
+          115.0,
+          58.0
+        ],
+        [
+          115.0,
+          66.5
+        ]
+      ],
+      "todo": false
     },
     {
-      "a": "BDC",
-      "b": "DB",
-      "type": "b",
-      "cost": 14.2,
-      "accessible": true,
-      "outdoor": false
+      "a": "LB",
+      "b": "LIB",
+      "type": "s",
+      "kind": "stairs",
+      "distance_m": 12.0,
+      "time_s": 12.0,
+      "accessible": false,
+      "outdoor": false,
+      "cost": 12.0,
+      "width_m": 1.8,
+      "path": [
+        [
+          47.0,
+          52.0
+        ],
+        [
+          198.9,
+          59.4
+        ]
+      ],
+      "todo": false
     },
     {
-      "a": "BDC",
-      "b": "CAN",
-      "type": "b",
-      "cost": 12.2,
-      "accessible": true,
-      "outdoor": false
+      "a": "S1A",
+      "b": "SA0",
+      "type": "s",
+      "kind": "stairs",
+      "distance_m": 12.0,
+      "time_s": 12.0,
+      "accessible": false,
+      "outdoor": false,
+      "cost": 12.0,
+      "width_m": 1.8,
+      "path": [
+        [
+          42.0,
+          32.0
+        ],
+        [
+          40.5,
+          37.6
+        ]
+      ],
+      "todo": false
     },
     {
-      "a": "BBA",
-      "b": "BB",
-      "type": "b",
-      "cost": 11.68,
+      "a": "LIFT1",
+      "b": "LIFT0",
+      "type": "l",
+      "kind": "lift",
+      "distance_m": 4.5,
+      "time_s": 8.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": false,
+      "cost": 8.0,
+      "width_m": 3.0,
+      "path": [
+        [
+          38.0,
+          42.0
+        ],
+        [
+          4.2,
+          28.5
+        ]
+      ],
+      "todo": false
     },
     {
-      "a": "BBA",
-      "b": "AB",
-      "type": "b",
-      "cost": 11.1,
-      "accessible": true,
-      "outdoor": false
+      "a": "MC1",
+      "b": "MBD",
+      "type": "s",
+      "kind": "stairs",
+      "distance_m": 12.0,
+      "time_s": 12.0,
+      "accessible": false,
+      "outdoor": true,
+      "cost": 12.0,
+      "width_m": 1.8,
+      "path": [
+        [
+          110.0,
+          33.0
+        ],
+        [
+          68.4,
+          109.8
+        ]
+      ],
+      "todo": false
+    },
+    {
+      "a": "STAIRS_CANTEEN",
+      "b": "MC0",
+      "type": "s",
+      "kind": "stairs",
+      "distance_m": 10.0,
+      "time_s": 12.0,
+      "accessible": false,
+      "outdoor": false,
+      "cost": 12.0,
+      "width_m": 1.8,
+      "path": [
+        [
+          110.0,
+          45.0
+        ],
+        [
+          19.0,
+          49.0
+        ]
+      ],
+      "todo": false
     },
     {
       "a": "EA",
-      "b": "BBA",
-      "type": "b",
-      "cost": 10.06,
+      "b": "VDA",
+      "type": "d",
+      "kind": "door",
+      "distance_m": 5.0,
+      "time_s": 4.0,
       "accessible": true,
-      "outdoor": false
+      "outdoor": true,
+      "cost": 4.0,
+      "width_m": 1.2,
+      "path": [
+        [
+          14.0,
+          70.0
+        ],
+        [
+          180.0,
+          98.64
+        ]
+      ],
+      "todo": false
     },
     {
       "a": "EN",
-      "b": "BDC",
-      "type": "b",
-      "cost": 9.3,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "SA0",
-      "b": "S1A",
-      "type": "s",
-      "cost": 12.0,
-      "accessible": false,
-      "outdoor": false
-    },
-    {
-      "a": "SB0",
-      "b": "S1B",
-      "type": "s",
-      "cost": 12.0,
-      "accessible": false,
-      "outdoor": false
-    },
-    {
-      "a": "SR0",
-      "b": "S1R",
-      "type": "s",
-      "cost": 12.0,
-      "accessible": false,
-      "outdoor": false
-    },
-    {
-      "a": "LIFT0",
-      "b": "LIFT1",
-      "type": "l",
-      "cost": 8.0,
-      "accessible": true,
-      "outdoor": false
-    },
-    {
-      "a": "VDA",
-      "b": "EA",
+      "b": "VDN",
       "type": "d",
-      "cost": 4.0,
+      "kind": "door",
+      "distance_m": 5.0,
+      "time_s": 4.0,
       "accessible": true,
-      "outdoor": true
-    },
-    {
-      "a": "VDN",
-      "b": "EN",
-      "type": "d",
+      "outdoor": true,
       "cost": 4.0,
-      "accessible": true,
-      "outdoor": true
-    },
-    {
-      "a": "MBD",
-      "b": "MC1",
-      "type": "d",
-      "cost": 4.0,
-      "accessible": true,
-      "outdoor": true
+      "width_m": 1.2,
+      "path": [
+        [
+          91.0,
+          70.0
+        ],
+        [
+          134.1,
+          98.64
+        ]
+      ],
+      "todo": false
     }
   ],
   "rooms": [
     {
       "level": "c",
       "label": "",
-      "x": 240,
-      "y": 360,
-      "width": 1345,
-      "height": 140,
+      "x": 240.0,
+      "y": 360.0,
+      "width": 1345.0,
+      "height": 140.0,
       "kind": "road"
     },
     {
       "level": "c",
       "label": "Football ground",
-      "x": 240,
-      "y": 130,
-      "width": 410,
-      "height": 225,
+      "x": 240.0,
+      "y": 130.0,
+      "width": 410.0,
+      "height": 225.0,
       "kind": "field"
     },
     {
       "level": "c",
       "label": "Y block",
-      "x": 702,
-      "y": 190,
-      "width": 82,
-      "height": 135,
+      "x": 702.0,
+      "y": 190.0,
+      "width": 82.0,
+      "height": 135.0,
       "kind": "bld"
     },
     {
       "level": "c",
       "label": "GND",
-      "x": 808,
-      "y": 12,
-      "width": 68,
-      "height": 62,
+      "x": 808.0,
+      "y": 12.0,
+      "width": 68.0,
+      "height": 62.0,
       "kind": "bld"
     },
     {
       "level": "c",
       "label": "DEN",
-      "x": 810,
-      "y": 90,
-      "width": 70,
-      "height": 75,
+      "x": 810.0,
+      "y": 90.0,
+      "width": 70.0,
+      "height": 75.0,
       "kind": "bld"
     },
     {
       "level": "c",
       "label": "CLD",
-      "x": 820,
-      "y": 190,
-      "width": 75,
-      "height": 135,
+      "x": 820.0,
+      "y": 190.0,
+      "width": 75.0,
+      "height": 135.0,
       "kind": "bld"
     },
     {
       "level": "c",
       "label": "Ground",
-      "x": 937,
-      "y": 30,
-      "width": 357,
-      "height": 145,
+      "x": 937.0,
+      "y": 30.0,
+      "width": 357.0,
+      "height": 145.0,
       "kind": "field"
     },
     {
       "level": "c",
       "label": "Library",
-      "x": 937,
-      "y": 200,
-      "width": 342,
-      "height": 128,
+      "x": 937.0,
+      "y": 200.0,
+      "width": 342.0,
+      "height": 128.0,
       "kind": "bld"
     },
     {
       "level": "c",
       "label": "Basketball court",
-      "x": 1345,
-      "y": 12,
-      "width": 132,
-      "height": 175,
+      "x": 1345.0,
+      "y": 12.0,
+      "width": 132.0,
+      "height": 175.0,
       "kind": "field"
     },
     {
       "level": "c",
       "label": "Parking",
-      "x": 1318,
-      "y": 200,
-      "width": 205,
-      "height": 135,
+      "x": 1318.0,
+      "y": 200.0,
+      "width": 205.0,
+      "height": 135.0,
       "kind": "park"
     },
     {
       "level": "c",
       "label": "M block",
-      "x": 215,
-      "y": 610,
-      "width": 320,
-      "height": 285,
+      "x": 215.0,
+      "y": 610.0,
+      "width": 320.0,
+      "height": 285.0,
       "kind": "bld"
     },
     {
       "level": "c",
       "label": "VIT",
-      "x": 567,
-      "y": 548,
-      "width": 550,
-      "height": 350,
+      "x": 567.0,
+      "y": 548.0,
+      "width": 550.0,
+      "height": 350.0,
       "kind": "bld"
     },
     {
       "level": "c",
       "label": "VP",
-      "x": 1120,
-      "y": 545,
-      "width": 265,
-      "height": 330,
+      "x": 1120.0,
+      "y": 545.0,
+      "width": 265.0,
+      "height": 330.0,
       "kind": "bld"
     },
     {
       "level": "f0",
       "label": "",
-      "x": 415,
-      "y": 350,
-      "width": 905,
-      "height": 142,
+      "x": 415.0,
+      "y": 350.0,
+      "width": 905.0,
+      "height": 142.0,
       "kind": "floor"
     },
     {
       "level": "f0",
       "label": "Innovation lab",
-      "x": 70,
-      "y": 222,
-      "width": 310,
-      "height": 123,
+      "x": 70.0,
+      "y": 222.0,
+      "width": 310.0,
+      "height": 123.0,
       "kind": "room"
     },
     {
       "level": "f0",
       "label": "Auditorium",
-      "x": 262,
-      "y": 155,
-      "width": 126,
-      "height": 135,
+      "x": 262.0,
+      "y": 155.0,
+      "width": 126.0,
+      "height": 135.0,
       "kind": "room"
     },
     {
       "level": "f0",
       "label": "M-block lower hall",
-      "x": 0,
-      "y": 350,
-      "width": 380,
-      "height": 275,
+      "x": 0.0,
+      "y": 350.0,
+      "width": 380.0,
+      "height": 275.0,
       "kind": "room"
     },
     {
       "level": "f0",
       "label": "Lift",
-      "x": 15,
-      "y": 222,
-      "width": 55,
-      "height": 128,
+      "x": 15.0,
+      "y": 222.0,
+      "width": 55.0,
+      "height": 128.0,
       "kind": "stair"
     },
     {
       "level": "f0",
       "label": "Stairs \u2191",
-      "x": 335,
-      "y": 347,
-      "width": 140,
-      "height": 58,
+      "x": 335.0,
+      "y": 347.0,
+      "width": 140.0,
+      "height": 58.0,
       "kind": "stair"
     },
     {
       "level": "f0",
       "label": "Stairs",
-      "x": 335,
-      "y": 418,
-      "width": 140,
-      "height": 60,
+      "x": 335.0,
+      "y": 418.0,
+      "width": 140.0,
+      "height": 60.0,
       "kind": "stair"
     },
     {
       "level": "f0",
       "label": "Stairs",
-      "x": 1132,
-      "y": 357,
-      "width": 140,
-      "height": 123,
+      "x": 1132.0,
+      "y": 357.0,
+      "width": 140.0,
+      "height": 123.0,
       "kind": "stair"
     },
     {
       "level": "f0",
       "label": "Lab T1",
-      "x": 418,
-      "y": 218,
-      "width": 122,
-      "height": 132,
+      "x": 418.0,
+      "y": 218.0,
+      "width": 122.0,
+      "height": 132.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab B1",
-      "x": 418,
-      "y": 492,
-      "width": 122,
-      "height": 136,
+      "x": 418.0,
+      "y": 492.0,
+      "width": 122.0,
+      "height": 136.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab T2",
-      "x": 548,
-      "y": 218,
-      "width": 122,
-      "height": 132,
+      "x": 548.0,
+      "y": 218.0,
+      "width": 122.0,
+      "height": 132.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab B2",
-      "x": 548,
-      "y": 492,
-      "width": 122,
-      "height": 136,
+      "x": 548.0,
+      "y": 492.0,
+      "width": 122.0,
+      "height": 136.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab T3",
-      "x": 676,
-      "y": 218,
-      "width": 122,
-      "height": 132,
+      "x": 676.0,
+      "y": 218.0,
+      "width": 122.0,
+      "height": 132.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab B3",
-      "x": 676,
-      "y": 492,
-      "width": 122,
-      "height": 136,
+      "x": 676.0,
+      "y": 492.0,
+      "width": 122.0,
+      "height": 136.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab T4",
-      "x": 806,
-      "y": 218,
-      "width": 122,
-      "height": 132,
+      "x": 806.0,
+      "y": 218.0,
+      "width": 122.0,
+      "height": 132.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab B4",
-      "x": 806,
-      "y": 492,
-      "width": 122,
-      "height": 136,
+      "x": 806.0,
+      "y": 492.0,
+      "width": 122.0,
+      "height": 136.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab T5",
-      "x": 936,
-      "y": 218,
-      "width": 122,
-      "height": 132,
+      "x": 936.0,
+      "y": 218.0,
+      "width": 122.0,
+      "height": 132.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab B5",
-      "x": 936,
-      "y": 492,
-      "width": 122,
-      "height": 136,
+      "x": 936.0,
+      "y": 492.0,
+      "width": 122.0,
+      "height": 136.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab T6",
-      "x": 1066,
-      "y": 218,
-      "width": 122,
-      "height": 132,
+      "x": 1066.0,
+      "y": 218.0,
+      "width": 122.0,
+      "height": 132.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab B6",
-      "x": 1066,
-      "y": 492,
-      "width": 122,
-      "height": 136,
+      "x": 1066.0,
+      "y": 492.0,
+      "width": 122.0,
+      "height": 136.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab T7",
-      "x": 1196,
-      "y": 218,
-      "width": 122,
-      "height": 132,
+      "x": 1196.0,
+      "y": 218.0,
+      "width": 122.0,
+      "height": 132.0,
       "kind": "lab"
     },
     {
       "level": "f0",
       "label": "Lab B7",
-      "x": 1196,
-      "y": 492,
-      "width": 122,
-      "height": 136,
+      "x": 1196.0,
+      "y": 492.0,
+      "width": 122.0,
+      "height": 136.0,
       "kind": "lab"
     },
     {
       "level": "f1",
-      "label": "",
-      "x": 393,
-      "y": 95,
-      "width": 922,
-      "height": 497,
-      "kind": "floor"
+      "label": "A",
+      "x": 80.0,
+      "y": 100.0,
+      "width": 240.0,
+      "height": 220.0,
+      "kind": "class"
     },
     {
       "level": "f1",
-      "label": "M-block canteen",
-      "x": 0,
-      "y": 80,
-      "width": 370,
-      "height": 485,
+      "label": "faculty",
+      "x": 340.0,
+      "y": 100.0,
+      "width": 160.0,
+      "height": 220.0,
+      "kind": "faculty"
+    },
+    {
+      "level": "f1",
+      "label": "B",
+      "x": 520.0,
+      "y": 100.0,
+      "width": 100.0,
+      "height": 220.0,
+      "kind": "class"
+    },
+    {
+      "level": "f1",
+      "label": "canteen",
+      "x": 640.0,
+      "y": 100.0,
+      "width": 210.0,
+      "height": 220.0,
+      "kind": "canteen"
+    },
+    {
+      "level": "f1",
+      "label": "faculty",
+      "x": 870.0,
+      "y": 100.0,
+      "width": 110.0,
+      "height": 220.0,
+      "kind": "faculty"
+    },
+    {
+      "level": "f1",
+      "label": "washroom",
+      "x": 1000.0,
+      "y": 100.0,
+      "width": 80.0,
+      "height": 100.0,
+      "kind": "washroom"
+    },
+    {
+      "level": "f1",
+      "label": "class",
+      "x": 1100.0,
+      "y": 100.0,
+      "width": 150.0,
+      "height": 150.0,
+      "kind": "class"
+    },
+    {
+      "level": "f1",
+      "label": "into m block / down to canteen",
+      "x": 1090.0,
+      "y": 260.0,
+      "width": 160.0,
+      "height": 240.0,
+      "kind": "stair"
+    },
+    {
+      "level": "f1",
+      "label": "LaB computer",
+      "x": 190.0,
+      "y": 520.0,
+      "width": 210.0,
+      "height": 190.0,
+      "kind": "lab"
+    },
+    {
+      "level": "f1",
+      "label": "library stairs",
+      "x": 420.0,
+      "y": 520.0,
+      "width": 110.0,
+      "height": 190.0,
+      "kind": "stair"
+    },
+    {
+      "level": "f1",
+      "label": "faculty",
+      "x": 550.0,
+      "y": 520.0,
+      "width": 180.0,
+      "height": 190.0,
+      "kind": "faculty"
+    },
+    {
+      "level": "f1",
+      "label": "class",
+      "x": 750.0,
+      "y": 520.0,
+      "width": 130.0,
+      "height": 190.0,
+      "kind": "class"
+    },
+    {
+      "level": "f1",
+      "label": "stations",
+      "x": 980.0,
+      "y": 480.0,
+      "width": 100.0,
+      "height": 55.0,
       "kind": "room"
     },
     {
       "level": "f1",
-      "label": "E block",
-      "x": 503,
-      "y": 97,
-      "width": 132,
-      "height": 133,
-      "kind": "bld"
+      "label": "faculty",
+      "x": 980.0,
+      "y": 550.0,
+      "width": 150.0,
+      "height": 160.0,
+      "kind": "faculty"
     },
     {
       "level": "f1",
-      "label": "F block",
-      "x": 760,
-      "y": 97,
-      "width": 143,
-      "height": 133,
-      "kind": "bld"
+      "label": "class",
+      "x": 1150.0,
+      "y": 550.0,
+      "width": 100.0,
+      "height": 75.0,
+      "kind": "class"
     },
     {
       "level": "f1",
-      "label": "Library",
-      "x": 970,
-      "y": 97,
-      "width": 123,
-      "height": 133,
-      "kind": "bld"
-    },
-    {
-      "level": "f1",
-      "label": "D block",
-      "x": 517,
-      "y": 457,
-      "width": 160,
-      "height": 133,
-      "kind": "bld"
-    },
-    {
-      "level": "f1",
-      "label": "Nescafe",
-      "x": 685,
-      "y": 540,
-      "width": 108,
-      "height": 50,
-      "kind": "bld"
-    },
-    {
-      "level": "f1",
-      "label": "Canteen",
-      "x": 805,
-      "y": 470,
-      "width": 110,
-      "height": 120,
-      "kind": "bld"
-    },
-    {
-      "level": "f1",
-      "label": "B block",
-      "x": 922,
-      "y": 455,
-      "width": 123,
-      "height": 135,
-      "kind": "bld"
-    },
-    {
-      "level": "f1",
-      "label": "A block",
-      "x": 1108,
-      "y": 455,
-      "width": 124,
-      "height": 135,
-      "kind": "bld"
-    },
-    {
-      "level": "f1",
-      "label": "",
-      "x": 547,
-      "y": 225,
-      "width": 60,
-      "height": 130,
-      "kind": "stair"
-    },
-    {
-      "level": "f1",
-      "label": "",
-      "x": 780,
-      "y": 315,
-      "width": 138,
-      "height": 55,
-      "kind": "stair"
-    },
-    {
-      "level": "f1",
-      "label": "",
-      "x": 1085,
-      "y": 315,
-      "width": 105,
-      "height": 55,
-      "kind": "stair"
-    },
-    {
-      "level": "f1",
-      "label": "",
-      "x": 970,
-      "y": 370,
-      "width": 60,
-      "height": 95,
-      "kind": "stair"
-    },
-    {
-      "level": "f1",
-      "label": "",
-      "x": 310,
-      "y": 257,
-      "width": 140,
-      "height": 58,
-      "kind": "stair"
-    },
-    {
-      "level": "f1",
-      "label": "",
-      "x": 308,
-      "y": 447,
-      "width": 140,
-      "height": 60,
-      "kind": "stair"
-    },
-    {
-      "level": "f1",
-      "label": "",
-      "x": 622,
-      "y": 92,
-      "width": 140,
-      "height": 55,
-      "kind": "bridge"
-    },
-    {
-      "level": "f1",
-      "label": "",
-      "x": 668,
-      "y": 505,
-      "width": 140,
-      "height": 24,
-      "kind": "bridge"
-    },
-    {
-      "level": "f1",
-      "label": "",
-      "x": 1040,
-      "y": 538,
-      "width": 78,
-      "height": 55,
-      "kind": "bridge"
+      "label": "class",
+      "x": 1150.0,
+      "y": 635.0,
+      "width": 100.0,
+      "height": 75.0,
+      "kind": "class"
     }
-  ],
-  "metadata": {
-    "name": "VIT Campus & Academic Blocks",
-    "levels": {
-      "c": "Campus Outdoor Grounds",
-      "f1": "VIT Floor 1 (Elevated Walkway)",
-      "f0": "VIT Basement Labs"
-    }
-  }
+  ]
 }
