@@ -9,11 +9,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/campus_navigator.css?v=2.2">
+  <link rel="stylesheet" href="/static/qds_cockpit.css?v=1.0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/7.0.0/fuse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="/static/campus_navigator.js?v=2.2"></script>
+  <script src="/static/qds_cockpit.js?v=1.0"></script>
   <style>
     :root {
       --bg: #f8fafc;
@@ -853,6 +855,7 @@
       <!-- Layout Preset Toggle -->
       <div class="preset-toggle">
         <button class="preset-btn active" id="btnCampusBlueprint" onclick="switchMainMode('blueprint')">Campus Blueprint (2D / 3D)</button>
+        <button class="preset-btn" id="btnQuantumQDS" onclick="switchMainMode('quantum_qds')">🛡️ Quantum Cyber Defense (QDS)</button>
         <button class="preset-btn" id="btnVidyalankar" onclick="switchMainMode('vidyalankar')">VIT Campus (Retail/Graph)</button>
         <button class="preset-btn" id="btnMega" onclick="switchMainMode('mega')">Mega Mart</button>
         <button class="preset-btn" id="btnClassic" onclick="switchMainMode('classic')">Classic Store</button>
@@ -1105,7 +1108,204 @@
     </section>
 
     <!-- ================================================================= -->
-    <!-- 2. RETAIL / AOA GRAPH ENGINE SYSTEM (LEGACY PRESETS)             -->
+    <!-- 2. QUANTUM CYBER DEFENSE (QDS) & THREAT DETECTION (SIH PS 26141)  -->
+    <!-- ================================================================= -->
+    <section id="quantumQdsSection" class="qds-view-wrapper" style="display: none;">
+      
+      <!-- SIH 2026 Header Card -->
+      <div class="qds-hero-card">
+        <div class="qds-hero-left">
+          <h1>
+            <span>🛡️</span>
+            <span>Quantum-Inspired Cyber Threat Detection Framework</span>
+          </h1>
+          <div class="qds-hero-sub">
+            Smart India Hackathon 2026 | Problem Statement 26141 (Egreen Quanta) | Teleportation-Based Quantum Digital Signatures (QDS)
+          </div>
+          <div class="qds-badges-row">
+            <span class="qds-pill highlight">Theme: Blockchain & Cybersecurity</span>
+            <span class="qds-pill">⚛️ Bell-State Teleportation (|Φ⁺⟩)</span>
+            <span class="qds-pill">🚫 Pure Physics (Zero AI/ML)</span>
+            <span class="qds-pill">📐 Pauli Eigenstates (X, Y, Z)</span>
+            <span class="qds-pill">🔒 Information-Theoretic Security</span>
+            <span class="qds-pill" id="qdsKeyLenBadge">32 Qubits</span>
+            <span class="qds-pill" id="qdsSaBadge">s_a: 0.08</span>
+            <span class="qds-pill" id="qdsSvBadge">s_v: 0.22</span>
+          </div>
+        </div>
+        <div class="qds-hero-right">
+          <button id="btnDistributeKeys" class="qds-action-btn" onclick="QDSCockpit.distributeKeys()" title="Generate new Bell-state entanglement and teleport quantum keys">
+            ⚡ Teleport Key Pairs
+          </button>
+        </div>
+      </div>
+
+      <!-- Action & Live Attack Injection Console -->
+      <div class="qds-control-deck">
+        <div class="qds-message-row">
+          <input type="text" id="qdsMessageInput" class="qds-msg-input" value="Authorized Campus Secure Transit Dispatch #2026-ALPHA" placeholder="Enter transaction message or clearance dispatch string..." />
+          <button class="qds-action-btn" onclick="QDSCockpit.runSimulation(QDSCockpit.activeAttack || 'none')">
+            Verify Signature
+          </button>
+        </div>
+
+        <div class="qds-attacks-deck">
+          <h3>⚡ Cyber Attack Simulation Suite (Select Threat Vector to Test)</h3>
+          <div class="qds-attacks-grid">
+            <button class="qds-attack-btn active" data-attack="none" onclick="QDSCockpit.runSimulation('none')">
+              <span class="qds-attack-title">🛡️ Baseline Legitimate</span>
+              <span class="qds-attack-sub">Authentic Alice QDS (QBER &le; s_a)</span>
+            </button>
+            <button class="qds-attack-btn" data-attack="forgery" onclick="QDSCockpit.runSimulation('forgery')">
+              <span class="qds-attack-title">⚡ Forgery Attack</span>
+              <span class="qds-attack-sub">Eve guesses signature keys (QBER &ge; s_v)</span>
+            </button>
+            <button class="qds-attack-btn" data-attack="impersonation" onclick="QDSCockpit.runSimulation('impersonation')">
+              <span class="qds-attack-title">🎭 Impersonation</span>
+              <span class="qds-attack-sub">Rogue node lacking Bell entanglement</span>
+            </button>
+            <button class="qds-attack-btn" data-attack="replay" onclick="QDSCockpit.runSimulation('replay')">
+              <span class="qds-attack-title">🔁 Replay Attack</span>
+              <span class="qds-attack-sub">Reuses stale classical feed-forward bits</span>
+            </button>
+            <button class="qds-attack-btn" data-attack="channel_tap" onclick="QDSCockpit.runSimulation('channel_tap')">
+              <span class="qds-attack-title">📡 Quantum Channel Tap</span>
+              <span class="qds-attack-sub">Beam-splitter tap / MitM probe (s_a &lt; e &lt; s_v)</span>
+            </button>
+            <button class="qds-attack-btn" data-attack="repudiation" onclick="QDSCockpit.runSimulation('repudiation')">
+              <span class="qds-attack-title">❌ Repudiation Threat</span>
+              <span class="qds-attack-sub">Alice transmits mismatched states to B & C</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Physics Decision & Threat Verdict Banner -->
+      <div id="qdsVerdictBanner" class="qds-verdict-banner secure">
+        <div class="qds-verdict-left">
+          <h2 id="qdsVerdictTitle">✅ Quantum Signature Verified (Authentic)</h2>
+          <p id="qdsVerdictDesc">Quantum Bit Error Rate within physical acceptance threshold s_a (0.08). Zero wave-function collapse detected.</p>
+        </div>
+        <div id="qdsVerdictBadge" class="qds-decision-badge accept">ACCEPTED</div>
+      </div>
+
+      <!-- Real-Time Physics Telemetry Cards -->
+      <div class="qds-telemetry-grid">
+        <div class="qds-stat-card">
+          <div class="qds-stat-header">
+            <span>Bob's QBER (Verifier 1)</span>
+            <span>Threshold: s_a &le; 8%</span>
+          </div>
+          <div class="qds-stat-value" id="qdsBobQberVal">0.0%</div>
+          <div class="qds-meter-bar">
+            <div id="qdsBobBar" class="qds-meter-fill green" style="width: 5%;"></div>
+          </div>
+        </div>
+
+        <div class="qds-stat-card">
+          <div class="qds-stat-header">
+            <span>Charlie's QBER (Verifier 2)</span>
+            <span>Threshold: s_a &le; 8%</span>
+          </div>
+          <div class="qds-stat-value" id="qdsCharlieQberVal">0.0%</div>
+          <div class="qds-meter-bar">
+            <div id="qdsCharlieBar" class="qds-meter-fill green" style="width: 5%;"></div>
+          </div>
+        </div>
+
+        <div class="qds-stat-card">
+          <div class="qds-stat-header">
+            <span>Discrepancy |e_B - e_C|</span>
+            <span>Repudiation: s_k &le; 14%</span>
+          </div>
+          <div class="qds-stat-value" id="qdsDiscrepancyVal">0.0%</div>
+          <div class="qds-meter-bar">
+            <div class="qds-meter-fill green" style="width: 2%;"></div>
+          </div>
+        </div>
+
+        <div class="qds-stat-card">
+          <div class="qds-stat-header">
+            <span>Statistical Confidence</span>
+            <span>Chernoff-Hoeffding</span>
+          </div>
+          <div class="qds-stat-value" id="qdsConfidenceVal">99.9%</div>
+          <div class="qds-meter-bar">
+            <div class="qds-meter-fill green" style="width: 99.9%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2-Column Split: Pauli Projective Matrix & Quantum Blockchain Explorer -->
+      <div class="qds-split-layout">
+        <!-- Left: Pauli Projective Measurements -->
+        <div class="qds-panel-card">
+          <div class="qds-panel-title">
+            <span>📐 Pauli Projective Measurements (Sample Qubits)</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">Non-AI von Neumann Projections</span>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="qds-matrix-table">
+              <thead>
+                <tr>
+                  <th>Qubit</th>
+                  <th>Declared Basis</th>
+                  <th>Alice Bit</th>
+                  <th>Bob Outcome</th>
+                  <th>Charlie Outcome</th>
+                  <th>State Status</th>
+                </tr>
+              </thead>
+              <tbody id="qdsMeasurementRows">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right: Quantum-Secured Blockchain Ledger -->
+        <div class="qds-panel-card">
+          <div class="qds-panel-title">
+            <span>⛓️ Quantum Blockchain Audit Ledger</span>
+            <span id="qdsLedgerIntegrityBadge">
+              <span class="status-chip valid">🟢 Cryptographically Verified</span>
+            </span>
+          </div>
+          <div id="qdsLedgerChainList" class="qds-ledger-scroll">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Mathematical Security Bounds & Asymptotic Curve Table -->
+      <div class="qds-panel-card">
+        <div class="qds-panel-title">
+          <span>📊 Information-Theoretic Security Bounds (P_forge &le; 2^(-α·N))</span>
+          <span style="font-size: 0.78rem; color: var(--primary);">Post-Quantum Immune (Shor & Grover Resilient)</span>
+        </div>
+        <div style="overflow-x: auto;">
+          <table class="qds-benchmark-table">
+            <thead>
+              <tr>
+                <th>Key Length (N)</th>
+                <th>Theoretical Forgery Probability P_forge</th>
+                <th>Security Margin</th>
+                <th>Equivalent Classical Bits</th>
+                <th>Teleported Qubits</th>
+                <th>Verification Latency</th>
+              </tr>
+            </thead>
+            <tbody id="qdsBenchmarkRows">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 3. RETAIL / AOA GRAPH ENGINE SYSTEM (LEGACY PRESETS)             -->
     <!-- ================================================================= -->
     <div id="retailAoaSection" style="display: none; width: 100%;">
     <!-- TOP SECTION: Primary Action Control Deck -->
@@ -1693,22 +1893,30 @@
 
     function switchMainMode(mode) {
       const isBlueprint = mode === 'blueprint';
+      const isQDS = mode === 'quantum_qds';
       const bpSec = document.getElementById('campusBlueprintSection');
       const retSec = document.getElementById('retailAoaSection');
+      const qdsSec = document.getElementById('quantumQdsSection');
+
       if (bpSec) bpSec.style.display = isBlueprint ? 'flex' : 'none';
-      if (retSec) retSec.style.display = isBlueprint ? 'none' : 'block';
+      if (retSec) retSec.style.display = (!isBlueprint && !isQDS) ? 'block' : 'none';
+      if (qdsSec) qdsSec.style.display = isQDS ? 'flex' : 'none';
 
       const btnBp = document.getElementById('btnCampusBlueprint');
+      const btnQds = document.getElementById('btnQuantumQDS');
       const btnVid = document.getElementById('btnVidyalankar');
       const btnMeg = document.getElementById('btnMega');
       const btnCls = document.getElementById('btnClassic');
 
       if (btnBp) btnBp.classList.toggle('active', isBlueprint);
-      if (btnVid) btnVid.classList.toggle('active', !isBlueprint && mode === 'vidyalankar');
-      if (btnMeg) btnMeg.classList.toggle('active', !isBlueprint && mode === 'mega');
-      if (btnCls) btnCls.classList.toggle('active', !isBlueprint && mode === 'classic');
+      if (btnQds) btnQds.classList.toggle('active', isQDS);
+      if (btnVid) btnVid.classList.toggle('active', mode === 'vidyalankar');
+      if (btnMeg) btnMeg.classList.toggle('active', mode === 'mega');
+      if (btnCls) btnCls.classList.toggle('active', mode === 'classic');
 
-      if (!isBlueprint) {
+      if (isQDS && window.QDSCockpit) {
+        window.QDSCockpit.init();
+      } else if (!isBlueprint && !isQDS) {
         setTimeout(() => {
           resizeCanvas();
           centerGraph();

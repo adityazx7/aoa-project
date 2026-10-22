@@ -817,6 +817,116 @@ async def save_campus_graph(payload: CampusGraphData):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+# =====================================================================
+# QUANTUM CYBER DEFENSE (QDS) & THREAT DETECTION API (SIH PS 26141)
+# =====================================================================
+
+from quantum_qds.qds_protocol import TeleportationQDS
+from quantum_qds.threat_detector import QuantumThreatDetector
+from quantum_qds.attack_simulator import QuantumAttackSimulator
+from quantum_qds.quantum_blockchain import quantum_ledger_instance
+from quantum_qds.metrics import compute_security_metrics, generate_benchmark_curves
+
+qds_protocol_instance = TeleportationQDS(key_length=32)
+qds_detector_instance = QuantumThreatDetector()
+qds_simulator_instance = QuantumAttackSimulator(qds_protocol_instance, qds_detector_instance)
+
+class QDSSignRequest(BaseModel):
+    message: str = Field(..., min_length=1, description="Message string to sign")
+
+class QDSAttackSimRequest(BaseModel):
+    message: str = Field("Authorized Campus Secure Dispatch #2026-ALPHA")
+    attack_type: str = Field("none", description="none, forgery, impersonation, replay, channel_tap, repudiation")
+
+@app.get("/api/qds/status", status_code=status.HTTP_200_OK)
+async def get_qds_status():
+    """Returns current quantum signature protocol state, parameters, and telemetry."""
+    if not qds_protocol_instance.is_distributed:
+        qds_protocol_instance.distribute_keys()
+    
+    return {
+        "status": "OPERATIONAL",
+        "protocol": "Teleportation-Based Quantum Digital Signature",
+        "standard": "Smart India Hackathon 2026 (PS 26141 - Egreen Quanta)",
+        "key_length": qds_protocol_instance.key_length,
+        "s_a_acceptance": qds_protocol_instance.s_a,
+        "s_v_rejection": qds_protocol_instance.s_v,
+        "s_k_repudiation": qds_protocol_instance.s_k,
+        "channel_noise": qds_protocol_instance.channel_noise,
+        "security_type": "Information-Theoretic Security (No-Cloning Theorem)",
+        "ai_ml_free": True
+    }
+
+@app.post("/api/qds/distribute-keys", status_code=status.HTTP_200_OK)
+async def qds_distribute_keys():
+    """Distributes quantum public keys via Bell-state entanglement and quantum teleportation."""
+    def _dist():
+        return qds_protocol_instance.distribute_keys()
+    return await run_in_threadpool(_dist)
+
+@app.post("/api/qds/sign", status_code=status.HTTP_200_OK)
+async def qds_sign_message(payload: QDSSignRequest):
+    """Alice signs a digital message using quantum private keys."""
+    def _sign():
+        return qds_protocol_instance.sign_message(payload.message)
+    return await run_in_threadpool(_sign)
+
+@app.post("/api/qds/simulate-attack", status_code=status.HTTP_200_OK)
+async def qds_simulate_attack(payload: QDSAttackSimRequest):
+    """Executes a full QDS cycle with live attack injection and non-AI threat detection.
+    Also records event onto the Quantum-Secured Blockchain Ledger.
+    """
+    def _run():
+        res = qds_simulator_instance.run_simulation(
+            message=payload.message,
+            attack_type=payload.attack_type
+        )
+        # Mint event on Quantum Blockchain
+        threat = res["threat_detection"]
+        verif = res["verification"]
+        block = quantum_ledger_instance.record_qds_event(
+            message=payload.message,
+            message_hash=res["hash"],
+            decision=threat["decision"],
+            threat_type=threat["threat_type"],
+            qber_bob=verif["bob"]["qber"],
+            qber_charlie=verif["charlie"]["qber"],
+            fidelity=1.0 if payload.attack_type != "channel_tap" else 0.58,
+            extra_data={
+                "attack_type": payload.attack_type,
+                "confidence": threat["physics_metrics"]["statistical_confidence"]
+            }
+        )
+        res["blockchain_receipt"] = {
+            "block_index": block.index,
+            "block_hash": block.hash,
+            "previous_hash": block.previous_hash,
+            "merkle_root": block.merkle_root,
+            "iso_time": block.to_dict()["iso_time"]
+        }
+        return res
+
+    return await run_in_threadpool(_run)
+
+@app.get("/api/qds/ledger", status_code=status.HTTP_200_OK)
+async def get_quantum_ledger():
+    """Returns the immutable Quantum Blockchain Ledger and chain validation state."""
+    integrity = quantum_ledger_instance.verify_chain_integrity()
+    return {
+        "integrity": integrity,
+        "chain": quantum_ledger_instance.get_chain_dict()
+    }
+
+@app.get("/api/qds/benchmarks", status_code=status.HTTP_200_OK)
+async def get_qds_benchmarks():
+    """Returns theoretical asymptotic security bounds and forgery curves vs key length N."""
+    curves = generate_benchmark_curves()
+    current_metrics = compute_security_metrics(key_length=qds_protocol_instance.key_length)
+    return {
+        "current": current_metrics,
+        "curves": curves
+    }
+
 @app.get("/")
 async def serve_frontend():
     return FileResponse("index.html")

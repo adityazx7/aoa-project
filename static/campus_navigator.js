@@ -1213,7 +1213,47 @@
         </div>
       `;
     });
+
+    // Quantum Cybersecurity & Blockchain Audit Seal
+    html += `
+      <div style="margin-top: 14px; padding: 12px 14px; background: rgba(59, 130, 246, 0.08); border: 1px dashed var(--c-acc); border-radius: 8px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-weight: 700; color: var(--c-ink);">🛡️ Quantum Digital Signature (QDS)</div>
+          <div style="font-size: 0.74rem; color: var(--c-mut);">Sign route clearance via Teleportation & Bell Entanglement</div>
+        </div>
+        <button type="button" class="route-ghost-btn" onclick="CampusNavigator.signCurrentRouteQDS()" style="font-size: 0.76rem; padding: 6px 12px; font-weight: 600;">
+          Sign Route
+        </button>
+      </div>
+      <div id="qdsRouteSignatureBadge" style="display: none; margin-top: 8px; padding: 10px; background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981; border-radius: 6px; font-size: 0.78rem; color: #059669; font-weight: 600;"></div>
+    `;
+
     list.innerHTML = html;
+  }
+
+  async function signCurrentRouteQDS() {
+    if (!store.fromId || !store.toId) return;
+    const fromLabel = store.nodesMap[store.fromId]?.label || store.fromId;
+    const toLabel = store.nodesMap[store.toId]?.label || store.toId;
+    const msg = `Campus Transit Route Clearance: ${fromLabel} ➔ ${toLabel} via ${store.activeAlgo.toUpperCase()}`;
+    
+    try {
+      const res = await fetch("/api/qds/simulate-attack", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg, attack_type: "none" })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const badge = $("qdsRouteSignatureBadge");
+        if (badge) {
+          badge.style.display = "block";
+          badge.innerHTML = `✅ Route QDS Verified & Mined on Quantum Ledger (Block #${data.blockchain_receipt.block_index} | Hash: <code>${data.blockchain_receipt.block_hash.slice(0, 16)}...</code>)`;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   function focusLeg(level, path) {
@@ -1624,6 +1664,7 @@
     setCameraPreset,
     exportGraphJson,
     saveGraphToServer,
-    addEditorNode
+    addEditorNode,
+    signCurrentRouteQDS
   };
 })();

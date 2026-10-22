@@ -1,0 +1,383 @@
+/* =====================================================================
+ * QUANTUM CYBER DEFENSE COCKPIT STYLES (SIH PS 26141)
+ * High-tech glassmorphism, telemetry gauges, and threat banners
+ * ===================================================================== */
+
+.qds-view-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 32px;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* SIH 2026 Header Card */
+.qds-hero-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: var(--radius);
+  padding: 22px 28px;
+  color: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.qds-hero-left h1 {
+  font-size: 1.45rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  background: linear-gradient(90deg, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.qds-hero-sub {
+  color: #94a3b8;
+  font-size: 0.88rem;
+  margin-bottom: 12px;
+}
+
+.qds-badges-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.qds-pill {
+  font-size: 0.76rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+}
+.qds-pill.highlight {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  color: #93c5fd;
+}
+
+/* Control & Attack Console */
+.qds-control-deck {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.qds-message-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.qds-msg-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--border-dark);
+  border-radius: 8px;
+  background: var(--surface-subtle);
+  color: var(--text-main);
+  font-size: 0.92rem;
+  font-family: inherit;
+}
+
+.qds-action-btn {
+  padding: 10px 18px;
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.qds-action-btn:hover {
+  background: var(--primary-hover);
+}
+
+.qds-attacks-deck h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.qds-attacks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.qds-attack-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+.qds-attack-btn:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+.qds-attack-btn.active {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+.qds-attack-title {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text-main);
+}
+.qds-attack-sub {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* Verdict Banner */
+.qds-verdict-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-radius: var(--radius);
+  border: 1.5px solid transparent;
+  transition: all 0.25s;
+}
+.qds-verdict-banner.secure {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: #10b981;
+}
+.qds-verdict-banner.medium {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: #f59e0b;
+}
+.qds-verdict-banner.critical {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: #ef4444;
+}
+
+.qds-verdict-left h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.qds-verdict-left p {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+}
+
+.qds-decision-badge {
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+}
+.qds-decision-badge.accept {
+  background: #10b981;
+  color: #ffffff;
+}
+.qds-decision-badge.warning {
+  background: #f59e0b;
+  color: #ffffff;
+}
+.qds-decision-badge.reject {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* Metrics & Telemetry Grid */
+.qds-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.qds-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.qds-stat-header {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.qds-stat-value {
+  font-size: 1.55rem;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+.qds-meter-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--surface-subtle);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.qds-meter-fill {
+  height: 100%;
+  transition: width 0.3s;
+}
+.qds-meter-fill.green { background: #10b981; }
+.qds-meter-fill.amber { background: #f59e0b; }
+.qds-meter-fill.red { background: #ef4444; }
+
+/* 2-Column Split: Pauli Matrix & Blockchain Ledger */
+.qds-split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 1100px) {
+  .qds-split-layout { grid-template-columns: 1fr; }
+}
+
+.qds-panel-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.qds-panel-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Measurement Matrix Table */
+.qds-matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+.qds-matrix-table th {
+  text-align: left;
+  padding: 8px 10px;
+  background: var(--surface-subtle);
+  color: var(--text-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+.qds-matrix-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.basis-chip {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.basis-chip.basis-Z { background: rgba(59, 130, 246, 0.15); color: #2563eb; }
+.basis-chip.basis-X { background: rgba(168, 85, 247, 0.15); color: #7c3aed; }
+.basis-chip.basis-Y { background: rgba(236, 72, 153, 0.15); color: #db2777; }
+
+.qds-status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.qds-status-dot.match { background: #10b981; }
+.qds-status-dot.mismatch { background: #ef4444; }
+
+/* Blockchain Ledger Cards */
+.qds-ledger-scroll {
+  max-height: 380px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 4px;
+}
+
+.qds-block-card {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+}
+.qds-block-card.threat-block {
+  border-left-color: #ef4444;
+}
+
+.block-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.block-idx { color: var(--primary); }
+.block-time { color: var(--text-muted); font-size: 0.75rem; }
+.block-threat-tag.clean { color: #10b981; }
+.block-threat-tag.alert { color: #ef4444; font-weight: 700; }
+
+.block-hashes {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 6px 0;
+}
+.hash-row span { color: var(--text-muted); }
+
+.block-payload {
+  color: var(--text-main);
+  word-break: break-all;
+}
+
+/* Benchmark Table */
+.qds-benchmark-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  margin-top: 10px;
+}
+.qds-benchmark-table th {
+  text-align: left;
+  padding: 8px 10px;
+  background: var(--surface-subtle);
+  color: var(--text-muted);
+}
+.qds-benchmark-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
