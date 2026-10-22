@@ -3827,7 +3827,7 @@
     },
     {
       "level": "f1",
-      "label": "A",
+      "label": "Room A",
       "x": 80.0,
       "y": 100.0,
       "width": 240.0,
@@ -3836,7 +3836,7 @@
     },
     {
       "level": "f1",
-      "label": "faculty",
+      "label": "Faculty",
       "x": 340.0,
       "y": 100.0,
       "width": 160.0,
@@ -3845,7 +3845,7 @@
     },
     {
       "level": "f1",
-      "label": "B",
+      "label": "Room B",
       "x": 520.0,
       "y": 100.0,
       "width": 100.0,
@@ -3854,7 +3854,7 @@
     },
     {
       "level": "f1",
-      "label": "canteen",
+      "label": "Canteen",
       "x": 640.0,
       "y": 100.0,
       "width": 210.0,
@@ -3863,7 +3863,7 @@
     },
     {
       "level": "f1",
-      "label": "faculty",
+      "label": "Faculty",
       "x": 870.0,
       "y": 100.0,
       "width": 110.0,
@@ -3872,7 +3872,7 @@
     },
     {
       "level": "f1",
-      "label": "washroom",
+      "label": "Washroom",
       "x": 1000.0,
       "y": 100.0,
       "width": 80.0,
@@ -3881,7 +3881,7 @@
     },
     {
       "level": "f1",
-      "label": "class",
+      "label": "Classroom",
       "x": 1100.0,
       "y": 100.0,
       "width": 150.0,
@@ -3890,7 +3890,7 @@
     },
     {
       "level": "f1",
-      "label": "into m block / down to canteen",
+      "label": "Stairs: M-Block & Canteen",
       "x": 1090.0,
       "y": 260.0,
       "width": 160.0,
@@ -3899,7 +3899,7 @@
     },
     {
       "level": "f1",
-      "label": "LaB computer",
+      "label": "Computer Lab",
       "x": 190.0,
       "y": 520.0,
       "width": 210.0,
@@ -3908,7 +3908,7 @@
     },
     {
       "level": "f1",
-      "label": "library stairs",
+      "label": "Library Stairs",
       "x": 420.0,
       "y": 520.0,
       "width": 110.0,
@@ -3917,7 +3917,7 @@
     },
     {
       "level": "f1",
-      "label": "faculty",
+      "label": "Faculty",
       "x": 550.0,
       "y": 520.0,
       "width": 180.0,
@@ -3926,7 +3926,7 @@
     },
     {
       "level": "f1",
-      "label": "class",
+      "label": "Classroom",
       "x": 750.0,
       "y": 520.0,
       "width": 130.0,
@@ -3935,7 +3935,7 @@
     },
     {
       "level": "f1",
-      "label": "stations",
+      "label": "Stations",
       "x": 980.0,
       "y": 480.0,
       "width": 100.0,
@@ -3944,7 +3944,7 @@
     },
     {
       "level": "f1",
-      "label": "faculty",
+      "label": "Faculty",
       "x": 980.0,
       "y": 550.0,
       "width": 150.0,
@@ -3953,7 +3953,7 @@
     },
     {
       "level": "f1",
-      "label": "class",
+      "label": "Classroom",
       "x": 1150.0,
       "y": 550.0,
       "width": 100.0,
@@ -3962,7 +3962,7 @@
     },
     {
       "level": "f1",
-      "label": "class",
+      "label": "Classroom",
       "x": 1150.0,
       "y": 635.0,
       "width": 100.0,

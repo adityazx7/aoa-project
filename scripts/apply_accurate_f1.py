@@ -361,24 +361,24 @@ def update_f1_floor_plan():
     c_f0_rooms = [r for r in data["rooms"] if r["level"] != "f1"]
     new_f1_rooms = [
         # Top Row Rooms
-        {"level": "f1", "label": "A", "x": 80.0, "y": 100.0, "width": 240.0, "height": 220.0, "kind": "class"},
-        {"level": "f1", "label": "faculty", "x": 340.0, "y": 100.0, "width": 160.0, "height": 220.0, "kind": "faculty"},
-        {"level": "f1", "label": "B", "x": 520.0, "y": 100.0, "width": 100.0, "height": 220.0, "kind": "class"},
-        {"level": "f1", "label": "canteen", "x": 640.0, "y": 100.0, "width": 210.0, "height": 220.0, "kind": "canteen"},
-        {"level": "f1", "label": "faculty", "x": 870.0, "y": 100.0, "width": 110.0, "height": 220.0, "kind": "faculty"},
-        {"level": "f1", "label": "washroom", "x": 1000.0, "y": 100.0, "width": 80.0, "height": 100.0, "kind": "washroom"},
-        {"level": "f1", "label": "class", "x": 1100.0, "y": 100.0, "width": 150.0, "height": 150.0, "kind": "class"},
+        {"level": "f1", "label": "Room A", "x": 80.0, "y": 100.0, "width": 240.0, "height": 220.0, "kind": "class"},
+        {"level": "f1", "label": "Faculty", "x": 340.0, "y": 100.0, "width": 160.0, "height": 220.0, "kind": "faculty"},
+        {"level": "f1", "label": "Room B", "x": 520.0, "y": 100.0, "width": 100.0, "height": 220.0, "kind": "class"},
+        {"level": "f1", "label": "Canteen", "x": 640.0, "y": 100.0, "width": 210.0, "height": 220.0, "kind": "canteen"},
+        {"level": "f1", "label": "Faculty", "x": 870.0, "y": 100.0, "width": 110.0, "height": 220.0, "kind": "faculty"},
+        {"level": "f1", "label": "Washroom", "x": 1000.0, "y": 100.0, "width": 80.0, "height": 100.0, "kind": "washroom"},
+        {"level": "f1", "label": "Classroom", "x": 1100.0, "y": 100.0, "width": 150.0, "height": 150.0, "kind": "class"},
         # Right Stairs Block
-        {"level": "f1", "label": "into m block / down to canteen", "x": 1090.0, "y": 260.0, "width": 160.0, "height": 240.0, "kind": "stair"},
+        {"level": "f1", "label": "Stairs: M-Block & Canteen", "x": 1090.0, "y": 260.0, "width": 160.0, "height": 240.0, "kind": "stair"},
         # Bottom Row Rooms
-        {"level": "f1", "label": "LaB computer", "x": 190.0, "y": 520.0, "width": 210.0, "height": 190.0, "kind": "lab"},
-        {"level": "f1", "label": "library stairs", "x": 420.0, "y": 520.0, "width": 110.0, "height": 190.0, "kind": "stair"},
-        {"level": "f1", "label": "faculty", "x": 550.0, "y": 520.0, "width": 180.0, "height": 190.0, "kind": "faculty"},
-        {"level": "f1", "label": "class", "x": 750.0, "y": 520.0, "width": 130.0, "height": 190.0, "kind": "class"},
-        {"level": "f1", "label": "stations", "x": 980.0, "y": 480.0, "width": 100.0, "height": 55.0, "kind": "room"},
-        {"level": "f1", "label": "faculty", "x": 980.0, "y": 550.0, "width": 150.0, "height": 160.0, "kind": "faculty"},
-        {"level": "f1", "label": "class", "x": 1150.0, "y": 550.0, "width": 100.0, "height": 75.0, "kind": "class"},
-        {"level": "f1", "label": "class", "x": 1150.0, "y": 635.0, "width": 100.0, "height": 75.0, "kind": "class"},
+        {"level": "f1", "label": "Computer Lab", "x": 190.0, "y": 520.0, "width": 210.0, "height": 190.0, "kind": "lab"},
+        {"level": "f1", "label": "Library Stairs", "x": 420.0, "y": 520.0, "width": 110.0, "height": 190.0, "kind": "stair"},
+        {"level": "f1", "label": "Faculty", "x": 550.0, "y": 520.0, "width": 180.0, "height": 190.0, "kind": "faculty"},
+        {"level": "f1", "label": "Classroom", "x": 750.0, "y": 520.0, "width": 130.0, "height": 190.0, "kind": "class"},
+        {"level": "f1", "label": "Stations", "x": 980.0, "y": 480.0, "width": 100.0, "height": 55.0, "kind": "room"},
+        {"level": "f1", "label": "Faculty", "x": 980.0, "y": 550.0, "width": 150.0, "height": 160.0, "kind": "faculty"},
+        {"level": "f1", "label": "Classroom", "x": 1150.0, "y": 550.0, "width": 100.0, "height": 75.0, "kind": "class"},
+        {"level": "f1", "label": "Classroom", "x": 1150.0, "y": 635.0, "width": 100.0, "height": 75.0, "kind": "class"},
     ]
     all_rooms = c_f0_rooms + new_f1_rooms
 

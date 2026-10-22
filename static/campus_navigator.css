@@ -478,26 +478,38 @@
 #campusSvg:active { cursor: grabbing; }
 
 .r {
+  fill: var(--c-room);
   stroke: var(--c-line);
   stroke-width: 2;
   transition: opacity 0.2s;
 }
-.k_bld { fill: var(--c-room); }
-.k_room { fill: var(--c-room); }
+.k_bld { fill: var(--c-room); stroke: var(--c-line); }
+.k_room { fill: var(--c-room); stroke: var(--c-line); }
+.k_class { fill: #f8fafc; stroke: #94a3b8; }
+.k_faculty { fill: #f1f5f9; stroke: #94a3b8; }
+.k_canteen { fill: #fff7ed; stroke: #fdba74; }
+.k_washroom { fill: #f0f9ff; stroke: #7dd3fc; }
 .k_lab { fill: var(--c-lab); stroke: var(--c-lab-border); }
-.k_stair { fill: var(--c-stair); }
-.k_bridge { fill: var(--c-bridge); }
-.k_field { fill: var(--c-field); }
-.k_park { fill: var(--c-park); }
-.k_floor { fill: var(--c-card); stroke-dasharray: 6 4; }
+.k_stair { fill: var(--c-stair); stroke: #f59e0b; }
+.k_bridge { fill: var(--c-bridge); stroke: #a855f7; }
+.k_field { fill: var(--c-field); stroke: #86efac; }
+.k_park { fill: var(--c-park); stroke: var(--c-line); }
+.k_floor { fill: var(--c-card); stroke: var(--c-border-dark); stroke-dasharray: 6 4; }
 .k_road { fill: var(--c-road); stroke: none; }
+
+[data-theme="dark"] .k_class, :root:not([data-theme="light"]) .k_class { fill: #1e293b; stroke: #475569; }
+[data-theme="dark"] .k_faculty, :root:not([data-theme="light"]) .k_faculty { fill: #1e293b; stroke: #475569; }
+[data-theme="dark"] .k_canteen, :root:not([data-theme="light"]) .k_canteen { fill: #2d1808; stroke: #9a3412; }
+[data-theme="dark"] .k_washroom, :root:not([data-theme="light"]) .k_washroom { fill: #082f49; stroke: #0284c7; }
 
 .r-label {
   fill: var(--c-ink);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
   text-anchor: middle;
   pointer-events: none;
-  font-weight: 600;
   user-select: none;
+  letter-spacing: 0.02em;
 }
 
 .e {

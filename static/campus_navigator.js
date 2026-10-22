@@ -756,8 +756,8 @@
         const rx = r.kind === "bridge" || r.kind === "stair" ? 10 : 6;
         html += `<rect class="r k_${r.kind}" x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" rx="${rx}"/>`;
         if (r.label) {
-          const fs = Math.max(9, Math.min(level === "c" ? 16 : 13, r.width / 6.5, r.height / 2.2));
-          const maxChars = Math.max(3, Math.floor((r.width - 8) / (fs * 0.58)));
+          const fs = Math.max(10, Math.min(level === "c" ? 16 : 14, r.width / 6.2, r.height / 2.2));
+          const maxChars = Math.max(3, Math.floor((r.width - 10) / (fs * 0.54)));
           const truncated = r.label.length > maxChars ? r.label.slice(0, maxChars - 1) + "…" : r.label;
           html += `<text class="r-label" x="${r.x + r.width / 2}" y="${r.y + r.height / 2 + fs / 2.6}" font-size="${fs}" text-anchor="middle">
             <title>${r.label}</title>
