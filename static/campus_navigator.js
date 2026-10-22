@@ -85,7 +85,7 @@
 
   async function fetchCampusGraph() {
     try {
-      const res = await fetch("/api/campus/graph");
+      const res = await fetch("/api/campus/graph?t=" + Date.now());
       if (!res.ok) throw new Error("Failed to load campus graph");
       const data = await res.json();
       store.graph = data;
@@ -849,10 +849,37 @@
       });
 
     html += "</g>";
+
+    // Read current zoom transform BEFORE rebuilding SVG so view stays rock-solid
+    let currentTransform = null;
+    if (window.d3 && svgEl) {
+      try {
+        currentTransform = d3.zoomTransform(svgEl);
+      } catch (e) {}
+    }
+
     svgEl.innerHTML = html;
 
-    // Node click handler
+    // Node click & pointer selection handler (forgiving of tiny hand drift)
     svgEl.querySelectorAll("circle.n").forEach((c) => {
+      let startPos = null;
+      c.onpointerdown = (e) => {
+        startPos = { x: e.clientX, y: e.clientY };
+      };
+      c.onpointerup = (e) => {
+        if (!startPos) return;
+        const dist = Math.hypot(e.clientX - startPos.x, e.clientY - startPos.y);
+        startPos = null;
+        if (dist <= 8) {
+          e.stopPropagation();
+          const id = c.dataset.id;
+          if (store.editor.enabled) {
+            handleEditorNodeClick(id);
+          } else {
+            handleDynamicNodeSelection(id);
+          }
+        }
+      };
       c.onclick = (e) => {
         e.stopPropagation();
         const id = c.dataset.id;
@@ -864,7 +891,7 @@
       };
     });
 
-    // D3 Zoom & Drag
+    // D3 Zoom & Pan (Nodes remain completely static)
     if (window.d3) {
       const svgSel = d3.select(svgEl);
       store.zoomBehavior = d3
@@ -877,6 +904,12 @@
         });
       svgSel.call(store.zoomBehavior);
 
+      // Re-apply preserved zoom/pan transform so the node/view never jumps away on selection
+      if (currentTransform && (currentTransform.k !== 1 || currentTransform.x !== 0 || currentTransform.y !== 0)) {
+        d3.select("#zoomGroup").attr("transform", currentTransform);
+        updateMinimap(currentTransform, vb);
+      }
+
       if ($("btnZoomReset")) {
         $("btnZoomReset").onclick = () => {
           if (store.routeData && store.routeData.primary && store.routeData.primary.path) {
@@ -887,21 +920,22 @@
         };
       }
 
-      // Drag in editor mode
-      d3.selectAll("circle.n").call(
-        d3.drag().on("drag", function (event) {
-          if (!store.editor.enabled) return;
-          const id = this.dataset.id;
-          const n = store.nodesMap[id];
-          if (n) {
-            n.x = Math.round(event.x);
-            n.y = Math.round(event.y);
-            d3.select(this).attr("cx", n.x).attr("cy", n.y);
-            d3.selectAll(`line.e[data-a="${id}"]`).attr("x1", n.x).attr("y1", n.y);
-            d3.selectAll(`line.e[data-b="${id}"]`).attr("x2", n.x).attr("y2", n.y);
-          }
-        })
-      );
+      // ONLY attach node drag behavior when Dev Editor is explicitly active
+      if (store.editor.enabled) {
+        d3.selectAll("circle.n").call(
+          d3.drag().on("drag", function (event) {
+            const id = this.dataset.id;
+            const n = store.nodesMap[id];
+            if (n) {
+              n.x = Math.round(event.x);
+              n.y = Math.round(event.y);
+              d3.select(this).attr("cx", n.x).attr("cy", n.y);
+              d3.selectAll(`line.e[data-a="${id}"]`).attr("x1", n.x).attr("y1", n.y);
+              d3.selectAll(`line.e[data-b="${id}"]`).attr("x2", n.x).attr("y2", n.y);
+            }
+          })
+        );
+      }
     }
   }
 
